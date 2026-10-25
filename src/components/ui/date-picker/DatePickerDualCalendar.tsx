@@ -100,17 +100,19 @@ export const DatePickerDualCalendar = ({
 
   return (
     <div className={cn('flex flex-col w-full max-w-[500px]', className)}>
-      <div className="flex flex-col sm:flex-row items-start w-full">
-        <div className="w-full sm:w-[240px] mr-0 sm:mr-5 mb-4 sm:mb-0">
+      <div className="flex flex-row items-start w-full">
+        <div className="flex-1 min-w-0 mr-3 sm:mr-4">
           <div className="flex items-center justify-between mb-2 h-8">
-            <span className="font-mono font-bold text-sm text-(--lithos-text)">
+            <span className="font-mono font-bold text-xs sm:text-sm truncate text-(--lithos-text)">
               {formatMonthYear(currentMonth, locale)}
             </span>
           </div>
 
           <CalendarGrid
             mode="range"
-            classes={{ grid: 'w-full' }}
+            classes={{
+              grid: 'w-full [grid-template-columns:repeat(7,minmax(24px,1fr))!important]',
+            }}
             currentValue={asRange(range)}
             focusedDate={focusedDate}
             gridDays={leftDays}
@@ -127,9 +129,9 @@ export const DatePickerDualCalendar = ({
           />
         </div>
 
-        <div className="w-full sm:w-[240px]">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-2 h-8">
-            <span className="font-mono font-bold text-sm text-(--lithos-text)">
+            <span className="font-mono font-bold text-xs sm:text-sm truncate text-(--lithos-text)">
               {formatMonthYear(nextMonth, locale)}
             </span>
 
@@ -139,9 +141,9 @@ export const DatePickerDualCalendar = ({
                 aria-label="Previous month"
                 disabled={isPrevDisabled}
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, -1))}
-                className="p-1 mr-1"
+                className="p-1 mr-0.5 sm:mr-1"
               >
-                <IconChevronLeft className="w-4 h-4" />
+                <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
               <Button
                 variant="text"
@@ -150,14 +152,16 @@ export const DatePickerDualCalendar = ({
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, 1))}
                 className="p-1"
               >
-                <IconChevronLeft className="w-4 h-4 rotate-180" />
+                <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
               </Button>
             </div>
           </div>
 
           <CalendarGrid
             mode="range"
-            classes={{ grid: 'w-full' }}
+            classes={{
+              grid: 'w-full [grid-template-columns:repeat(7,minmax(24px,1fr))!important]',
+            }}
             currentValue={asRange(range)}
             focusedDate={focusedDate}
             gridDays={rightDays}

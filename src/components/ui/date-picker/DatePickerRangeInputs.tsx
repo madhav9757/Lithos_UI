@@ -48,8 +48,8 @@ export const DatePickerRangeInputs = ({
   }
 
   return (
-    <div className={cn('flex flex-col sm:flex-row items-center w-full max-w-[500px] mb-3', className)}>
-      <div className="w-full sm:w-[240px] mr-0 sm:mr-5 mb-2 sm:mb-0">
+    <div className={cn('flex flex-row items-center w-full max-w-[500px] mb-3', className)}>
+      <div className="flex-1 min-w-0 mr-3 sm:mr-4">
         <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{fromLabel}</label>
         <input
           type="text"
@@ -58,11 +58,11 @@ export const DatePickerRangeInputs = ({
           onChange={handleFromChange}
           placeholder="DD/MM/YYYY"
           aria-label={fromLabel}
-          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
+          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
         />
       </div>
 
-      <div className="w-full sm:w-[240px]">
+      <div className="flex-1 min-w-0">
         <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{toLabel}</label>
         <input
           type="text"
@@ -71,7 +71,7 @@ export const DatePickerRangeInputs = ({
           onChange={handleToChange}
           placeholder="DD/MM/YYYY"
           aria-label={toLabel}
-          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
+          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
         />
       </div>
     </div>

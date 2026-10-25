@@ -54,7 +54,7 @@ export const DatePickerContent = ({
         data-status={status}
         aria-label="Choose date"
         className={cn(
-          'z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius)',
+          'z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius) max-w-[calc(100vw-1rem)] overflow-x-auto',
           className
         )}
         {...getFloatingProps(props)}
