@@ -162,3 +162,41 @@ describe('DatePicker Component - Accessibility & Keyboard Interaction', () => {
     expect(results).toHaveNoViolations()
   })
 })
+
+describe('DatePicker Component - Dual Month Range Variant', () => {
+  it('renders dual variant with From and To inputs and action buttons', async () => {
+    const user = userEvent.setup()
+    const onApply = vi.fn()
+    const onCancel = vi.fn()
+    const fromDate = new Date(2026, 9, 25)
+
+    render(
+      <DatePicker
+        variant="dual"
+        value={{ from: fromDate, to: fromDate }}
+        onApply={onApply}
+        onCancel={onCancel}
+        locale="en-US"
+      />
+    )
+
+    const trigger = screen.getByRole('button')
+    await user.click(trigger)
+
+    expect(screen.getByLabelText('From')).toHaveValue('25/10/2026')
+    expect(screen.getByLabelText('To')).toHaveValue('25/10/2026')
+    expect(screen.getByText('1 day selected')).toBeInTheDocument()
+
+    const applyBtn = screen.getByRole('button', { name: 'Apply' })
+    const cancelBtn = screen.getByRole('button', { name: 'Cancel' })
+    expect(applyBtn).toBeInTheDocument()
+    expect(cancelBtn).toBeInTheDocument()
+
+    await user.click(applyBtn)
+    expect(onApply).toHaveBeenCalled()
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+})

@@ -5,6 +5,8 @@ import type { LithosClass } from '../../../utils/cn'
 
 export type DatePickerMode = 'single' | 'range' | 'multiple'
 
+export type DatePickerVariant = 'default' | 'dual'
+
 export type DatePickerValue = Date | DateRange | Date[] | null
 
 export interface DatePickerPreset {
@@ -81,11 +83,34 @@ export interface DatePickerPresetsProps {
   onSelectPreset?: ((preset: DatePickerPreset) => void) | undefined
 }
 
+export interface DatePickerRangeInputsProps {
+  fromLabel?: string | undefined
+  toLabel?: string | undefined
+  editable?: boolean | undefined
+  className?: LithosClass | undefined
+}
+
+export interface DatePickerActionsProps {
+  onApply?: (() => void) | undefined
+  onCancel?: (() => void) | undefined
+  className?: LithosClass | undefined
+  applyLabel?: string | undefined
+  cancelLabel?: string | undefined
+}
+
+export interface DatePickerDualCalendarProps {
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+  disabledDates?: (Date | number)[] | undefined
+  isDateDisabled?: ((date: Date) => boolean) | undefined
+  className?: LithosClass | undefined
+}
+
 export interface DatePickerProps
   extends
     UseDatePickerOptions,
     Omit<CalendarProps, 'value' | 'defaultValue' | 'onChange' | 'mode' | 'classes' | 'className' | 'locale'> {
   children?: ReactNode | undefined
+  variant?: DatePickerVariant | undefined
   placeholder?: string | undefined
   disabled?: boolean | undefined
   invalid?: boolean | undefined
@@ -93,6 +118,10 @@ export interface DatePickerProps
   clearable?: boolean | undefined
   showPresets?: boolean | undefined
   presets?: DatePickerPreset[] | undefined
+  showRangeInputs?: boolean | undefined
+  showActions?: boolean | undefined
   portaled?: boolean | undefined
   className?: LithosClass | undefined
+  onApply?: (() => void) | undefined
+  onCancel?: (() => void) | undefined
 }

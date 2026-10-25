@@ -2,6 +2,9 @@ import { useDatePicker, DatePickerContext } from './useDatePicker'
 import { DatePickerInput } from './DatePickerInput'
 import { DatePickerContent } from './DatePickerContent'
 import { DatePickerPresets } from './DatePickerPresets'
+import { DatePickerRangeInputs } from './DatePickerRangeInputs'
+import { DatePickerDualCalendar } from './DatePickerDualCalendar'
+import { DatePickerActions } from './DatePickerActions'
 import { Calendar } from '../calendar/Calendar'
 import { cn } from '../../../utils/cn'
 import type { DatePickerProps } from './date-picker.types'
@@ -9,7 +12,8 @@ import type { CalendarProps, CalendarValue } from '../calendar/calendar.types'
 
 export const DatePicker = ({
   children,
-  mode = 'single',
+  variant = 'default',
+  mode: propMode,
   value,
   defaultValue,
   onChange,
@@ -18,7 +22,7 @@ export const DatePicker = ({
   onOpenChange,
   placement = 'bottom-start',
   modal = false,
-  closeOnSelect,
+  closeOnSelect: propCloseOnSelect,
   locale,
   placeholder,
   disabled,
@@ -27,6 +31,8 @@ export const DatePicker = ({
   clearable = false,
   showPresets = false,
   presets,
+  showRangeInputs = false,
+  showActions = false,
   portaled = true,
   minDate,
   maxDate,
@@ -38,7 +44,13 @@ export const DatePicker = ({
   onMonthChange,
   yearRange,
   className,
+  onApply,
+  onCancel,
 }: DatePickerProps) => {
+  const isDual = variant === 'dual'
+  const mode = propMode ?? (isDual ? 'range' : 'single')
+  const closeOnSelect = propCloseOnSelect ?? (isDual ? false : undefined)
+
   const datePicker = useDatePicker({
     mode,
     defaultOpen,
@@ -90,8 +102,23 @@ export const DatePicker = ({
               {...(invalid !== undefined && { invalid })}
             />
             <DatePickerContent portaled={portaled}>
+              {(isDual || showRangeInputs) && <DatePickerRangeInputs />}
               {showPresets && <DatePickerPresets {...(presets !== undefined && { presets })} />}
-              <Calendar {...calendarProps} />
+              {isDual ? (
+                <DatePickerDualCalendar
+                  firstDayOfWeek={firstDayOfWeek}
+                  {...(disabledDates !== undefined && { disabledDates })}
+                  {...(isDateDisabled !== undefined && { isDateDisabled })}
+                />
+              ) : (
+                <Calendar {...calendarProps} />
+              )}
+              {(isDual || showActions) && (
+                <DatePickerActions
+                  {...(onApply !== undefined && { onApply })}
+                  {...(onCancel !== undefined && { onCancel })}
+                />
+              )}
             </DatePickerContent>
           </>
         )}

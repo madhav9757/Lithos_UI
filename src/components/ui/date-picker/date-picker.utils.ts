@@ -15,6 +15,29 @@ export const formatDate = (
   return new Intl.DateTimeFormat(locale, options).format(date)
 }
 
+export const formatDateNumeric = (date: Date | null | undefined): string => {
+  if (!date || !isValidDate(date)) return ''
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
+export const getDayDifference = (from: Date | null, to: Date | null): number => {
+  if (!from) return 0
+  if (!to) return 1
+  const fromTime = normalizeToMidnight(from).getTime()
+  const toTime = normalizeToMidnight(to).getTime()
+  const diffTime = Math.abs(toTime - fromTime)
+  return Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1
+}
+
+export const formatDayCount = (count: number): string => {
+  if (count <= 0) return 'No dates selected'
+  if (count === 1) return '1 day selected'
+  return `${count} days selected`
+}
+
 export const formatDateRange = (range: DateRange | null | undefined, locale?: string): string => {
   if (!range || !range.from) return ''
   const fromFormatted = formatDate(range.from, locale)
