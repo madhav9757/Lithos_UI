@@ -12,7 +12,7 @@ export const CompoundDatePicker = () => {
   return (
     <DatePicker value={date} onChange={setDate}>
       <DatePickerTrigger asChild>
-        <Button variant="outline">Custom Trigger: {date instanceof Date ? formatDate(date) : 'Choose date'}</Button>
+        <Button variant="secondary">Custom Trigger: {date instanceof Date ? formatDate(date) : 'Choose date'}</Button>
       </DatePickerTrigger>
       <DatePickerContent>
         <DatePickerPresets />
