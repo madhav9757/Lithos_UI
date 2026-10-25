@@ -14,6 +14,7 @@ import { Alert } from '../components/ui/Alert'
 import { Accordion } from '../components/ui/Accordion'
 import { Breadcrumb } from '../components/ui/Breadcrumb'
 import { Calendar } from '../components/ui/Calendar'
+import { DatePicker } from '../components/ui/DatePicker'
 import { Carousel, CarouselSlide } from '../components/ui/Carousel'
 import { Checkbox } from '../components/ui/Checkbox'
 import {
@@ -178,6 +179,13 @@ const getComponentPreview = (name: string) => {
       return <Button className="cursor-pointer">Button</Button>
     case 'Calendar':
       return <Calendar className="pointer-events-none scale-[0.32] origin-center" />
+    case 'DatePicker':
+    case 'Date Picker':
+      return (
+        <div className="w-full scale-[0.75] origin-center flex justify-center pointer-events-none">
+          <DatePicker placeholder="DD/MM/YYYY" />
+        </div>
+      )
     case 'Card':
       return (
         <Card
