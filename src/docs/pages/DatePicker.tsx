@@ -8,12 +8,14 @@ import { RangeDatePicker } from '../examples/date-picker/range'
 import { PresetsDatePicker } from '../examples/date-picker/presets'
 import { ClearableDatePicker } from '../examples/date-picker/clearable'
 import { CompoundDatePicker } from '../examples/date-picker/compound'
+import { DualMonthDatePicker } from '../examples/date-picker/dual'
 
 import SingleDatePickerSource from '../examples/date-picker/single?raw'
 import RangeDatePickerSource from '../examples/date-picker/range?raw'
 import PresetsDatePickerSource from '../examples/date-picker/presets?raw'
 import ClearableDatePickerSource from '../examples/date-picker/clearable?raw'
 import CompoundDatePickerSource from '../examples/date-picker/compound?raw'
+import DualMonthDatePickerSource from '../examples/date-picker/dual?raw'
 import { removeImports } from '../examples/removeImports'
 
 const githubUrl = 'https://github.com/lithosui/Lithos_UI/blob/main/src/components/ui/DatePicker.ts'
@@ -134,6 +136,21 @@ export const DatePickerDoc = () => {
         <PreviewBlock code={getCode(CompoundDatePickerSource)} githubUrl={githubUrl}>
           <div className="flex justify-center py-6 max-w-sm mx-auto">
             <CompoundDatePicker />
+          </div>
+        </PreviewBlock>
+      </div>
+
+      <div className="mb-12">
+        <h3 id="dual-range" className="text-xl font-bold mb-4 font-display">
+          Dual Month Range with From &amp; To Inputs
+        </h3>
+        <p className="mb-4 text-sm font-body opacity-80 max-w-2xl">
+          Side-by-side two-month calendar with dedicated From and To input fields, live day-count summary, and
+          Apply/Cancel action buttons.
+        </p>
+        <PreviewBlock code={getCode(DualMonthDatePickerSource)} githubUrl={githubUrl}>
+          <div className="flex justify-center py-6 max-w-sm mx-auto">
+            <DualMonthDatePicker />
           </div>
         </PreviewBlock>
       </div>

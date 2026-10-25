@@ -36,19 +36,14 @@ export const DatePickerActions = ({
   }
 
   return (
-    <div
-      className={cn(
-        'flex items-center justify-between border-t-2 border-(--lithos-border) pt-3 mt-3 w-full',
-        className
-      )}
-    >
-      <span className="text-xs font-mono font-bold text-(--lithos-text) opacity-80">{summaryText}</span>
+    <div className={cn('flex flex-col w-full max-w-[500px] mt-2', className)}>
+      <div className="text-center py-1 text-xs font-mono font-bold text-(--lithos-text) opacity-80">{summaryText}</div>
 
-      <div className="flex items-center">
-        <Button variant="outline" size="sm" type="button" onClick={handleCancel} className="mr-2 text-xs py-1 px-3">
+      <div className="flex items-center justify-end border-t-2 border-(--lithos-border) pt-3 mt-2 w-full">
+        <Button variant="outline" size="sm" type="button" onClick={handleCancel} className="mr-2 text-xs py-1.5 px-3">
           {cancelLabel}
         </Button>
-        <Button variant="primary" size="sm" type="button" onClick={handleApply} className="text-xs py-1 px-3">
+        <Button variant="primary" size="sm" type="button" onClick={handleApply} className="text-xs py-1.5 px-3">
           {applyLabel}
         </Button>
       </div>

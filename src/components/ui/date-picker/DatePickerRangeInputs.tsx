@@ -48,11 +48,9 @@ export const DatePickerRangeInputs = ({
   }
 
   return (
-    <div className={cn('flex items-center w-full mb-3', className)}>
-      <div className="flex-1 mr-3">
-        <label className="block text-xs font-mono font-bold mb-1 opacity-80 uppercase tracking-wider text-(--lithos-text)">
-          {fromLabel}
-        </label>
+    <div className={cn('flex flex-col sm:flex-row items-center w-full max-w-[500px] mb-3', className)}>
+      <div className="w-full sm:w-[240px] mr-0 sm:mr-5 mb-2 sm:mb-0">
+        <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{fromLabel}</label>
         <input
           type="text"
           readOnly={!editable}
@@ -64,10 +62,8 @@ export const DatePickerRangeInputs = ({
         />
       </div>
 
-      <div className="flex-1">
-        <label className="block text-xs font-mono font-bold mb-1 opacity-80 uppercase tracking-wider text-(--lithos-text)">
-          {toLabel}
-        </label>
+      <div className="w-full sm:w-[240px]">
+        <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{toLabel}</label>
         <input
           type="text"
           readOnly={!editable}

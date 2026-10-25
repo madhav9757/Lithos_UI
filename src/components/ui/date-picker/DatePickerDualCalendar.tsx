@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, type KeyboardEvent } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useDatePickerContext } from './useDatePicker'
 import { CalendarGrid } from '../calendar/CalendarGrid'
 import { Button } from '../Button'
@@ -33,7 +33,10 @@ export const DatePickerDualCalendar = ({
   className,
 }: DatePickerDualCalendarProps) => {
   const { value, setValue, minDate, maxDate, locale } = useDatePickerContext()
-  const range = value && typeof value === 'object' && 'from' in value ? (value as DateRange) : { from: null, to: null }
+  const range = useMemo(
+    () => (value && typeof value === 'object' && 'from' in value ? (value as DateRange) : { from: null, to: null }),
+    [value]
+  )
 
   const [currentMonth, setCurrentMonth] = useState<Date>(() => startOfMonth(range.from ?? new Date()))
   const nextMonth = useMemo(() => addMonths(currentMonth, 1), [currentMonth])
@@ -81,11 +84,14 @@ export const DatePickerDualCalendar = ({
     }
   }
 
-  const handleGridKeyDown = (_event: KeyboardEvent<HTMLDivElement>) => {}
+  const handleGridKeyDown = () => {}
 
   const leftDays = useMemo(() => getCalendarGridDays(currentMonth, firstDayOfWeek), [currentMonth, firstDayOfWeek])
   const rightDays = useMemo(() => getCalendarGridDays(nextMonth, firstDayOfWeek), [nextMonth, firstDayOfWeek])
-  const weekdayLabels = useMemo(() => getWeekdayLabels(firstDayOfWeek, locale), [firstDayOfWeek, locale])
+  const weekdayLabels = useMemo(
+    () => getWeekdayLabels(firstDayOfWeek, locale).map((d) => d.slice(0, 2)),
+    [firstDayOfWeek, locale]
+  )
 
   const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { dateStyle: 'full' }), [locale])
 
@@ -93,44 +99,18 @@ export const DatePickerDualCalendar = ({
   const isNextDisabled = maxDate ? nextMonth.getTime() >= startOfMonth(maxDate).getTime() : false
 
   return (
-    <div className={cn('flex flex-col', className)}>
-      <div className="flex items-center justify-between mb-3 w-full">
-        <div className="flex items-center justify-between flex-1 mr-6">
-          <span className="font-mono font-bold text-sm text-(--lithos-text)">
-            {formatMonthYear(currentMonth, locale)}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between flex-1">
-          <span className="font-mono font-bold text-sm text-(--lithos-text)">{formatMonthYear(nextMonth, locale)}</span>
-
-          <div className="flex items-center ml-2">
-            <Button
-              variant="text"
-              aria-label="Previous month"
-              disabled={isPrevDisabled}
-              onClick={() => setCurrentMonth((prev) => addMonths(prev, -1))}
-              className="p-1 mr-1"
-            >
-              <IconChevronLeft className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="text"
-              aria-label="Next month"
-              disabled={isNextDisabled}
-              onClick={() => setCurrentMonth((prev) => addMonths(prev, 1))}
-              className="p-1"
-            >
-              <IconChevronLeft className="w-4 h-4 rotate-180" />
-            </Button>
+    <div className={cn('flex flex-col w-full max-w-[500px]', className)}>
+      <div className="flex flex-col sm:flex-row items-start w-full">
+        <div className="w-full sm:w-[240px] mr-0 sm:mr-5 mb-4 sm:mb-0">
+          <div className="flex items-center justify-between mb-2 h-8">
+            <span className="font-mono font-bold text-sm text-(--lithos-text)">
+              {formatMonthYear(currentMonth, locale)}
+            </span>
           </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col md:flex-row items-start">
-        <div className="mr-0 md:mr-6 mb-4 md:mb-0">
           <CalendarGrid
             mode="range"
+            classes={{ grid: 'w-full' }}
             currentValue={asRange(range)}
             focusedDate={focusedDate}
             gridDays={leftDays}
@@ -147,9 +127,37 @@ export const DatePickerDualCalendar = ({
           />
         </div>
 
-        <div>
+        <div className="w-full sm:w-[240px]">
+          <div className="flex items-center justify-between mb-2 h-8">
+            <span className="font-mono font-bold text-sm text-(--lithos-text)">
+              {formatMonthYear(nextMonth, locale)}
+            </span>
+
+            <div className="flex items-center">
+              <Button
+                variant="text"
+                aria-label="Previous month"
+                disabled={isPrevDisabled}
+                onClick={() => setCurrentMonth((prev) => addMonths(prev, -1))}
+                className="p-1 mr-1"
+              >
+                <IconChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="text"
+                aria-label="Next month"
+                disabled={isNextDisabled}
+                onClick={() => setCurrentMonth((prev) => addMonths(prev, 1))}
+                className="p-1"
+              >
+                <IconChevronLeft className="w-4 h-4 rotate-180" />
+              </Button>
+            </div>
+          </div>
+
           <CalendarGrid
             mode="range"
+            classes={{ grid: 'w-full' }}
             currentValue={asRange(range)}
             focusedDate={focusedDate}
             gridDays={rightDays}
