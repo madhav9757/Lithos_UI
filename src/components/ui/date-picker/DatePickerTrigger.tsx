@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, type HTMLProps, type Ref } from 'react'
+import { cloneElement, isValidElement, type Ref } from 'react'
 import { useMergeRefs } from '@floating-ui/react'
 import { useDatePickerContext } from './useDatePicker'
 import { cn } from '../../../utils/cn'
@@ -10,7 +10,7 @@ export const DatePickerTrigger = ({
   className,
   ref: propRef,
   ...props
-}: DatePickerTriggerProps & { ref?: Ref<HTMLButtonElement> }) => {
+}: DatePickerTriggerProps & { ref?: Ref<HTMLButtonElement> | undefined }) => {
   const { open, triggerRef, getReferenceProps, disabled } = useDatePickerContext()
   const ref = useMergeRefs([triggerRef, propRef])
 
@@ -30,7 +30,7 @@ export const DatePickerTrigger = ({
         ...props,
         ...childProps,
         className: cn(normalizedClass, childProps['className'] as string),
-      } as HTMLProps<HTMLButtonElement> & { 'data-state'?: string })
+      } as Record<string, unknown>)
     )
   }
 

@@ -13,17 +13,17 @@ export interface DatePickerPreset {
 }
 
 export interface UseDatePickerOptions {
-  mode?: DatePickerMode
-  value?: DatePickerValue
-  defaultValue?: DatePickerValue
-  onChange?: (value: DatePickerValue) => void
-  open?: boolean
-  defaultOpen?: boolean
-  onOpenChange?: (open: boolean) => void
-  placement?: Placement
-  modal?: boolean
-  closeOnSelect?: boolean
-  locale?: string
+  mode?: DatePickerMode | undefined
+  value?: DatePickerValue | undefined
+  defaultValue?: DatePickerValue | undefined
+  onChange?: ((value: DatePickerValue) => void) | undefined
+  open?: boolean | undefined
+  defaultOpen?: boolean | undefined
+  onOpenChange?: ((open: boolean) => void) | undefined
+  placement?: Placement | undefined
+  modal?: boolean | undefined
+  closeOnSelect?: boolean | undefined
+  locale?: string | undefined
 }
 
 export interface DatePickerContextValue {
@@ -32,7 +32,7 @@ export interface DatePickerContextValue {
   setValue: (value: DatePickerValue) => void
   open: boolean
   setOpen: (open: boolean) => void
-  locale?: string
+  locale?: string | undefined
   closeOnSelect: boolean
   triggerRef: (node: HTMLElement | null) => void
   floatingRef: (node: HTMLElement | null) => void
@@ -40,59 +40,59 @@ export interface DatePickerContextValue {
   floatingContext: FloatingContext
   getReferenceProps: (userProps?: Record<string, unknown>) => Record<string, unknown>
   getFloatingProps: (userProps?: Record<string, unknown>) => Record<string, unknown>
-  minDate?: Date
-  maxDate?: Date
-  disabled?: boolean
-  invalid?: boolean
+  minDate?: Date | undefined
+  maxDate?: Date | undefined
+  disabled?: boolean | undefined
+  invalid?: boolean | undefined
   modal: boolean
 }
 
 export interface DatePickerTriggerProps {
   children: ReactNode
-  asChild?: boolean
-  className?: LithosClass
+  asChild?: boolean | undefined
+  className?: LithosClass | undefined
 }
 
 export type DatePickerInputSizes = 'default' | 'sm' | 'md' | 'lg'
 
 export interface DatePickerInputProps {
-  placeholder?: string
-  disabled?: boolean
-  invalid?: boolean
-  size?: DatePickerInputSizes
-  clearable?: boolean
-  startAdornment?: ReactNode
-  endAdornment?: ReactNode
-  className?: LithosClass
-  'aria-label'?: string
+  placeholder?: string | undefined
+  disabled?: boolean | undefined
+  invalid?: boolean | undefined
+  size?: DatePickerInputSizes | undefined
+  clearable?: boolean | undefined
+  startAdornment?: ReactNode | undefined
+  endAdornment?: ReactNode | undefined
+  className?: LithosClass | undefined
+  'aria-label'?: string | undefined
 }
 
 export interface DatePickerContentProps {
-  children?: ReactNode
-  portaled?: boolean
-  transitionDuration?: number
-  className?: LithosClass
-  style?: React.CSSProperties
+  children?: ReactNode | undefined
+  portaled?: boolean | undefined
+  transitionDuration?: number | undefined
+  className?: LithosClass | undefined
+  style?: React.CSSProperties | undefined
 }
 
 export interface DatePickerPresetsProps {
-  presets?: DatePickerPreset[]
-  className?: LithosClass
-  onSelectPreset?: (preset: DatePickerPreset) => void
+  presets?: DatePickerPreset[] | undefined
+  className?: LithosClass | undefined
+  onSelectPreset?: ((preset: DatePickerPreset) => void) | undefined
 }
 
 export interface DatePickerProps
   extends
     UseDatePickerOptions,
-    Omit<CalendarProps, 'value' | 'defaultValue' | 'onChange' | 'mode' | 'classes' | 'className'> {
-  children?: ReactNode
-  placeholder?: string
-  disabled?: boolean
-  invalid?: boolean
-  size?: DatePickerInputSizes
-  clearable?: boolean
-  showPresets?: boolean
-  presets?: DatePickerPreset[]
-  portaled?: boolean
-  className?: LithosClass
+    Omit<CalendarProps, 'value' | 'defaultValue' | 'onChange' | 'mode' | 'classes' | 'className' | 'locale'> {
+  children?: ReactNode | undefined
+  placeholder?: string | undefined
+  disabled?: boolean | undefined
+  invalid?: boolean | undefined
+  size?: DatePickerInputSizes | undefined
+  clearable?: boolean | undefined
+  showPresets?: boolean | undefined
+  presets?: DatePickerPreset[] | undefined
+  portaled?: boolean | undefined
+  className?: LithosClass | undefined
 }

@@ -4,7 +4,7 @@ import { useDatePickerContext } from './useDatePicker'
 import { Calendar } from '../calendar/Calendar'
 import { cn } from '../../../utils/cn'
 import type { DatePickerContentProps } from './date-picker.types'
-import type { CalendarValue } from '../calendar/calendar.types'
+import type { CalendarProps, CalendarValue } from '../calendar/calendar.types'
 
 export const DatePickerContent = ({
   children,
@@ -14,7 +14,7 @@ export const DatePickerContent = ({
   style,
   ref: propRef,
   ...props
-}: DatePickerContentProps & { ref?: Ref<HTMLDivElement> }) => {
+}: DatePickerContentProps & { ref?: Ref<HTMLDivElement> | undefined }) => {
   const {
     floatingRef,
     floatingStyles,
@@ -37,6 +37,15 @@ export const DatePickerContent = ({
 
   if (!isMounted) return null
 
+  const calendarProps: CalendarProps = {
+    mode,
+    value: value as CalendarValue,
+    onChange: (next) => setValue(next as CalendarValue),
+    ...(locale !== undefined && { locale }),
+    ...(minDate !== undefined && { minDate }),
+    ...(maxDate !== undefined && { maxDate }),
+  }
+
   const content = (
     <FloatingFocusManager context={floatingContext} modal={modal}>
       <div
@@ -50,16 +59,7 @@ export const DatePickerContent = ({
         )}
         {...getFloatingProps(props)}
       >
-        {children ?? (
-          <Calendar
-            mode={mode}
-            value={value as CalendarValue}
-            onChange={(next) => setValue(next as CalendarValue)}
-            locale={locale}
-            minDate={minDate}
-            maxDate={maxDate}
-          />
-        )}
+        {children ?? <Calendar {...calendarProps} />}
       </div>
     </FloatingFocusManager>
   )
