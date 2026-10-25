@@ -43,6 +43,7 @@ export const DatePickerContent = ({
         ref={ref}
         style={{ ...floatingStyles, ...style }}
         data-status={status}
+        aria-label="Choose date"
         className={cn(
           'z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius)',
           className

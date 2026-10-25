@@ -27,6 +27,7 @@ export const DatePicker = ({
   clearable = false,
   showPresets = false,
   presets,
+  portaled = true,
   minDate,
   maxDate,
   disabledDates,
@@ -72,7 +73,7 @@ export const DatePicker = ({
               size={size}
               clearable={clearable}
             />
-            <DatePickerContent>
+            <DatePickerContent portaled={portaled}>
               {showPresets && <DatePickerPresets presets={presets} />}
               <Calendar
                 mode={mode}

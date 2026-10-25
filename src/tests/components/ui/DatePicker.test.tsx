@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import { describe, it, expect, vi } from 'vitest'
 import { DatePicker } from '../../../components/ui/DatePicker'
 
@@ -112,5 +113,52 @@ describe('DatePicker Component - Range, Clear & Presets', () => {
 
     await user.click(todayPreset)
     expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+  })
+})
+
+describe('DatePicker Component - Accessibility & Keyboard Interaction', () => {
+  const BASE_MONTH = new Date(2026, 7, 1)
+
+  it('closes popover on Escape key press', async () => {
+    const user = userEvent.setup()
+    render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Select date/i })
+    await user.click(trigger)
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+
+  it('opens on Enter key on focused trigger', async () => {
+    const user = userEvent.setup()
+    render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Select date/i })
+    trigger.focus()
+    expect(trigger).toHaveFocus()
+
+    await user.keyboard('{Enter}')
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('has no accessibility violations in closed state', async () => {
+    const { container } = render(<DatePicker placeholder="Accessible DatePicker" />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
+
+  it('has no accessibility violations in open state', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" portaled={false} />)
+
+    const trigger = screen.getByRole('button', { name: /Select date/i })
+    await user.click(trigger)
+
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

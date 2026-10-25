@@ -93,5 +93,6 @@ export interface DatePickerProps
   clearable?: boolean
   showPresets?: boolean
   presets?: DatePickerPreset[]
+  portaled?: boolean
   className?: LithosClass
 }
