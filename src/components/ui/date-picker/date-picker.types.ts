@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Placement } from '@floating-ui/react'
+import type { Placement, FloatingContext } from '@floating-ui/react'
 import type { DateRange, CalendarProps } from '../calendar/calendar.types'
 import type { LithosClass } from '../../../utils/cn'
 
@@ -37,6 +37,7 @@ export interface DatePickerContextValue {
   triggerRef: (node: HTMLElement | null) => void
   floatingRef: (node: HTMLElement | null) => void
   floatingStyles: React.CSSProperties
+  floatingContext: FloatingContext
   getReferenceProps: (userProps?: Record<string, unknown>) => Record<string, unknown>
   getFloatingProps: (userProps?: Record<string, unknown>) => Record<string, unknown>
   minDate?: Date
@@ -71,6 +72,7 @@ export interface DatePickerContentProps {
   portaled?: boolean
   transitionDuration?: number
   className?: LithosClass
+  style?: React.CSSProperties
 }
 
 export interface DatePickerPresetsProps {
