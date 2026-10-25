@@ -62,3 +62,55 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })
+
+describe('DatePicker Component - Range, Clear & Presets', () => {
+  const BASE_MONTH = new Date(2026, 7, 1)
+
+  it('handles date range selection and auto-closes on completion', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker mode="range" defaultMonth={BASE_MONTH} locale="en-US" onChange={onChange} />)
+
+    const trigger = screen.getByRole('button', { name: /Select date range/i })
+    await user.click(trigger)
+
+    const day10 = screen.getByRole('button', { name: /August 10, 2026/i })
+    const day15 = screen.getByRole('button', { name: /August 15, 2026/i })
+
+    await user.click(day10)
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ from: expect.any(Date), to: null }))
+
+    await user.click(day15)
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ from: expect.any(Date), to: expect.any(Date) }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole('grid')).not.toBeInTheDocument()
+    })
+  })
+
+  it('clears selected date when clear button is clicked', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker value={new Date(2026, 7, 15)} clearable onChange={onChange} locale="en-US" />)
+
+    const clearBtn = screen.getByRole('button', { name: /Clear date/i })
+    await user.click(clearBtn)
+
+    expect(onChange).toHaveBeenCalledWith(null)
+  })
+
+  it('renders and applies quick presets', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker showPresets defaultMonth={BASE_MONTH} onChange={onChange} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Select date/i })
+    await user.click(trigger)
+
+    const todayPreset = screen.getByRole('button', { name: 'Today' })
+    expect(todayPreset).toBeInTheDocument()
+
+    await user.click(todayPreset)
+    expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+  })
+})
