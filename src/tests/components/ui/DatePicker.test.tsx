@@ -23,6 +23,10 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     expect(screen.getByRole('grid')).toBeInTheDocument()
     expect(screen.getByText('August 2026')).toBeInTheDocument()
+
+    const dialog = screen.getByRole('dialog')
+    const innerCalendar = dialog.firstElementChild as HTMLElement
+    expect(innerCalendar).not.toHaveClass('border-2')
   })
 
   it('selects a date and closes popover in single mode', async () => {

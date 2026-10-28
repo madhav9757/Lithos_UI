@@ -26,7 +26,7 @@
  *   (endpoints and the days between) renders in one uniform accent color, since a range is a single
  *   contiguous selection, not a set of independently colorable dates.
  */
-import { useMemo, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 import { Button } from '../Button'
 import { cn } from '../../../utils/cn'
 import { IconChevronLeft } from '../icons/IconChevronLeft'
@@ -50,6 +50,12 @@ import { CalendarGrid } from './CalendarGrid'
 import { Select } from '../Select'
 
 import type { DateRange, CalendarValue, CalendarProps } from './calendar.types'
+
+export interface CalendarContextValue {
+  bordered?: boolean
+}
+
+export const CalendarContext = createContext<CalendarContextValue | null>(null)
 
 const NavIcon = ({ direction }: { direction: 'prev' | 'next' }) => (
   <div className="w-4 min-w-4">
@@ -82,8 +88,11 @@ export const Calendar = ({
   yearRange,
   classes = {},
   className,
+  bordered: propBordered,
   ...rest
 }: CalendarProps) => {
+  const calendarContext = useContext(CalendarContext)
+  const bordered = propBordered ?? calendarContext?.bordered ?? true
   const isValueControlled = value !== undefined
   const [localValue, setLocalValue] = useState<CalendarValue>(() => defaultValue ?? getEmptyValue(mode))
   const currentValue = isValueControlled ? value! : localValue
@@ -204,7 +213,9 @@ export const Calendar = ({
   return (
     <div
       className={cn(
-        'inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) shadow-[2px_2px_0_0_var(--lithos-shadow)] p-3 rounded-(--lithos-radius)',
+        'inline-block',
+        bordered &&
+          'border-2 border-(--lithos-border) bg-(--lithos-surface) shadow-[2px_2px_0_0_var(--lithos-shadow)] p-3 rounded-(--lithos-radius)',
         classes.container,
         className
       )}

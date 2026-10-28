@@ -79,6 +79,12 @@ export const calendarPropsData: PropItem[] = [
     description: 'Min and max year range in the year dropdown.',
   },
   {
+    name: 'bordered',
+    type: 'boolean',
+    defaultValue: 'true',
+    description: 'Whether to show the outer brutalist border and shadow. Automatically false inside DatePickerContent.',
+  },
+  {
     name: 'className',
     type: 'LithosClass',
     description: 'Additional CSS classes applied to the calendar container.',

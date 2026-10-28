@@ -69,6 +69,7 @@ export const DatePicker = ({
     mode,
     value: datePicker.value as CalendarValue,
     onChange: (next) => datePicker.setValue(next as CalendarValue),
+    bordered: false,
     ...(locale !== undefined && { locale }),
     ...(minDate !== undefined && { minDate }),
     ...(maxDate !== undefined && { maxDate }),

@@ -1,7 +1,7 @@
 import { type Ref } from 'react'
 import { useMergeRefs, useTransitionStatus, FloatingFocusManager, FloatingPortal } from '@floating-ui/react'
 import { useDatePickerContext } from './useDatePicker'
-import { Calendar } from '../calendar/Calendar'
+import { Calendar, CalendarContext } from '../calendar/Calendar'
 import { cn } from '../../../utils/cn'
 import type { DatePickerContentProps } from './date-picker.types'
 import type { CalendarProps, CalendarValue } from '../calendar/calendar.types'
@@ -41,6 +41,7 @@ export const DatePickerContent = ({
     mode,
     value: value as CalendarValue,
     onChange: (next) => setValue(next as CalendarValue),
+    bordered: false,
     ...(locale !== undefined && { locale }),
     ...(minDate !== undefined && { minDate }),
     ...(maxDate !== undefined && { maxDate }),
@@ -59,7 +60,9 @@ export const DatePickerContent = ({
         )}
         {...getFloatingProps(props)}
       >
-        {children ?? <Calendar {...calendarProps} />}
+        <CalendarContext.Provider value={{ bordered: false }}>
+          {children ?? <Calendar {...calendarProps} />}
+        </CalendarContext.Provider>
       </div>
     </FloatingFocusManager>
   )

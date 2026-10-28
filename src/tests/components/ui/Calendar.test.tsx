@@ -223,6 +223,22 @@ describe('Calendar', () => {
     })
   })
 
+  describe('Bordered styling', () => {
+    it('renders with border and shadow by default', () => {
+      const { container } = render(<Calendar locale="en-US" mode="single" defaultMonth={BASE_MONTH} />)
+      const root = container.firstChild as HTMLElement
+      expect(root).toHaveClass('border-2')
+      expect(root).toHaveClass('p-3')
+    })
+
+    it('renders borderless when bordered={false}', () => {
+      const { container } = render(<Calendar locale="en-US" mode="single" defaultMonth={BASE_MONTH} bordered={false} />)
+      const root = container.firstChild as HTMLElement
+      expect(root).not.toHaveClass('border-2')
+      expect(root).not.toHaveClass('p-3')
+    })
+  })
+
   it('has no accessibility violations', async () => {
     const { container } = render(<Calendar locale="en-US" mode="single" defaultMonth={BASE_MONTH} />)
     const results = await axe(container)
