@@ -70,6 +70,7 @@ export const DatePicker = ({
     value: datePicker.value as CalendarValue,
     onChange: (next) => datePicker.setValue(next as CalendarValue),
     bordered: false,
+    className: 'w-full',
     ...(locale !== undefined && { locale }),
     ...(minDate !== undefined && { minDate }),
     ...(maxDate !== undefined && { maxDate }),
@@ -104,7 +105,12 @@ export const DatePicker = ({
             />
             <DatePickerContent portaled={portaled}>
               {(isDual || showRangeInputs) && <DatePickerRangeInputs />}
-              {showPresets && <DatePickerPresets {...(presets !== undefined && { presets })} />}
+              {showPresets && (
+                <DatePickerPresets
+                  {...(presets !== undefined && { presets })}
+                  {...(isDual && { className: 'max-w-[500px]' })}
+                />
+              )}
               {isDual ? (
                 <DatePickerDualCalendar
                   firstDayOfWeek={firstDayOfWeek}

@@ -42,6 +42,7 @@ export const DatePickerContent = ({
     value: value as CalendarValue,
     onChange: (next) => setValue(next as CalendarValue),
     bordered: false,
+    className: 'w-full',
     ...(locale !== undefined && { locale }),
     ...(minDate !== undefined && { minDate }),
     ...(maxDate !== undefined && { maxDate }),
@@ -55,7 +56,7 @@ export const DatePickerContent = ({
         data-status={status}
         aria-label="Choose date"
         className={cn(
-          'z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius) max-w-[calc(100vw-1rem)] overflow-x-auto',
+          'z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius) w-fit max-w-[calc(100vw-1rem)] overflow-x-auto',
           className
         )}
         {...getFloatingProps(props)}

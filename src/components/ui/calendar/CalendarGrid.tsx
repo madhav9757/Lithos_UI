@@ -107,7 +107,7 @@ export const CalendarGrid = ({
       onMouseMove={handleGridHover}
       onClick={handleGridClick}
       onKeyDown={handleGridKeyDown}
-      className={cn('grid border-t-2 border-l-2 border-(--lithos-border)', classes.grid)}
+      className={cn('grid border-t-2 border-l-2 border-(--lithos-border) w-full', classes.grid)}
       style={{ gridTemplateColumns: 'repeat(7, minmax(28px, 1fr))' }}
     >
       <div role="row" className="contents">
