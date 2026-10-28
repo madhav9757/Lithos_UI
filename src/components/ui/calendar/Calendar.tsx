@@ -213,7 +213,7 @@ export const Calendar = ({
   return (
     <div
       className={cn(
-        'inline-block',
+        'inline-block w-full',
         bordered &&
           'border-2 border-(--lithos-border) bg-(--lithos-surface) shadow-[2px_2px_0_0_var(--lithos-shadow)] p-3 rounded-(--lithos-radius)',
         classes.container,

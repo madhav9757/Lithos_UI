@@ -13,7 +13,7 @@ export const DatePickerPresets = ({ presets: consumerPresets, className, onSelec
   }
 
   return (
-    <div className={cn('flex flex-wrap border-b-2 border-(--lithos-border) pb-2 mb-2 max-w-72', className)}>
+    <div className={cn('flex flex-wrap border-b-2 border-(--lithos-border) pb-2 mb-2 w-full max-w-[260px]', className)}>
       {presets.map((preset) => (
         <button
           key={preset.label}
