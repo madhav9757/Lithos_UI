@@ -7,19 +7,13 @@ import type { ReactNode } from 'react'
 import type { HexColor } from '../../../core/types'
 import type { LithosClass } from '../../../utils/cn'
 
-/**
- * Visual intent or status variant for a toast notification.
- */
+/** Visual intent or status variant for a toast notification. */
 export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'default' | 'accent'
 
-/**
- * Screen corner placement where toast notifications are positioned.
- */
+/** Screen corner placement where toast notifications are positioned. */
 export type ToastPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 
-/**
- * Options for dispatching an individual toast notification.
- */
+/** Options for dispatching an individual toast notification. */
 export interface ToastProps {
   /**
    * Visual style variant representing the status or intent.
@@ -27,23 +21,18 @@ export interface ToastProps {
    */
   intent?: ToastType | undefined
 
-  /**
-   * Optional header title text.
-   */
+  /** Optional header title text. */
   title?: string | undefined
 
-  /**
-   * Primary message text displayed inside the toast.
-   */
-  message: string
+  /** Primary message text/content displayed inside the toast. */
+  message?: ReactNode
 
-  /**
-   * Custom background or accent color override.
-   */
+  /** Custom background or accent color override. */
   color?: HexColor | string | undefined
 
   /**
    * Display duration in milliseconds before auto-dismissing.
+   * @default 5000
    */
   duration?: number | undefined
 
@@ -52,6 +41,30 @@ export interface ToastProps {
    * @default 'Close notification'
    */
   label?: string
+
+  /**
+   * Message or content displayed while the asynchronous action is pending.
+   * @default 'Processing...'
+   */
+  loading?: ReactNode
+
+  /**
+   * Message or content displayed when the asynchronous action resolves successfully.
+   * @default 'Done!'
+   */
+  success?: ReactNode
+
+  /**
+   * Message or content displayed if the asynchronous action throws an error.
+   * @default 'Failed'
+   */
+  error?: ReactNode
+
+  /** Asynchronous action function executed when the async toast runs. */
+  action?: (() => Promise<unknown>) | undefined
+
+  /** Custom icon component reference or rendered element override. */
+  icon?: ((props: Record<string, unknown>) => ReactNode) | ReactNode
 }
 
 /**
@@ -79,9 +92,7 @@ export interface ToastItemProps {
   className?: LithosClass
 }
 
-/**
- * Custom auto-dismiss duration configuration mapping specific toast intents to display times in milliseconds.
- */
+/** Custom auto-dismiss duration configuration mapping specific toast intents to display times in milliseconds. */
 export type DurationObjType = {
   success?: number
   error?: number
@@ -91,13 +102,9 @@ export type DurationObjType = {
   accent?: number
 }
 
-/**
- * Props for the `ToastProvider` wrapper component.
- */
+/** Props for the `ToastProvider` wrapper component. */
 export interface ToastProviderProps {
-  /**
-   * Application tree or elements wrapped by the toast context.
-   */
+  /** Application tree or elements wrapped by the toast context. */
   children: ReactNode
 
   /**
@@ -113,15 +120,11 @@ export interface ToastProviderProps {
    */
   position?: ToastPosition
 
-  /**
-   * Custom CSS class names applied to the floating toast container wrapper.
-   */
+  /** Custom CSS class names applied to the floating toast container wrapper. */
   className?: LithosClass
 }
 
-/**
- * Context payload contract for dispatching and removing toast notifications.
- */
+/** Context payload contract for dispatching and removing toast notifications. */
 export interface ToastContextType {
   /**
    * Dispatches a new toast notification and returns its unique generated ID.
@@ -132,4 +135,7 @@ export interface ToastContextType {
    * Manually dismisses an active toast notification by its unique ID.
    */
   removeToast: (id: string) => void
+
+  /** Updates an existing active toast notification by its unique ID. */
+  updateToast: (id: string, newProps: Partial<Omit<ToastProps, 'action'>>) => void
 }

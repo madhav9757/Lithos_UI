@@ -42,13 +42,35 @@ export const ToastProvider = ({ children, duration, position = 'bottom-right', c
     setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }, [])
 
+  const updateToast = useCallback((id: string, newProps: Partial<IdentifiedToastProps>) => {
+    setToasts((prev) => prev.map((toast) => (toast.id === id ? { ...toast, ...newProps } : toast)))
+  }, [])
+
   const addToast = useCallback(
-    ({ message, intent = 'default', color, title, duration: customDuration }: ToastProps) => {
+    ({
+      message,
+      intent = 'default',
+      color,
+      title,
+      duration: customDuration,
+      loading = 'Processing...',
+      success = 'Done!',
+      error = 'Failed',
+      action,
+      icon,
+    }: ToastProps) => {
       const id = Math.random().toString(36).substring(2, 9)
       let toastDuration = customDuration
+      let initialIntent = intent
+      const initialMessage = message || (action ? loading : undefined)
 
-      if (!customDuration && durationConfig) {
-        toastDuration = durationConfig[intent]
+      if (action) {
+        initialIntent = intent || 'default'
+        toastDuration = Infinity
+      }
+
+      if (!toastDuration && durationConfig) {
+        toastDuration = durationConfig[initialIntent]
       }
 
       // consumer passes a single duration for all the toast types
@@ -57,7 +79,7 @@ export const ToastProvider = ({ children, duration, position = 'bottom-right', c
       }
 
       // fallback duration
-      if (!toastDuration) {
+      if (toastDuration === undefined) {
         toastDuration = DEFAULT_DURATION
       }
 
@@ -65,21 +87,50 @@ export const ToastProvider = ({ children, duration, position = 'bottom-right', c
         ...prev,
         {
           id,
-          message,
-          intent,
+          message: initialMessage,
+          intent: initialIntent,
           color,
           title,
           duration: toastDuration,
+          loading,
+          success,
+          error,
+          action,
+          icon,
         },
       ])
 
+      if (!action) return id
+
+      action()
+        .then(() => {
+          const successDuration = (typeof duration === 'object' && duration?.success) || 5000
+
+          updateToast(id, {
+            message: success,
+            intent: 'success',
+            duration: successDuration,
+            action: undefined,
+          })
+        })
+        .catch(() => {
+          const errorDuration = (typeof duration === 'object' && duration?.error) || 8000
+
+          updateToast(id, {
+            message: error,
+            intent: 'error',
+            duration: errorDuration,
+            action: undefined,
+          })
+        })
+
       return id
     },
-    [durationConfig, duration]
+    [durationConfig, duration, updateToast]
   )
 
   return (
-    <ToastContext.Provider value={{ addToast, removeToast }}>
+    <ToastContext.Provider value={{ addToast, removeToast, updateToast }}>
       {children}
       {typeof document !== 'undefined' &&
         createPortal(
