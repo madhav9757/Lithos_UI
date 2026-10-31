@@ -11,6 +11,8 @@ import { PositionedToast } from '../examples/toast/customPosition'
 import positionedSource from '../examples/toast/customPosition.tsx?raw'
 import { AllIntentsToast } from '../examples/toast/allIntents'
 import allIntentsSource from '../examples/toast/allIntents.tsx?raw'
+import { AsyncToastExample } from '../examples/toast/asyncToast'
+import { CustomIconUndoToastExample } from '../examples/toast/customIcon'
 import {
   DocCallout,
   DocExample,
@@ -29,17 +31,79 @@ const manualPath = {
   ToastProvider: toastPath,
   useToast: toastPath,
   Button: '../../components/ui/Button',
+  IconHeart: '../../components/ui/IconHeart',
 }
-const toastCode = (source: string, componentNames: string[], types: string[] = []) => ({
+
+const toastCode = (source: string, componentNames: string[] = [], types: string[] = []) => ({
   body: removeImports(source),
-  componentNames,
+  componentNames: ['useToast', 'Button', ...componentNames],
   types,
   manualPath,
 })
 
-const defaultCode = toastCode(defaultSource, ['useToast', 'Button'])
-const allIntentsCode = toastCode(allIntentsSource, ['useToast', 'Button', 'ToastType'], ['ToastType'])
-const positionedCode = toastCode(positionedSource, ['useToast', 'ToastProvider', 'Button'])
+const defaultCode = toastCode(defaultSource)
+const allIntentsCode = toastCode(allIntentsSource, ['ToastType'], ['ToastType'])
+const positionedCode = toastCode(positionedSource, ['ToastProvider'])
+
+const customIconCode = toastCode(
+  `export const CustomIconToastExample = () => {
+  const toast = useToast()
+
+  const triggerToast = () => {
+    if (!toast || !toast.addToast) return
+
+    toast.addToast({
+      title: 'FAVORITE ADDED',
+      message: 'This item has been saved to your liked collection.',
+      intent: 'accent',
+      icon: IconHeart,
+    })
+  }
+
+  return (
+    <div className='flex items-center'>
+      <Button onClick={triggerToast}>Trigger Custom Icon Toast</Button>
+    </div>
+  )
+}`,
+  ['IconHeart']
+)
+
+const asyncCode = toastCode(`
+// Simulated database API
+const fakeDatabase = {
+  deleteRecord: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    return { success: true, message: 'Record deleted from database' }
+  },
+  failRecord: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    throw new Error('Database constraint violation')
+  },
+}
+
+export const AsyncToastExample = () => {
+  const toast = useToast()
+
+  const triggerToast = (shouldFail?: boolean) => {
+    if (!toast || !toast.addToast) return
+
+    toast.addToast({
+      title: 'DATABASE SYNC',
+      loading: 'Deleting record from database...',
+      success: 'Record successfully removed!',
+      error: 'Failed to delete record.',
+      action: !shouldFail ? fakeDatabase.deleteRecord : fakeDatabase.failRecord,
+    })
+  }
+
+  return (
+    <div className='flex flex-col space-y-4 items-center'>
+      <Button onClick={() => triggerToast()}>Trigger Success API Action</Button>
+      <Button onClick={() => triggerToast(true)}>Trigger Error API Action</Button>
+    </div>
+  )
+}`)
 
 export const ToastDoc = () => (
   <div className="max-w-5xl mx-auto px-6">
@@ -59,7 +123,13 @@ export const ToastDoc = () => (
         manualPath={manualPath}
         requires={[
           'components/ui/icons/IconClose.tsx',
-          'components/ui/Button.tsx',
+          'components/ui/icons/IconAlertCircle.tsx',
+          'components/ui/icons/IconCheck.tsx',
+          'components/ui/icons/IconInfo.tsx',
+          'components/ui/icons/IconClosIconAlertTriangle.tsx',
+          'components/ui/icons/IconBell.tsx',
+          'components/ui/Spinner.tsx',
+          'components/ui/Typography.tsx',
           'utils/colors.ts',
           'utils/yiq.ts',
           'utils/cn.ts',
@@ -107,6 +177,26 @@ export const ToastDoc = () => (
     >
       <PreviewBlock code={positionedCode} githubUrl={githubUrl}>
         <PositionedToast />
+      </PreviewBlock>
+    </DocExample>
+
+    <DocExample
+      id="async-toast"
+      title="Async Toast"
+      description="Handle asynchronous operations seamlessly. The toast automatically displays a loading spinner with pending states, transitioning to success or error states upon promise resolution or rejection."
+    >
+      <PreviewBlock code={asyncCode} githubUrl={githubUrl}>
+        <AsyncToastExample />
+      </PreviewBlock>
+    </DocExample>
+
+    <DocExample
+      id="custom-icon"
+      title="Custom Icon"
+      description="Override default intent icons or fallback indicators by passing any custom component reference directly to the icon property for specialized messaging."
+    >
+      <PreviewBlock code={customIconCode} githubUrl={githubUrl}>
+        <CustomIconUndoToastExample />
       </PreviewBlock>
     </DocExample>
 
