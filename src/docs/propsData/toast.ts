@@ -29,9 +29,8 @@ export const toastProviderPropsData: PropItem[] = [
 export const toastPropsData: PropItem[] = [
   {
     name: 'message',
-    type: 'string',
-    required: true,
-    description: 'The main body text displayed inside the toast notification.',
+    type: 'ReactNode',
+    description: 'Primary message text/content displayed inside the toast.',
   },
   {
     name: 'title',
@@ -58,6 +57,35 @@ export const toastPropsData: PropItem[] = [
   {
     name: 'duration',
     type: 'number',
+    defaultValue: '5000',
     description: 'Custom lifetime in milliseconds for this specific toast, overriding the provider setting.',
+  },
+  {
+    name: 'loading',
+    type: 'ReactNode',
+    defaultValue: 'Processing...',
+    description: 'Message or content displayed while the asynchronous action is pending.',
+  },
+  {
+    name: 'success',
+    type: 'ReactNode',
+    defaultValue: 'Done!',
+    description: 'Message or content displayed when the asynchronous action resolves successfully.',
+  },
+  {
+    name: 'error',
+    type: 'ReactNode',
+    defaultValue: 'Failed!',
+    description: 'Message or content displayed if the asynchronous action throws an error.',
+  },
+  {
+    name: 'action',
+    type: '() => Promise<unknown>',
+    description: 'Asynchronous action function executed when the async toast runs.',
+  },
+  {
+    name: 'icon',
+    type: 'ComponentType<unknown> | ReactNode',
+    description: 'Custom icon component reference or rendered React element override.',
   },
 ]
