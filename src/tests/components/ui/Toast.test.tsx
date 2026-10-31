@@ -4,6 +4,8 @@ import { axe } from 'jest-axe'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useToast, ToastProvider, ToastItem } from '../../../components/ui/Toast'
 
+import { IconHeart } from '../../../components/ui/icons/IconHeart'
+
 const TestComponent = ({
   toastProps = { title: 'Toast toast', message: 'Test notification' },
 }: {
@@ -207,6 +209,133 @@ describe('Toast Component', () => {
     await user.click(screen.getByRole('button', { name: 'Close notification' }))
 
     expect(triggerBtn).toHaveFocus()
+  })
+
+  it('handles async action lifecycle showing loading, success, and error states', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    const mockSuccessAction = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      return 'done'
+    }
+
+    render(
+      <ToastProvider>
+        <TestComponent
+          toastProps={{
+            title: 'Async Task',
+            loading: 'Custom Loading...',
+            success: 'Custom Success!',
+            action: mockSuccessAction,
+          }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+
+    expect(screen.getByText('Custom Loading...')).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(await screen.findByText('Custom Success!')).toBeInTheDocument()
+  })
+
+  it('renders a custom icon component successfully', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    render(
+      <ToastProvider>
+        <TestComponent
+          toastProps={{
+            title: 'Heart Toast',
+            message: 'Testing custom icon',
+            icon: <IconHeart data-testid="toast-icon-heart" />,
+          }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+    expect(screen.getByText('Heart Toast')).toBeInTheDocument()
+
+    expect(screen.getByTestId('toast-icon-heart')).toBeInTheDocument()
+  })
+
+  it('pauses auto-dismiss timer when document visibility is hidden', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    render(
+      <ToastProvider>
+        <TestComponent toastProps={{ title: 'Visibility test', message: 'Tab hidden toast', duration: 4000 }} />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+    expect(screen.getByText('Tab hidden toast')).toBeInTheDocument()
+
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+
+    act(() => {
+      vi.advanceTimersByTime(6000)
+    })
+
+    expect(screen.getByText('Tab hidden toast')).toBeInTheDocument()
+
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true })
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+
+    act(() => {
+      vi.advanceTimersByTime(4000)
+    })
+
+    expect(screen.queryByText('Tab hidden toast')).not.toBeInTheDocument()
+  })
+
+  it('allows updating active toast properties manually via updateToast', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    const UpdaterComponent = () => {
+      const { addToast, updateToast } = useToast()
+
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            const id = addToast({ title: 'Original', message: 'Initial state' })
+            setTimeout(() => {
+              updateToast(id, { title: 'Updated', message: 'Restored state' })
+            }, 100)
+          }}
+        >
+          Run Update
+        </button>
+      )
+    }
+
+    render(
+      <ToastProvider>
+        <UpdaterComponent />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Run Update' }))
+    expect(screen.getByText('Initial state')).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(100)
+    })
+
+    expect(screen.queryByText('Initial state')).not.toBeInTheDocument()
+    expect(screen.getByText('Restored state')).toBeInTheDocument()
+    expect(screen.getByText('Updated')).toBeInTheDocument()
   })
 
   it('passes a11y audit without violations', async () => {
