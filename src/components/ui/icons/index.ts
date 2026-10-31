@@ -1,3 +1,6 @@
+export { IconAlertCircle } from './IconAlertCircle'
+export { IconInfo } from './IconInfo'
+export { IconBell } from './IconBell'
 export { IconAlertTriangle } from './IconAlertTriangle'
 export { IconArrowDown } from './IconArrowDown'
 export { IconArrowLeft } from './IconArrowLeft'
