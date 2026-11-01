@@ -4,7 +4,6 @@ import {
   useRef,
   useMemo,
   type ChangeEvent,
-  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
   type Ref,
@@ -83,7 +82,6 @@ export const DatePickerInput = ({
   const [inputValue, setInputValue] = useState(formattedDisplay)
   const isTypingRef = useRef(false)
 
-  // Sync external value changes (from calendar click, preset click, etc.)
   useEffect(() => {
     if (!isTypingRef.current) {
       setInputValue(formattedDisplay)
@@ -113,7 +111,7 @@ export const DatePickerInput = ({
     }
   }
 
-  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     isTypingRef.current = false
     if (value) {
       setInputValue(formattedDisplay)

@@ -50,7 +50,9 @@ describe('DatePicker Component - Single & Toggle', () => {
     await user.type(input, '15/08/2026')
 
     expect(onChange).toHaveBeenCalledWith(expect.any(Date))
-    const calledDate = onChange.mock.calls[onChange.mock.calls.length - 1][0] as Date
+    const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
+    expect(lastCall).toBeDefined()
+    const calledDate = lastCall![0] as Date
     expect(calledDate.getDate()).toBe(15)
     expect(calledDate.getMonth()).toBe(7)
     expect(calledDate.getFullYear()).toBe(2026)
@@ -241,5 +243,22 @@ describe('DatePicker Component - Dual Month Range Variant', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+  })
+
+  it('updates range when From or To input is cleared', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    const fromDate = new Date(2026, 9, 25)
+    const toDate = new Date(2026, 9, 30)
+
+    render(<DatePicker variant="dual" value={{ from: fromDate, to: toDate }} onChange={onChange} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    await user.click(trigger)
+
+    const fromInput = screen.getByLabelText('From')
+    await user.clear(fromInput)
+
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ from: null, to: toDate }))
   })
 })

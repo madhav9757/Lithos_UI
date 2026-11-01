@@ -32,6 +32,10 @@ export const DatePickerRangeInputs = ({
   const handleFromChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
     setFromText(text)
+    if (text.trim() === '') {
+      setValue({ from: null, to: range.to })
+      return
+    }
     const parsed = parseDateString(text)
     if (parsed) {
       setValue({ from: parsed, to: range.to })
@@ -41,6 +45,10 @@ export const DatePickerRangeInputs = ({
   const handleToChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
     setToText(text)
+    if (text.trim() === '') {
+      setValue({ from: range.from, to: null })
+      return
+    }
     const parsed = parseDateString(text)
     if (parsed) {
       setValue({ from: range.from, to: parsed })

@@ -51,7 +51,6 @@ export const parseDateString = (input: string): Date | null => {
   const trimmed = input.trim()
   if (!trimmed) return null
 
-  // 1. ISO format: YYYY-MM-DD
   const isoMatch = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(trimmed)
   if (isoMatch && isoMatch[1] && isoMatch[2] && isoMatch[3]) {
     const year = Number(isoMatch[1])
@@ -63,14 +62,12 @@ export const parseDateString = (input: string): Date | null => {
     }
   }
 
-  // 2. Format: DD/MM/YYYY or MM/DD/YYYY
   const partsMatch = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(trimmed)
   if (partsMatch && partsMatch[1] && partsMatch[2] && partsMatch[3]) {
     const first = Number(partsMatch[1])
     const second = Number(partsMatch[2])
     const year = Number(partsMatch[3])
 
-    // Try DD/MM/YYYY first
     if (second >= 1 && second <= 12) {
       const candidateDMY = new Date(year, second - 1, first)
       if (
@@ -82,7 +79,6 @@ export const parseDateString = (input: string): Date | null => {
       }
     }
 
-    // Try MM/DD/YYYY
     if (first >= 1 && first <= 12) {
       const candidateMDY = new Date(year, first - 1, second)
       if (
@@ -95,7 +91,6 @@ export const parseDateString = (input: string): Date | null => {
     }
   }
 
-  // 3. Fallback: text formats like "Aug 15, 2026"
   const timestamp = Date.parse(trimmed)
   if (!isNaN(timestamp)) {
     const parsed = new Date(timestamp)
@@ -164,25 +159,39 @@ export const getDefaultPresets = (mode: DatePickerMode = 'single'): DatePickerPr
   if (mode === 'range') {
     const thisMonthStart = startOfMonth(today)
     const thisMonthEnd = endOfMonth(today)
-    const lastMonthDate = addDays(thisMonthStart, -1)
-    const lastMonthStart = startOfMonth(lastMonthDate)
-    const lastMonthEnd = endOfMonth(lastMonthDate)
 
     return [
-      { label: 'Today', value: { from: today, to: today } },
-      { label: 'Yesterday', value: { from: addDays(today, -1), to: addDays(today, -1) } },
-      { label: 'Last 7 Days', value: { from: addDays(today, -6), to: today } },
-      { label: 'Last 30 Days', value: { from: addDays(today, -29), to: today } },
-      { label: 'This Month', value: { from: thisMonthStart, to: thisMonthEnd } },
-      { label: 'Last Month', value: { from: lastMonthStart, to: lastMonthEnd } },
+      {
+        label: 'Today',
+        value: { from: today, to: today },
+      },
+      {
+        label: 'Last 7 Days',
+        value: { from: addDays(today, -6), to: today },
+      },
+      {
+        label: 'Last 30 Days',
+        value: { from: addDays(today, -29), to: today },
+      },
+      {
+        label: 'This Month',
+        value: { from: thisMonthStart, to: thisMonthEnd },
+      },
     ]
   }
 
   return [
-    { label: 'Today', value: today },
-    { label: 'Tomorrow', value: addDays(today, 1) },
-    { label: 'In 3 Days', value: addDays(today, 3) },
-    { label: 'In 1 Week', value: addDays(today, 7) },
-    { label: 'In 2 Weeks', value: addDays(today, 14) },
+    {
+      label: 'Today',
+      value: today,
+    },
+    {
+      label: 'Tomorrow',
+      value: addDays(today, 1),
+    },
+    {
+      label: 'Next Week',
+      value: addDays(today, 7),
+    },
   ]
 }
