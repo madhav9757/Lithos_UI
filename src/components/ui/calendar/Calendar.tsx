@@ -26,7 +26,7 @@
  *   (endpoints and the days between) renders in one uniform accent color, since a range is a single
  *   contiguous selection, not a set of independently colorable dates.
  */
-import { createContext, useContext, useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { Button } from '../Button'
 import { cn } from '../../../utils/cn'
 import { IconChevronLeft } from '../icons/IconChevronLeft'
@@ -47,15 +47,10 @@ import { inferSeedDate, getEmptyValue, asRange, asArray } from './calendar.utils
 import { useRainbowColors } from './useRainbowColors'
 import { useCalendarKeyboardNav } from './useCalendarKeyboardNav'
 import { CalendarGrid } from './CalendarGrid'
+import { CalendarContext } from './CalendarContext'
 import { Select } from '../Select'
 
 import type { DateRange, CalendarValue, CalendarProps } from './calendar.types'
-
-export interface CalendarContextValue {
-  bordered?: boolean
-}
-
-export const CalendarContext = createContext<CalendarContextValue | null>(null)
 
 const NavIcon = ({ direction }: { direction: 'prev' | 'next' }) => (
   <div className="w-4 min-w-4">

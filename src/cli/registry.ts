@@ -114,6 +114,7 @@ export const registry: Record<string, RegistryItem> = {
       'components/ui/Button.tsx',
       'components/ui/Select.ts',
       'components/ui/calendar/Calendar.tsx',
+      'components/ui/calendar/CalendarContext.ts',
       'components/ui/calendar/CalendarDay.tsx',
       'components/ui/calendar/CalendarGrid.tsx',
       'components/ui/calendar/calendar.types.ts',
