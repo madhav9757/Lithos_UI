@@ -127,7 +127,7 @@ export const DatePickerDoc = () => {
 
       <div className="mb-12">
         <h3 id="compound" className="text-xl font-bold mb-4 font-display">
-          Compound Custom Composition
+          Compound Composition
         </h3>
         <p className="mb-4 text-sm font-body opacity-80 max-w-2xl">
           Build custom date workflows by composing DatePickerTrigger, DatePickerContent, DatePickerPresets, and
@@ -142,7 +142,7 @@ export const DatePickerDoc = () => {
 
       <div className="mb-12">
         <h3 id="dual-range" className="text-xl font-bold mb-4 font-display">
-          Dual Month Range with From &amp; To Inputs
+          Dual Month Range
         </h3>
         <p className="mb-4 text-sm font-body opacity-80 max-w-2xl">
           Side-by-side two-month calendar with dedicated From and To input fields, live day-count summary, and
