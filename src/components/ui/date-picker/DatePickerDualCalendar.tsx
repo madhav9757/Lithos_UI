@@ -141,7 +141,7 @@ export const DatePickerDualCalendar = ({
                 aria-label="Previous month"
                 disabled={isPrevDisabled}
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, -1))}
-                className="p-1 mr-0.5 sm:mr-1"
+                className="hover:bg-transparent p-1 mr-0.5 sm:mr-1"
               >
                 <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
@@ -150,7 +150,7 @@ export const DatePickerDualCalendar = ({
                 aria-label="Next month"
                 disabled={isNextDisabled}
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, 1))}
-                className="p-1"
+                className="hover:bg-transparent p-1"
               >
                 <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
               </Button>

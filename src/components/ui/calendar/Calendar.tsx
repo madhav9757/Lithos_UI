@@ -222,7 +222,10 @@ export const Calendar = ({
           aria-label="Previous month"
           disabled={isPrevDisabled}
           onClick={() => changeMonth(addMonths(displayedMonth, -1))}
-          className={cn('translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1', classes.nav)}
+          className={cn(
+            'hover:bg-transparent translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1',
+            classes.nav
+          )}
         >
           <NavIcon direction="prev" />
         </Button>
@@ -252,7 +255,10 @@ export const Calendar = ({
           aria-label="Next month"
           disabled={isNextDisabled}
           onClick={() => changeMonth(addMonths(displayedMonth, 1))}
-          className={cn('translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1', classes.nav)}
+          className={cn(
+            'hover:bg-transparent translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1',
+            classes.nav
+          )}
         >
           <NavIcon direction="next" />
         </Button>
