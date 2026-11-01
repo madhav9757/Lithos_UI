@@ -56,9 +56,11 @@ export const parseDateString = (input: string): Date | null => {
     const year = Number(isoMatch[1])
     const month = Number(isoMatch[2]) - 1
     const day = Number(isoMatch[3])
-    const candidate = new Date(year, month, day)
-    if (candidate.getFullYear() === year && candidate.getMonth() === month && candidate.getDate() === day) {
-      return normalizeToMidnight(candidate)
+    if (year >= 1000 && year <= 9999) {
+      const candidate = new Date(year, month, day)
+      if (candidate.getFullYear() === year && candidate.getMonth() === month && candidate.getDate() === day) {
+        return normalizeToMidnight(candidate)
+      }
     }
   }
 
@@ -68,25 +70,27 @@ export const parseDateString = (input: string): Date | null => {
     const second = Number(partsMatch[2])
     const year = Number(partsMatch[3])
 
-    if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
-      const candidateMDY = new Date(year, first - 1, second)
-      if (
-        candidateMDY.getFullYear() === year &&
-        candidateMDY.getMonth() === first - 1 &&
-        candidateMDY.getDate() === second
-      ) {
-        return normalizeToMidnight(candidateMDY)
+    if (year >= 1000 && year <= 9999) {
+      if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
+        const candidateMDY = new Date(year, first - 1, second)
+        if (
+          candidateMDY.getFullYear() === year &&
+          candidateMDY.getMonth() === first - 1 &&
+          candidateMDY.getDate() === second
+        ) {
+          return normalizeToMidnight(candidateMDY)
+        }
       }
-    }
 
-    if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
-      const candidateDMY = new Date(year, second - 1, first)
-      if (
-        candidateDMY.getFullYear() === year &&
-        candidateDMY.getMonth() === second - 1 &&
-        candidateDMY.getDate() === first
-      ) {
-        return normalizeToMidnight(candidateDMY)
+      if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
+        const candidateDMY = new Date(year, second - 1, first)
+        if (
+          candidateDMY.getFullYear() === year &&
+          candidateDMY.getMonth() === second - 1 &&
+          candidateDMY.getDate() === first
+        ) {
+          return normalizeToMidnight(candidateDMY)
+        }
       }
     }
   }
@@ -97,36 +101,118 @@ export const parseDateString = (input: string): Date | null => {
     const second = Number(rawDigits[2])
     const year = Number(rawDigits[3])
 
-    if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
-      const candidateMDY = new Date(year, first - 1, second)
-      if (
-        candidateMDY.getFullYear() === year &&
-        candidateMDY.getMonth() === first - 1 &&
-        candidateMDY.getDate() === second
-      ) {
-        return normalizeToMidnight(candidateMDY)
+    if (year >= 1000 && year <= 9999) {
+      if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
+        const candidateMDY = new Date(year, first - 1, second)
+        if (
+          candidateMDY.getFullYear() === year &&
+          candidateMDY.getMonth() === first - 1 &&
+          candidateMDY.getDate() === second
+        ) {
+          return normalizeToMidnight(candidateMDY)
+        }
       }
-    }
 
-    if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
-      const candidateDMY = new Date(year, second - 1, first)
-      if (
-        candidateDMY.getFullYear() === year &&
-        candidateDMY.getMonth() === second - 1 &&
-        candidateDMY.getDate() === first
-      ) {
-        return normalizeToMidnight(candidateDMY)
+      if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
+        const candidateDMY = new Date(year, second - 1, first)
+        if (
+          candidateDMY.getFullYear() === year &&
+          candidateDMY.getMonth() === second - 1 &&
+          candidateDMY.getDate() === first
+        ) {
+          return normalizeToMidnight(candidateDMY)
+        }
       }
     }
   }
 
-  const timestamp = Date.parse(trimmed)
-  if (!isNaN(timestamp)) {
-    const parsed = new Date(timestamp)
-    return normalizeToMidnight(parsed)
+  const textMatch = /^[a-zA-Z]+\s+\d{1,2},?\s+(\d{4})$/.exec(trimmed)
+  if (textMatch && textMatch[1]) {
+    const timestamp = Date.parse(trimmed)
+    if (!isNaN(timestamp)) {
+      const parsed = new Date(timestamp)
+      if (parsed.getFullYear() >= 1000 && parsed.getFullYear() <= 9999) {
+        return normalizeToMidnight(parsed)
+      }
+    }
   }
 
   return null
+}
+
+export const formatDateInput = (input: string, prevInput?: string): string => {
+  if (!input) return ''
+  const isDeleting = Boolean(prevInput && input.length < prevInput.length)
+  if (isDeleting) {
+    if (prevInput && prevInput.endsWith('/') && input === prevInput.slice(0, -1)) {
+      return input.slice(0, -1)
+    }
+    return input.replace(/[^\d/]/g, '').slice(0, 10)
+  }
+
+  const endsWithSlash = input.endsWith('/')
+  const digits = input.replace(/\D/g, '').slice(0, 8)
+  if (!digits) return ''
+
+  if (digits.length <= 2) {
+    if (digits.length === 1 && endsWithSlash) {
+      return `0${digits}/`
+    }
+    if (digits.length === 2) {
+      return `${digits}/`
+    }
+    return digits
+  }
+
+  if (digits.length <= 4) {
+    const month = digits.slice(0, 2)
+    const day = digits.slice(2)
+    if (day.length === 1 && endsWithSlash) {
+      return `${month}/0${day}/`
+    }
+    if (digits.length === 4) {
+      return `${month}/${day}/`
+    }
+    return `${month}/${day}`
+  }
+
+  const month = digits.slice(0, 2)
+  const day = digits.slice(2, 4)
+  const year = digits.slice(4, 8)
+  return `${month}/${day}/${year}`
+}
+
+export const formatDateRangeInput = (input: string, prevInput?: string): string => {
+  if (!input) return ''
+  const isDeleting = Boolean(prevInput && input.length < prevInput.length)
+  if (isDeleting) {
+    if (prevInput && prevInput.endsWith(' - ') && input === prevInput.slice(0, -3)) {
+      return input
+    }
+    return input.slice(0, 23)
+  }
+
+  if (input.includes(' - ')) {
+    const [fromPart = '', toPart = ''] = input.split(' - ')
+    const formattedFrom = formatDateInput(fromPart, prevInput?.split(' - ')[0])
+    const formattedTo = formatDateInput(toPart, prevInput?.split(' - ')[1])
+    return formattedTo ? `${formattedFrom} - ${formattedTo}` : `${formattedFrom} - `
+  }
+
+  const digits = input.replace(/\D/g, '')
+  if (digits.length > 8) {
+    const fromDigits = digits.slice(0, 8)
+    const toDigits = digits.slice(8, 16)
+    const formattedFrom = formatDateInput(fromDigits)
+    const formattedTo = formatDateInput(toDigits)
+    return formattedTo ? `${formattedFrom} - ${formattedTo}` : `${formattedFrom} - `
+  }
+
+  const formatted = formatDateInput(input, prevInput)
+  if (digits.length === 8 && input.length > (prevInput?.length ?? 0)) {
+    return `${formatted} - `
+  }
+  return formatted
 }
 
 export const parseDateRangeString = (input: string): DateRange | null => {
@@ -157,13 +243,13 @@ export const getDisplayValue = (
   locale?: string,
   placeholder?: string
 ): string => {
-  if (!value) return placeholder ?? (mode === 'range' ? 'Select date range' : 'Select date')
+  if (!value) return placeholder ?? (mode === 'range' ? 'Select date range' : 'MM/DD/YYYY')
 
   if (mode === 'single') {
     if (value instanceof Date && isValidDate(value)) {
       return formatDate(value, locale)
     }
-    return placeholder ?? 'Select date'
+    return placeholder ?? 'MM/DD/YYYY'
   }
 
   if (mode === 'range') {
@@ -179,7 +265,7 @@ export const getDisplayValue = (
     return `${dates.length} dates selected`
   }
 
-  return placeholder ?? 'Select date'
+  return placeholder ?? 'MM/DD/YYYY'
 }
 
 export const getDefaultPresets = (mode: DatePickerMode = 'single'): DatePickerPreset[] => {

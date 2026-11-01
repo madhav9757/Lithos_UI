@@ -12,7 +12,7 @@ import { useFloating, autoUpdate, offset, flip, shift, FloatingFocusManager, Flo
 import { Calendar } from '../calendar/Calendar'
 import { IconCalendar } from '../icons/IconCalendar'
 import { IconClose } from '../icons/IconClose'
-import { parseDateString, isValidDate } from './date-picker.utils'
+import { parseDateString, formatDateInput, isValidDate } from './date-picker.utils'
 import { cn } from '../../../utils/cn'
 import { colors } from '../../../utils/colors'
 import type { LithosClass } from '../../../utils/cn'
@@ -66,9 +66,12 @@ export const DateField = ({
 
   const [inputValue, setInputValue] = useState(formattedDisplay)
   const internalInputRef = useRef<HTMLInputElement>(null)
+  const isFocusedRef = useRef(false)
 
   useEffect(() => {
-    setInputValue(formattedDisplay)
+    if (!isFocusedRef.current) {
+      setInputValue(formattedDisplay)
+    }
   }, [formattedDisplay, selectedDate])
 
   const floating = useFloating({
@@ -90,9 +93,10 @@ export const DateField = ({
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setInputValue(text)
+    const formatted = formatDateInput(text, inputValue)
+    setInputValue(formatted)
 
-    if (text.trim() === '') {
+    if (formatted.trim() === '') {
       if (!isControlled) {
         setLocalValue(null)
       }
@@ -100,7 +104,7 @@ export const DateField = ({
       return
     }
 
-    const parsed = parseDateString(text)
+    const parsed = parseDateString(formatted)
     if (parsed) {
       if (!isControlled) {
         setLocalValue(parsed)
@@ -121,7 +125,12 @@ export const DateField = ({
     }
   }
 
+  const handleInputFocus = () => {
+    isFocusedRef.current = true
+  }
+
   const handleInputBlur = () => {
+    isFocusedRef.current = false
     if (selectedDate) {
       setInputValue(formattedDisplay)
     } else if (inputValue.trim() === '') {
@@ -177,9 +186,11 @@ export const DateField = ({
             }}
             type="text"
             disabled={disabled}
+            maxLength={10}
             value={inputValue}
             placeholder={placeholder}
             onChange={handleInputChange}
+            onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             onKeyDown={handleKeyDown}
             aria-label={label ?? placeholder}

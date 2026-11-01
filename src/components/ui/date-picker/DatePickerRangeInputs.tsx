@@ -1,6 +1,6 @@
-import { useState, useEffect, type ChangeEvent } from 'react'
+import { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import { useDatePickerContext } from './useDatePicker'
-import { formatDateNumeric, parseDateString } from './date-picker.utils'
+import { formatDateNumeric, formatDateInput, parseDateString } from './date-picker.utils'
 import { cn } from '../../../utils/cn'
 import type { LithosClass } from '../../../utils/cn'
 import type { DateRange } from '../calendar/calendar.types'
@@ -24,34 +24,69 @@ export const DatePickerRangeInputs = ({
   const [fromText, setFromText] = useState(() => formatDateNumeric(range.from))
   const [toText, setToText] = useState(() => formatDateNumeric(range.to))
 
+  const fromFocusedRef = useRef(false)
+  const toFocusedRef = useRef(false)
+
   useEffect(() => {
-    setFromText(formatDateNumeric(range.from))
-    setToText(formatDateNumeric(range.to))
+    if (!fromFocusedRef.current) {
+      setFromText(formatDateNumeric(range.from))
+    }
+    if (!toFocusedRef.current) {
+      setToText(formatDateNumeric(range.to))
+    }
   }, [range.from, range.to])
 
   const handleFromChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setFromText(text)
-    if (text.trim() === '') {
+    const formatted = formatDateInput(text, fromText)
+    setFromText(formatted)
+    if (formatted.trim() === '') {
       setValue({ from: null, to: range.to })
       return
     }
-    const parsed = parseDateString(text)
+    const parsed = parseDateString(formatted)
     if (parsed) {
       setValue({ from: parsed, to: range.to })
     }
   }
 
+  const handleFromFocus = () => {
+    fromFocusedRef.current = true
+  }
+
+  const handleFromBlur = () => {
+    fromFocusedRef.current = false
+    if (range.from) {
+      setFromText(formatDateNumeric(range.from))
+    } else if (fromText.trim() === '') {
+      setFromText('')
+    }
+  }
+
   const handleToChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setToText(text)
-    if (text.trim() === '') {
+    const formatted = formatDateInput(text, toText)
+    setToText(formatted)
+    if (formatted.trim() === '') {
       setValue({ from: range.from, to: null })
       return
     }
-    const parsed = parseDateString(text)
+    const parsed = parseDateString(formatted)
     if (parsed) {
       setValue({ from: range.from, to: parsed })
+    }
+  }
+
+  const handleToFocus = () => {
+    toFocusedRef.current = true
+  }
+
+  const handleToBlur = () => {
+    toFocusedRef.current = false
+    if (range.to) {
+      setToText(formatDateNumeric(range.to))
+    } else if (toText.trim() === '') {
+      setToText('')
     }
   }
 
@@ -62,8 +97,11 @@ export const DatePickerRangeInputs = ({
         <input
           type="text"
           readOnly={!editable}
+          maxLength={10}
           value={fromText}
           onChange={handleFromChange}
+          onFocus={handleFromFocus}
+          onBlur={handleFromBlur}
           placeholder="DD/MM/YYYY"
           aria-label={fromLabel}
           className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
@@ -75,8 +113,11 @@ export const DatePickerRangeInputs = ({
         <input
           type="text"
           readOnly={!editable}
+          maxLength={10}
           value={toText}
           onChange={handleToChange}
+          onFocus={handleToFocus}
+          onBlur={handleToBlur}
           placeholder="DD/MM/YYYY"
           aria-label={toLabel}
           className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"

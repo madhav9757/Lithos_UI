@@ -10,7 +10,15 @@ import {
 } from 'react'
 import { useMergeRefs } from '@floating-ui/react'
 import { useDatePickerContext } from './useDatePicker'
-import { parseDateString, parseDateRangeString, formatDate, formatDateRange, isValidDate } from './date-picker.utils'
+import {
+  parseDateString,
+  parseDateRangeString,
+  formatDate,
+  formatDateRange,
+  formatDateInput,
+  formatDateRangeInput,
+  isValidDate,
+} from './date-picker.utils'
 import { IconCalendar } from '../icons/IconCalendar'
 import { IconClose } from '../icons/IconClose'
 import { colors } from '../../../utils/colors'
@@ -80,34 +88,43 @@ export const DatePickerInput = ({
   }, [value, mode, locale])
 
   const [inputValue, setInputValue] = useState(formattedDisplay)
+  const isFocusedRef = useRef(false)
 
   useEffect(() => {
-    setInputValue(formattedDisplay)
+    if (!isFocusedRef.current) {
+      setInputValue(formattedDisplay)
+    }
   }, [formattedDisplay, value])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setInputValue(text)
+    const formatted = mode === 'range' ? formatDateRangeInput(text, inputValue) : formatDateInput(text, inputValue)
+    setInputValue(formatted)
 
-    if (text.trim() === '') {
+    if (formatted.trim() === '') {
       setValue(null)
       return
     }
 
     if (mode === 'single') {
-      const parsed = parseDateString(text)
+      const parsed = parseDateString(formatted)
       if (parsed) {
         setValue(parsed)
       }
     } else if (mode === 'range') {
-      const parsedRange = parseDateRangeString(text)
+      const parsedRange = parseDateRangeString(formatted)
       if (parsedRange) {
         setValue(parsedRange)
       }
     }
   }
 
+  const handleFocus = () => {
+    isFocusedRef.current = true
+  }
+
   const handleBlur = () => {
+    isFocusedRef.current = false
     if (value) {
       setInputValue(formattedDisplay)
     } else if (inputValue.trim() === '') {
@@ -171,8 +188,10 @@ export const DatePickerInput = ({
         <input
           ref={inputRef}
           type="text"
+          maxLength={mode === 'range' ? 23 : 10}
           value={inputValue}
           onChange={handleInputChange}
+          onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           onClick={(e) => e.stopPropagation()}
