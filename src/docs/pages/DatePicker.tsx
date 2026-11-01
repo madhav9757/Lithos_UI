@@ -9,6 +9,7 @@ import { PresetsDatePicker } from '../examples/date-picker/presets'
 import { ClearableDatePicker } from '../examples/date-picker/clearable'
 import { CompoundDatePicker } from '../examples/date-picker/compound'
 import { DualMonthDatePicker } from '../examples/date-picker/dual'
+import { ControlledDateFieldExample } from '../examples/date-picker/field'
 
 import SingleDatePickerSource from '../examples/date-picker/single?raw'
 import RangeDatePickerSource from '../examples/date-picker/range?raw'
@@ -16,10 +17,18 @@ import PresetsDatePickerSource from '../examples/date-picker/presets?raw'
 import ClearableDatePickerSource from '../examples/date-picker/clearable?raw'
 import CompoundDatePickerSource from '../examples/date-picker/compound?raw'
 import DualMonthDatePickerSource from '../examples/date-picker/dual?raw'
+import ControlledDateFieldSource from '../examples/date-picker/field?raw'
 import { removeImports } from '../examples/removeImports'
 
 const githubUrl = 'https://github.com/lithosui/Lithos_UI/blob/main/src/components/ui/DatePicker.ts'
-const componentNames = ['DatePicker', 'DatePickerInput', 'DatePickerTrigger', 'DatePickerContent', 'DatePickerPresets']
+const componentNames = [
+  'DatePicker',
+  'DateField',
+  'DatePickerInput',
+  'DatePickerTrigger',
+  'DatePickerContent',
+  'DatePickerPresets',
+]
 const manualPath = '../../components/ui/DatePicker'
 
 const getCode = (source: string) => ({
@@ -151,6 +160,20 @@ export const DatePickerDoc = () => {
         <PreviewBlock code={getCode(DualMonthDatePickerSource)} githubUrl={githubUrl}>
           <div className="flex justify-center py-6 max-w-sm mx-auto">
             <DualMonthDatePicker />
+          </div>
+        </PreviewBlock>
+      </div>
+
+      <div className="mb-12">
+        <h3 id="date-field" className="text-xl font-bold mb-4 font-display">
+          Outlined Field
+        </h3>
+        <p className="mb-4 text-sm font-body opacity-80 max-w-2xl">
+          Outlined date field with top label, MM/DD/YYYY format, and calendar trigger.
+        </p>
+        <PreviewBlock code={getCode(ControlledDateFieldSource)} githubUrl={githubUrl}>
+          <div className="flex justify-center py-6 max-w-sm mx-auto">
+            <ControlledDateFieldExample />
           </div>
         </PreviewBlock>
       </div>

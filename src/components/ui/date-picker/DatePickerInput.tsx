@@ -80,18 +80,14 @@ export const DatePickerInput = ({
   }, [value, mode, locale])
 
   const [inputValue, setInputValue] = useState(formattedDisplay)
-  const isTypingRef = useRef(false)
 
   useEffect(() => {
-    if (!isTypingRef.current) {
-      setInputValue(formattedDisplay)
-    }
-  }, [formattedDisplay])
+    setInputValue(formattedDisplay)
+  }, [formattedDisplay, value])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
     setInputValue(text)
-    isTypingRef.current = true
 
     if (text.trim() === '') {
       setValue(null)
@@ -112,7 +108,6 @@ export const DatePickerInput = ({
   }
 
   const handleBlur = () => {
-    isTypingRef.current = false
     if (value) {
       setInputValue(formattedDisplay)
     } else if (inputValue.trim() === '') {
@@ -140,7 +135,6 @@ export const DatePickerInput = ({
     e.stopPropagation()
     e.preventDefault()
     if (!isDisabled) {
-      isTypingRef.current = false
       setInputValue('')
       setValue(null)
       internalInputRef.current?.focus()
@@ -155,7 +149,7 @@ export const DatePickerInput = ({
     }
   }
 
-  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'Select date range' : 'Select date')
+  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'Select date range' : 'MM/DD/YYYY')
 
   return (
     <div

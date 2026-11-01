@@ -272,6 +272,7 @@ export const registry: Record<string, RegistryItem> = {
       'components/ui/calendar/calendar.utils.ts',
       'components/ui/calendar/useCalendarKeyboardNav.ts',
       'components/ui/calendar/useRainbowColors.ts',
+      'components/ui/date-picker/DateField.tsx',
       'components/ui/date-picker/DatePicker.tsx',
       'components/ui/date-picker/DatePickerActions.tsx',
       'components/ui/date-picker/DatePickerContent.tsx',

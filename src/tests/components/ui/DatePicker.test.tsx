@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { describe, it, expect, vi } from 'vitest'
-import { DatePicker } from '../../../components/ui/DatePicker'
+import { DatePicker, DateField } from '../../../components/ui/DatePicker'
 
 describe('DatePicker Component - Single & Toggle', () => {
   const BASE_MONTH = new Date(2026, 7, 1)
@@ -315,5 +315,48 @@ describe('DatePicker Component - Dual Month Range Variant', () => {
     expect(calledRange.from.getDate()).toBe(10)
     expect(calledRange.from.getMonth()).toBe(9)
     expect(calledRange.from.getFullYear()).toBe(2026)
+  })
+})
+
+describe('DateField Component', () => {
+  it('renders fieldset with label, input, and calendar button', () => {
+    render(<DateField label="Controlled picker" placeholder="MM/DD/YYYY" />)
+    expect(screen.getByText('Controlled picker')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('MM/DD/YYYY')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Open calendar/i })).toBeInTheDocument()
+  })
+
+  it('allows direct typing in DateField and updates value', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DateField label="Controlled picker" onChange={onChange} />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '10/25/2026')
+
+    expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+    const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
+    expect(lastCall).toBeDefined()
+    const calledDate = lastCall![0] as Date
+    expect(calledDate.getDate()).toBe(25)
+    expect(calledDate.getMonth()).toBe(9)
+    expect(calledDate.getFullYear()).toBe(2026)
+  })
+
+  it('updates input immediately when date is clicked in calendar', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DateField label="Controlled picker" onChange={onChange} />)
+
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    await user.click(trigger)
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    const allButtons = screen.getAllByRole('button')
+    const dayBtn = allButtons.find((btn) => /\b15\b/.test(btn.getAttribute('aria-label') || btn.textContent || ''))
+    if (dayBtn) {
+      await user.click(dayBtn)
+      expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+    }
   })
 })

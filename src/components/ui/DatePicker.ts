@@ -1,5 +1,7 @@
 export { DatePicker } from './date-picker/DatePicker'
 export { DateRangePicker } from './date-picker/DateRangePicker'
+export { DateField } from './date-picker/DateField'
+export type { DateFieldProps } from './date-picker/DateField'
 export { DatePickerInput } from './date-picker/DatePickerInput'
 export { DatePickerTrigger } from './date-picker/DatePickerTrigger'
 export { DatePickerContent } from './date-picker/DatePickerContent'

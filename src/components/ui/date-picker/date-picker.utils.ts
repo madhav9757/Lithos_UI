@@ -20,7 +20,7 @@ export const formatDateNumeric = (date: Date | null | undefined): string => {
   const day = String(date.getDate()).padStart(2, '0')
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const year = date.getFullYear()
-  return `${day}/${month}/${year}`
+  return `${month}/${day}/${year}`
 }
 
 export const getDayDifference = (from: Date | null, to: Date | null): number => {
@@ -68,7 +68,18 @@ export const parseDateString = (input: string): Date | null => {
     const second = Number(partsMatch[2])
     const year = Number(partsMatch[3])
 
-    if (second >= 1 && second <= 12) {
+    if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
+      const candidateMDY = new Date(year, first - 1, second)
+      if (
+        candidateMDY.getFullYear() === year &&
+        candidateMDY.getMonth() === first - 1 &&
+        candidateMDY.getDate() === second
+      ) {
+        return normalizeToMidnight(candidateMDY)
+      }
+    }
+
+    if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
       const candidateDMY = new Date(year, second - 1, first)
       if (
         candidateDMY.getFullYear() === year &&
@@ -78,8 +89,15 @@ export const parseDateString = (input: string): Date | null => {
         return normalizeToMidnight(candidateDMY)
       }
     }
+  }
 
-    if (first >= 1 && first <= 12) {
+  const rawDigits = /^(\d{2})(\d{2})(\d{4})$/.exec(trimmed)
+  if (rawDigits && rawDigits[1] && rawDigits[2] && rawDigits[3]) {
+    const first = Number(rawDigits[1])
+    const second = Number(rawDigits[2])
+    const year = Number(rawDigits[3])
+
+    if (first >= 1 && first <= 12 && second >= 1 && second <= 31) {
       const candidateMDY = new Date(year, first - 1, second)
       if (
         candidateMDY.getFullYear() === year &&
@@ -87,6 +105,17 @@ export const parseDateString = (input: string): Date | null => {
         candidateMDY.getDate() === second
       ) {
         return normalizeToMidnight(candidateMDY)
+      }
+    }
+
+    if (second >= 1 && second <= 12 && first >= 1 && first <= 31) {
+      const candidateDMY = new Date(year, second - 1, first)
+      if (
+        candidateDMY.getFullYear() === year &&
+        candidateDMY.getMonth() === second - 1 &&
+        candidateDMY.getDate() === first
+      ) {
+        return normalizeToMidnight(candidateDMY)
       }
     }
   }
