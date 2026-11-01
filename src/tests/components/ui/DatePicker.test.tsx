@@ -30,6 +30,20 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(innerCalendar).not.toHaveClass('border-2')
   })
 
+  it('toggles popover open and closed when calendar icon button is clicked', async () => {
+    const user = userEvent.setup()
+    render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    await user.click(trigger)
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await user.click(trigger)
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+  })
+
   it('clicking input allows typing and does not open popover', async () => {
     const user = userEvent.setup()
     render(<DatePicker defaultMonth={BASE_MONTH} />)
@@ -260,5 +274,46 @@ describe('DatePicker Component - Dual Month Range Variant', () => {
     await user.clear(fromInput)
 
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ from: null, to: toDate }))
+  })
+
+  it('clears To endpoint when To input is cleared', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    const fromDate = new Date(2026, 9, 25)
+    const toDate = new Date(2026, 9, 30)
+
+    render(<DatePicker variant="dual" value={{ from: fromDate, to: toDate }} onChange={onChange} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    await user.click(trigger)
+
+    const toInput = screen.getByLabelText('To')
+    await user.clear(toInput)
+
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ from: fromDate, to: null }))
+  })
+
+  it('updates From date when valid date is typed in dual range inputs', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    const fromDate = new Date(2026, 9, 25)
+    const toDate = new Date(2026, 9, 30)
+
+    render(<DatePicker variant="dual" value={{ from: fromDate, to: toDate }} onChange={onChange} locale="en-US" />)
+
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    await user.click(trigger)
+
+    const fromInput = screen.getByLabelText('From')
+    await user.clear(fromInput)
+    await user.type(fromInput, '10/10/2026')
+
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ from: expect.any(Date), to: toDate }))
+    const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
+    expect(lastCall).toBeDefined()
+    const calledRange = lastCall![0]
+    expect(calledRange.from.getDate()).toBe(10)
+    expect(calledRange.from.getMonth()).toBe(9)
+    expect(calledRange.from.getFullYear()).toBe(2026)
   })
 })

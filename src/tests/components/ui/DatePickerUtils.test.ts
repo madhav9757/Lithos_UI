@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   isValidDate,
   formatDate,
+  formatDateNumeric,
   formatDateRange,
   parseDateString,
   parseDateRangeString,
@@ -49,12 +50,6 @@ describe('DatePicker date-picker.utils', () => {
     expect(iso?.getMonth()).toBe(9)
     expect(iso?.getDate()).toBe(25)
 
-    const dmy = parseDateString('25/10/2026')
-    expect(dmy).not.toBeNull()
-    expect(dmy?.getFullYear()).toBe(2026)
-    expect(dmy?.getMonth()).toBe(9)
-    expect(dmy?.getDate()).toBe(25)
-
     const us = parseDateString('10/25/2026')
     expect(us).not.toBeNull()
     expect(us?.getFullYear()).toBe(2026)
@@ -69,6 +64,38 @@ describe('DatePicker date-picker.utils', () => {
 
     expect(parseDateString('')).toBeNull()
     expect(parseDateString('not-a-date')).toBeNull()
+  })
+
+  it('parses DD/MM/YYYY format with various delimiters', () => {
+    const slashes = parseDateString('25/10/2026')
+    expect(slashes).not.toBeNull()
+    expect(slashes?.getDate()).toBe(25)
+    expect(slashes?.getMonth()).toBe(9)
+    expect(slashes?.getFullYear()).toBe(2026)
+
+    const dashes = parseDateString('31-12-2026')
+    expect(dashes).not.toBeNull()
+    expect(dashes?.getDate()).toBe(31)
+    expect(dashes?.getMonth()).toBe(11)
+    expect(dashes?.getFullYear()).toBe(2026)
+
+    const dots = parseDateString('05.04.2026')
+    expect(dots).not.toBeNull()
+    expect(dots?.getDate()).toBe(5)
+    expect(dots?.getMonth()).toBe(3)
+    expect(dots?.getFullYear()).toBe(2026)
+  })
+
+  it('handles empty strings and whitespace properly', () => {
+    expect(parseDateString('')).toBeNull()
+    expect(parseDateString('   ')).toBeNull()
+    expect(parseDateRangeString('')).toBeNull()
+    expect(parseDateRangeString('   ')).toBeNull()
+    expect(formatDate(null)).toBe('')
+    expect(formatDate(undefined)).toBe('')
+    expect(formatDateNumeric(null)).toBe('')
+    expect(formatDateNumeric(undefined)).toBe('')
+    expect(formatDateRange(null)).toBe('')
   })
 
   it('parses date range strings properly', () => {
