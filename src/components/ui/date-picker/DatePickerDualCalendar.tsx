@@ -1,7 +1,6 @@
 import { useState, useMemo, useRef } from 'react'
 import { useDatePickerContext } from './useDatePicker'
 import { CalendarGrid } from '../calendar/CalendarGrid'
-import { Button } from '../Button'
 import { IconChevronLeft } from '../icons/IconChevronLeft'
 import {
   addMonths,
@@ -136,24 +135,24 @@ export const DatePickerDualCalendar = ({
             </span>
 
             <div className="flex items-center">
-              <Button
-                variant="text"
+              <button
+                type="button"
                 aria-label="Previous month"
                 disabled={isPrevDisabled}
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, -1))}
-                className="hover:bg-transparent p-1 mr-0.5 sm:mr-1"
+                className="p-1 text-(--lithos-text) bg-transparent hover:bg-transparent active:bg-transparent rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors mr-0.5 sm:mr-1"
               >
                 <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Button>
-              <Button
-                variant="text"
+              </button>
+              <button
+                type="button"
                 aria-label="Next month"
                 disabled={isNextDisabled}
                 onClick={() => setCurrentMonth((prev) => addMonths(prev, 1))}
-                className="hover:bg-transparent p-1"
+                className="p-1 text-(--lithos-text) bg-transparent hover:bg-transparent active:bg-transparent rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <IconChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
-              </Button>
+              </button>
             </div>
           </div>
 

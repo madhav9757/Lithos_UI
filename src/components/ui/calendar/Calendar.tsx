@@ -27,7 +27,6 @@
  *   contiguous selection, not a set of independently colorable dates.
  */
 import { useContext, useMemo, useState } from 'react'
-import { Button } from '../Button'
 import { cn } from '../../../utils/cn'
 import { IconChevronLeft } from '../icons/IconChevronLeft'
 import {
@@ -217,18 +216,18 @@ export const Calendar = ({
       {...rest}
     >
       <div className={cn('flex items-center justify-between mb-3', classes.header)}>
-        <Button
-          variant="text"
+        <button
+          type="button"
           aria-label="Previous month"
           disabled={isPrevDisabled}
           onClick={() => changeMonth(addMonths(displayedMonth, -1))}
           className={cn(
-            'hover:bg-transparent translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1',
+            'p-1 text-(--lithos-text) bg-transparent hover:bg-transparent active:bg-transparent rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
             classes.nav
           )}
         >
           <NavIcon direction="prev" />
-        </Button>
+        </button>
 
         <div className="flex items-center">
           <Select
@@ -250,18 +249,18 @@ export const Calendar = ({
           />
         </div>
 
-        <Button
-          variant="text"
+        <button
+          type="button"
           aria-label="Next month"
           disabled={isNextDisabled}
           onClick={() => changeMonth(addMonths(displayedMonth, 1))}
           className={cn(
-            'hover:bg-transparent translate-x-0 translate-y-0 active:translate-x-0 active:translate-y-0 p-1',
+            'p-1 text-(--lithos-text) bg-transparent hover:bg-transparent active:bg-transparent rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
             classes.nav
           )}
         >
           <NavIcon direction="next" />
-        </Button>
+        </button>
       </div>
 
       <span className="sr-only" aria-live="polite">
