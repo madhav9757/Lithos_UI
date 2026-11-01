@@ -51,6 +51,7 @@ export const parseDateString = (input: string): Date | null => {
   const trimmed = input.trim()
   if (!trimmed) return null
 
+  // 1. ISO format: YYYY-MM-DD
   const isoMatch = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/.exec(trimmed)
   if (isoMatch && isoMatch[1] && isoMatch[2] && isoMatch[3]) {
     const year = Number(isoMatch[1])
@@ -62,23 +63,67 @@ export const parseDateString = (input: string): Date | null => {
     }
   }
 
-  const usMatch = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(trimmed)
-  if (usMatch && usMatch[1] && usMatch[2] && usMatch[3]) {
-    const month = Number(usMatch[1]) - 1
-    const day = Number(usMatch[2])
-    const year = Number(usMatch[3])
-    const candidate = new Date(year, month, day)
-    if (candidate.getFullYear() === year && candidate.getMonth() === month && candidate.getDate() === day) {
-      return normalizeToMidnight(candidate)
+  // 2. Format: DD/MM/YYYY or MM/DD/YYYY
+  const partsMatch = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(trimmed)
+  if (partsMatch && partsMatch[1] && partsMatch[2] && partsMatch[3]) {
+    const first = Number(partsMatch[1])
+    const second = Number(partsMatch[2])
+    const year = Number(partsMatch[3])
+
+    // Try DD/MM/YYYY first
+    if (second >= 1 && second <= 12) {
+      const candidateDMY = new Date(year, second - 1, first)
+      if (
+        candidateDMY.getFullYear() === year &&
+        candidateDMY.getMonth() === second - 1 &&
+        candidateDMY.getDate() === first
+      ) {
+        return normalizeToMidnight(candidateDMY)
+      }
+    }
+
+    // Try MM/DD/YYYY
+    if (first >= 1 && first <= 12) {
+      const candidateMDY = new Date(year, first - 1, second)
+      if (
+        candidateMDY.getFullYear() === year &&
+        candidateMDY.getMonth() === first - 1 &&
+        candidateMDY.getDate() === second
+      ) {
+        return normalizeToMidnight(candidateMDY)
+      }
     }
   }
 
+  // 3. Fallback: text formats like "Aug 15, 2026"
   const timestamp = Date.parse(trimmed)
   if (!isNaN(timestamp)) {
     const parsed = new Date(timestamp)
     return normalizeToMidnight(parsed)
   }
 
+  return null
+}
+
+export const parseDateRangeString = (input: string): DateRange | null => {
+  const trimmed = input.trim()
+  if (!trimmed) return null
+  const parts = trimmed.split(/\s*-\s*|\s+to\s+/i)
+  if (parts.length === 2 && parts[0] && parts[1]) {
+    const from = parseDateString(parts[0])
+    const to = parseDateString(parts[1])
+    if (from && to) {
+      return { from, to }
+    }
+    if (from) {
+      return { from, to: null }
+    }
+  } else if (parts.length === 1 && parts[0]) {
+    const from = parseDateString(parts[0])
+    if (from) {
+      return { from, to: null }
+    }
+  }
   return null
 }
 

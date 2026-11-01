@@ -15,6 +15,7 @@ export {
   getDayDifference,
   formatDayCount,
   parseDateString,
+  parseDateRangeString,
   getDisplayValue,
   getDefaultPresets,
   isValidDate,

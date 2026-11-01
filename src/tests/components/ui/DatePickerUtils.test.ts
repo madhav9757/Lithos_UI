@@ -4,6 +4,7 @@ import {
   formatDate,
   formatDateRange,
   parseDateString,
+  parseDateRangeString,
   getDisplayValue,
   getDefaultPresets,
 } from '../../../components/ui/date-picker/date-picker.utils'
@@ -48,14 +49,40 @@ describe('DatePicker date-picker.utils', () => {
     expect(iso?.getMonth()).toBe(9)
     expect(iso?.getDate()).toBe(25)
 
+    const dmy = parseDateString('25/10/2026')
+    expect(dmy).not.toBeNull()
+    expect(dmy?.getFullYear()).toBe(2026)
+    expect(dmy?.getMonth()).toBe(9)
+    expect(dmy?.getDate()).toBe(25)
+
     const us = parseDateString('10/25/2026')
     expect(us).not.toBeNull()
     expect(us?.getFullYear()).toBe(2026)
     expect(us?.getMonth()).toBe(9)
     expect(us?.getDate()).toBe(25)
 
+    const text = parseDateString('Aug 15, 2026')
+    expect(text).not.toBeNull()
+    expect(text?.getFullYear()).toBe(2026)
+    expect(text?.getMonth()).toBe(7)
+    expect(text?.getDate()).toBe(15)
+
     expect(parseDateString('')).toBeNull()
     expect(parseDateString('not-a-date')).toBeNull()
+  })
+
+  it('parses date range strings properly', () => {
+    const range = parseDateRangeString('10/10/2026 - 15/10/2026')
+    expect(range).not.toBeNull()
+    expect(range?.from?.getDate()).toBe(10)
+    expect(range?.to?.getDate()).toBe(15)
+
+    const singleRange = parseDateRangeString('10/10/2026')
+    expect(singleRange).not.toBeNull()
+    expect(singleRange?.from?.getDate()).toBe(10)
+    expect(singleRange?.to).toBeNull()
+
+    expect(parseDateRangeString('')).toBeNull()
   })
 
   it('determines display values across modes', () => {

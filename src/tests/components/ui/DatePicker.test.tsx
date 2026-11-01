@@ -7,17 +7,18 @@ import { DatePicker } from '../../../components/ui/DatePicker'
 describe('DatePicker Component - Single & Toggle', () => {
   const BASE_MONTH = new Date(2026, 7, 1)
 
-  it('renders default input trigger with placeholder', () => {
+  it('renders default input with placeholder and calendar button', () => {
     render(<DatePicker placeholder="Pick a date" />)
-    expect(screen.getByRole('button', { name: /Pick a date/i })).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Pick a date')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Open calendar/i })).toBeInTheDocument()
     expect(screen.queryByRole('grid')).not.toBeInTheDocument()
   })
 
-  it('opens floating popover calendar on trigger click', async () => {
+  it('opens floating popover calendar on calendar button click', async () => {
     const user = userEvent.setup()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -29,12 +30,49 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(innerCalendar).not.toHaveClass('border-2')
   })
 
+  it('clicking input allows typing and does not open popover', async () => {
+    const user = userEvent.setup()
+    render(<DatePicker defaultMonth={BASE_MONTH} />)
+
+    const input = screen.getByRole('textbox')
+    await user.click(input)
+
+    expect(input).toHaveFocus()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('allows direct typing in the input and updates value', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker defaultMonth={BASE_MONTH} onChange={onChange} />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '15/08/2026')
+
+    expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+    const calledDate = onChange.mock.calls[onChange.mock.calls.length - 1][0] as Date
+    expect(calledDate.getDate()).toBe(15)
+    expect(calledDate.getMonth()).toBe(7)
+    expect(calledDate.getFullYear()).toBe(2026)
+  })
+
+  it('clearing input text sets value to null', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker value={new Date(2026, 7, 15)} onChange={onChange} locale="en-US" />)
+
+    const input = screen.getByRole('textbox')
+    await user.clear(input)
+
+    expect(onChange).toHaveBeenCalledWith(null)
+  })
+
   it('selects a date and closes popover in single mode', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" onChange={onChange} />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     const day15 = screen.getByRole('button', { name: /August 15, 2026/i })
@@ -51,16 +89,17 @@ describe('DatePicker Component - Single & Toggle', () => {
     const selectedDate = new Date(2026, 7, 20)
     render(<DatePicker value={selectedDate} locale="en-US" />)
 
-    const trigger = screen.getByRole('button')
-    expect(trigger).toHaveTextContent(/2026/)
-    expect(trigger).toHaveTextContent(/20/)
+    const input = screen.getByRole('textbox')
+    expect(input).toHaveValue('Aug 20, 2026')
   })
 
   it('disables trigger when disabled prop is passed', async () => {
     const user = userEvent.setup()
     render(<DatePicker disabled />)
 
-    const trigger = screen.getByRole('button')
+    const input = screen.getByRole('textbox')
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
+    expect(input).toBeDisabled()
     expect(trigger).toBeDisabled()
 
     await user.click(trigger)
@@ -76,7 +115,7 @@ describe('DatePicker Component - Range, Clear & Presets', () => {
     const onChange = vi.fn()
     render(<DatePicker mode="range" defaultMonth={BASE_MONTH} locale="en-US" onChange={onChange} />)
 
-    const trigger = screen.getByRole('button', { name: /Select date range/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     const day10 = screen.getByRole('button', { name: /August 10, 2026/i })
@@ -109,7 +148,7 @@ describe('DatePicker Component - Range, Clear & Presets', () => {
     const onChange = vi.fn()
     render(<DatePicker showPresets defaultMonth={BASE_MONTH} onChange={onChange} locale="en-US" />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     const todayPreset = screen.getByRole('button', { name: 'Today' })
@@ -127,7 +166,7 @@ describe('DatePicker Component - Accessibility & Keyboard Interaction', () => {
     const user = userEvent.setup()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
 
@@ -137,11 +176,11 @@ describe('DatePicker Component - Accessibility & Keyboard Interaction', () => {
     })
   })
 
-  it('opens on Enter key on focused trigger', async () => {
+  it('opens on Enter key on focused calendar button', async () => {
     const user = userEvent.setup()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     trigger.focus()
     expect(trigger).toHaveFocus()
 
@@ -159,7 +198,7 @@ describe('DatePicker Component - Accessibility & Keyboard Interaction', () => {
     const user = userEvent.setup()
     const { container } = render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" portaled={false} />)
 
-    const trigger = screen.getByRole('button', { name: /Select date/i })
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     const results = await axe(container)
@@ -184,7 +223,7 @@ describe('DatePicker Component - Dual Month Range Variant', () => {
       />
     )
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', { name: /Open calendar/i })
     await user.click(trigger)
 
     expect(screen.getByLabelText('From')).toHaveValue('25/10/2026')
