@@ -28,6 +28,10 @@ import { TextareaVariantsExample } from '../examples/textarea/variants'
 import variantsSource from '../examples/textarea/variants.tsx?raw'
 import { TextareaFormExample } from '../examples/textarea/form'
 import formSource from '../examples/textarea/form.tsx?raw'
+import { CharacterCountTextareaExample } from '../examples/textarea/characterCount'
+import characterCountSource from '../examples/textarea/characterCount.tsx?raw'
+import { WordCountTextareaExample } from '../examples/textarea/wordCount'
+import wordCountSource from '../examples/textarea/wordCount.tsx?raw'
 
 const manualPath = '../../components/ui/Textarea'
 const githubUrl = getComponentGithubUrl('textarea')
@@ -56,9 +60,23 @@ const examples = [
   {
     id: 'textarea-group',
     title: 'Textarea group',
-    description: 'Compose a textarea with attachment, emoji, and send controls, plus character and word counts.',
+    description: 'Compose a textarea with attachment, emoji, and send controls.',
     source: groupSource,
     Component: TextareaGroupExample,
+  },
+  {
+    id: 'character-count',
+    title: 'Character count',
+    description: 'Show characters used and remaining. maxLength prevents typing or pasting beyond the limit.',
+    source: characterCountSource,
+    Component: CharacterCountTextareaExample,
+  },
+  {
+    id: 'word-count',
+    title: 'Word count',
+    description: 'Show words used and remaining, and prevent additional words once the limit is reached.',
+    source: wordCountSource,
+    Component: WordCountTextareaExample,
   },
   {
     id: 'auto-size',
@@ -141,7 +159,9 @@ export const TextareaDoc = () => (
                 ? ['Button', 'FiPaperclip', 'FiSmile', 'useId', 'useRef', 'useState']
                 : id === 'form'
                   ? ['Button', 'useState']
-                  : []),
+                  : ['character-count', 'word-count'].includes(id)
+                    ? ['useState']
+                    : []),
             ],
             manualPath: {
               others: manualPath,

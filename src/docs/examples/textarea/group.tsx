@@ -5,15 +5,6 @@ import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typo
 import { FiPaperclip, FiSmile } from 'react-icons/fi'
 
 const MAX_LENGTH = 2000
-const MAX_WORDS = 300
-
-const countWords = (value: string) => value.match(/\S+/gu)?.length ?? 0
-
-const limitMessage = (value: string) => {
-  const text = value.slice(0, MAX_LENGTH)
-  const firstExcessWord = [...text.matchAll(/\S+/gu)][MAX_WORDS]
-  return firstExcessWord ? text.slice(0, firstExcessWord.index) : text
-}
 
 /** Local demo: consumers can replace the submit handler with their own API. */
 export const TextareaGroupExample = () => {
@@ -24,7 +15,6 @@ export const TextareaGroupExample = () => {
   const [showEmoji, setShowEmoji] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
   const textarea = useRef<HTMLTextAreaElement>(null)
-  const wordCount = countWords(message)
 
   return (
     <form
@@ -48,8 +38,7 @@ export const TextareaGroupExample = () => {
             placeholder="Tell us what you have in mind..."
             maxLength={MAX_LENGTH}
             value={message}
-            onChange={(event) => setMessage(limitMessage(event.target.value))}
-            aria-describedby={`${id}-count`}
+            onChange={(event) => setMessage(event.target.value)}
             autoSize
             required
             variant="plain"
@@ -100,7 +89,6 @@ export const TextareaGroupExample = () => {
                     const end = textarea.current?.selectionEnd ?? start
                     if (message.length - (end - start) + emoji.length > MAX_LENGTH) return
                     const nextMessage = message.slice(0, start) + emoji + message.slice(end)
-                    if (countWords(nextMessage) > MAX_WORDS) return
                     setMessage(nextMessage)
                     setShowEmoji(false)
                     requestAnimationFrame(() => {
@@ -132,16 +120,8 @@ export const TextareaGroupExample = () => {
           )}
         </div>
         <FieldDescription>
-          Up to 2000 characters and 300 words. Enter adds a new line. Attachments stay on your device.
+          Up to 2000 characters. Enter adds a new line. Attachments stay on your device.
         </FieldDescription>
-        <div id={`${id}-count`} className="mt-2 text-sm font-mono">
-          <p>
-            {message.length} / {MAX_LENGTH} characters · {MAX_LENGTH - message.length} left
-          </p>
-          <p>
-            {wordCount} / {MAX_WORDS} words
-          </p>
-        </div>
       </Field>
       <p role="status" className="mt-2 break-words text-sm">
         {submitted && `Message captured locally: ${submitted}`}
