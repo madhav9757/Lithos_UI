@@ -236,6 +236,7 @@ export const DateField = ({
             <div
               ref={floating.refs.setFloating}
               style={floating.floatingStyles}
+              role="dialog"
               aria-label="Choose date"
               className="z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius) w-fit max-w-[calc(100vw-1rem)]"
             >

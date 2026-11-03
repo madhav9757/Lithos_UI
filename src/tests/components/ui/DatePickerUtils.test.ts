@@ -4,6 +4,8 @@ import {
   formatDate,
   formatDateNumeric,
   formatDateRange,
+  formatDateInput,
+  formatDateRangeInput,
   parseDateString,
   parseDateRangeString,
   getDisplayValue,
@@ -79,11 +81,31 @@ describe('DatePicker date-picker.utils', () => {
     expect(dashes?.getMonth()).toBe(11)
     expect(dashes?.getFullYear()).toBe(2026)
 
-    const dots = parseDateString('05.04.2026')
+    const dots = parseDateString('15.04.2026')
     expect(dots).not.toBeNull()
-    expect(dots?.getDate()).toBe(5)
+    expect(dots?.getDate()).toBe(15)
     expect(dots?.getMonth()).toBe(3)
     expect(dots?.getFullYear()).toBe(2026)
+  })
+
+  it('formats date input with auto-slashes, limits length, and supports backspacing', () => {
+    expect(formatDateInput('1')).toBe('1')
+    expect(formatDateInput('12')).toBe('12/')
+    expect(formatDateInput('120')).toBe('12/0')
+    expect(formatDateInput('1205')).toBe('12/05/')
+    expect(formatDateInput('12052026')).toBe('12/05/2026')
+    expect(formatDateInput('1111111111111111111111111111111')).toBe('11/11/1111')
+
+    expect(formatDateInput('12', '12/')).toBe('1')
+    expect(formatDateInput('12/05', '12/05/')).toBe('12/0')
+    expect(formatDateInput('12/05/202', '12/05/2026')).toBe('12/05/202')
+    expect(formatDateInput('12/05/20', '12/05/202')).toBe('12/05/20')
+  })
+
+  it('formats date range input with auto-slashes and range separator', () => {
+    expect(formatDateRangeInput('01012020')).toBe('01/01/2020 - ')
+    expect(formatDateRangeInput('0101202005102026')).toBe('01/01/2020 - 05/10/2026')
+    expect(formatDateRangeInput('01/01/2020 - 05/10/202', '01/01/2020 - 05/10/2026')).toBe('01/01/2020 - 05/10/202')
   })
 
   it('handles empty strings and whitespace properly', () => {
