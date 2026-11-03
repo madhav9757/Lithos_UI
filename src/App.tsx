@@ -8,42 +8,6 @@
  */
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
-import { ButtonDoc } from './docs/pages/Button'
-import { CalendarDoc } from './docs/pages/Calendar'
-import { DatePickerDoc } from './docs/pages/DatePicker'
-import { CardDoc } from './docs/pages/Card'
-import { CarouselDoc } from './docs/pages/Carousel'
-import { CheckboxDoc } from './docs/pages/Checkbox'
-import { CommandDoc } from './docs/pages/Command'
-import { ComingSoon } from './showroom/sections/ComingSoon'
-import { ComponentsIndex } from './pages/ComponentsIndex'
-import { DialogDoc } from './docs/pages/Dialog'
-import { DropdownDoc } from './docs/pages/Dropdown'
-import { DrawerDoc } from './docs/pages/Drawer'
-import { DocsLayout } from './docs/DocsLayout'
-import { Faq } from './pages/Faq'
-import { InputDoc } from './docs/pages/Input'
-import { IconsDoc } from './docs/pages/Icons'
-import { Installation } from './docs/pages/Installation'
-import { Introduction } from './docs/pages/Introduction'
-import { KbdDoc } from './docs/pages/Kbd'
-import { MarqueeDoc } from './docs/pages/Marquee'
-import { PopoverPage } from './docs/pages/Popover'
-import { NotFound } from './showroom/sections/NotFound'
-import { SelectDoc } from './docs/pages/Select'
-import { SkeletonDoc } from './docs/pages/Skeleton'
-import { SliderDoc } from './docs/pages/Slider'
-import { SpinnerDoc } from './docs/pages/Spinner'
-import { Showroom } from './showroom/Index'
-import { ToastDoc } from './docs/pages/Toast'
-import { ToggleDoc } from './docs/pages/Toggle'
-import { TabsDoc } from './docs/pages/Tabs'
-import { TableDoc } from './docs/pages/Table'
-import { PaginationDoc } from './docs/pages/Pagination'
-import { TypographyDoc } from './docs/pages/Typography'
-import { SidebarDoc } from './docs/pages/Sidebar'
-import { ThemeBuilder } from './pages/ThemeBuilder'
-import { TooltipDoc } from './docs/pages/Tooltip'
 import { MiniThemeEngine } from './components/ui/MiniThemeEngine'
 import { NotFound } from './showroom/sections/NotFound'
 import { LithosLogo } from './components/ui/LithosLogo'
@@ -97,57 +61,6 @@ const ScrollToTop = () => {
   }, [pathname, hash])
 
   return null
-}
-
-const renderDocRoutes = () => {
-  const docPages = [
-    { path: '', component: Introduction },
-    { path: 'alert', component: AlertDoc },
-    { path: 'avatar', component: AvatarDoc },
-    { path: 'accordion', component: AccordionDoc },
-    { path: 'badge', component: BadgeDoc },
-    { path: 'breadcrumb', component: BreadcrumbDoc },
-    { path: 'button', component: ButtonDoc },
-    { path: 'calendar', component: CalendarDoc },
-    { path: 'date-picker', component: DatePickerDoc },
-    { path: 'card', component: CardDoc },
-    { path: 'carousel', component: CarouselDoc },
-    { path: 'icons', component: IconsDoc },
-    { path: 'input', component: InputDoc },
-    { path: 'checkbox', component: CheckboxDoc },
-    { path: 'command', component: CommandDoc },
-    { path: 'dialog', component: DialogDoc },
-    { path: 'dropdown', component: DropdownDoc },
-    { path: 'drawer', component: DrawerDoc },
-    { path: 'installation', component: Installation },
-    { path: 'kbd', component: KbdDoc },
-    { path: 'marquee', component: MarqueeDoc },
-    { path: 'popover', component: PopoverPage },
-    { path: 'select', component: SelectDoc },
-    { path: 'sidebar', component: SidebarDoc },
-    { path: 'skeleton', component: SkeletonDoc },
-    { path: 'slider', component: SliderDoc },
-    { path: 'spinner', component: SpinnerDoc },
-    { path: 'toast', component: ToastDoc },
-    { path: 'toggle', component: ToggleDoc },
-    { path: 'tabs', component: TabsDoc },
-    { path: 'table', component: TableDoc },
-    { path: 'pagination', component: PaginationDoc },
-    { path: 'typography', component: TypographyDoc },
-    { path: 'tooltip', component: TooltipDoc },
-  ]
-
-  return docPages.map(({ path, component: Component }) => (
-    <Route
-      key={path || 'index'}
-      path={`/docs${path ? `/${path}` : ''}`}
-      element={
-        <DocsLayout>
-          <Component />
-        </DocsLayout>
-      }
-    />
-  ))
 }
 
 /**

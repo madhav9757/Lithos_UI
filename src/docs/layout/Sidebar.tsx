@@ -4,44 +4,6 @@ import { Badge } from '../../components/ui/Badge'
 import { gettingStartedPages, componentPages } from '../../core/lithos.utils'
 import { getUnreleasedComponentInfo } from '../../core/unreleasedRegistry'
 
-// The component name should match the route in App.tsx
-// to create spaced component labels use a - between the words.
-// e.g: navigation-menu name will use the label "Navigation Menu"
-const components = [
-  'accordion',
-  'alert',
-  'avatar',
-  'badge',
-  'breadcrumb',
-  'button',
-  'calendar',
-  'card',
-  'carousel',
-  'checkbox',
-  'command',
-  'date-picker',
-  'dialog',
-  'drawer',
-  'dropdown',
-  'icons',
-  'input',
-  'kbd',
-  'marquee',
-  'pagination',
-  'popover',
-  'select',
-  'sidebar',
-  'skeleton',
-  'slider',
-  'spinner',
-  'table',
-  'tabs',
-  'toast',
-  'toggle',
-  'tooltip',
-  'typography',
-].sort((a, b) => a.localeCompare(b))
-
 export const Sidebar = () => {
   const location = useLocation()
 

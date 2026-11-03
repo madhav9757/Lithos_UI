@@ -118,6 +118,13 @@ export const DOC_PAGES: readonly DocPageConfig[] = [
     loader: () => import('../docs/pages/Calendar').then((m) => ({ default: m.CalendarDoc })),
   },
   {
+    path: 'date-picker',
+    to: '/docs/date-picker',
+    label: 'Date Picker',
+    category: 'Components',
+    loader: () => import('../docs/pages/DatePicker').then((m) => ({ default: m.DatePickerDoc })),
+  },
+  {
     path: 'card',
     to: '/docs/card',
     label: 'Card',
