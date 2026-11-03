@@ -217,7 +217,7 @@ export const ToastProvider = ({
             role="region"
             aria-label="Notifications"
             className={cn(
-              'fixed p-4 sm:p-6 md:p-8 z-50 pointer-events-none flex flex-col w-full max-w-sm',
+              'fixed p-4 sm:p-6 md:p-8 z-50 pointer-events-none flex flex-col w-full max-w-xs',
               positionStyles[position],
               className
             )}

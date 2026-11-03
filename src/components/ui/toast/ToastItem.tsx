@@ -159,6 +159,7 @@ export const ToastItem = ({ toast, renderToast, className }: ToastItemProps) => 
             {(() => {
               let currentState: keyof typeof ICONS_MAP = intent
               let isFinishedAction = false
+              const iconSize = 20
 
               if (isLoading) {
                 currentState = 'loading'
@@ -195,22 +196,22 @@ export const ToastItem = ({ toast, renderToast, className }: ToastItemProps) => 
 
               if (typeof candidateIcon === 'function') {
                 const CustomIcon = candidateIcon as (props: IconProps) => ReactNode
-                return <CustomIcon size={18} aria-hidden={true} />
+                return <CustomIcon size={iconSize} aria-hidden={true} />
               }
 
               if (isLoading && !candidateIcon) {
-                return <Spinner size={18} aria-hidden={true} />
+                return <Spinner size={iconSize} aria-hidden={true} />
               }
 
               const activeFallbackState = isLoading && !isIconObject ? 'loading' : currentState
               const FallbackIcon = ICONS_MAP[activeFallbackState] || ICONS_MAP[intent] || ICONS_MAP.default
 
-              return <FallbackIcon size={18} aria-hidden={true} />
+              return <FallbackIcon size={iconSize} aria-hidden={true} />
             })()}
           </div>
 
           {title && (
-            <Typography variant="h4" className="font-black text-base uppercase tracking-tighter leading-none m-0">
+            <Typography variant="h4" className="font-black text-lg uppercase tracking-tighter leading-none m-0">
               {title}
             </Typography>
           )}
@@ -259,7 +260,7 @@ export const ToastItem = ({ toast, renderToast, className }: ToastItemProps) => 
       onAnimationEnd={() => setAnimated(true)}
       {...handlers}
       className={cn(
-        'transition-[background-color,color,translate] ease-in-out pointer-events-auto touch-none select-none border-2 border-(--lithos-border) mb-4 p-3 sm:p-3.5 w-full max-w-xs relative flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)',
+        'transition-[background-color,color,translate] ease-in-out pointer-events-auto touch-none select-none border-2 border-(--lithos-border) mb-4 p-3 sm:p-4 w-full max-w-xs relative flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)',
         !animated && transitionClass,
         isDragging && 'cursor-grabbing',
         className

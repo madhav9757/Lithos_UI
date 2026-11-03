@@ -44,23 +44,5 @@ export const getYiqValue = (hexcolor: string | undefined, isDarkModeOverride?: b
 }
 
 export const getContrastText = (hexcolor: string | undefined, isDarkModeOverride?: boolean) => {
-  if (hexcolor) {
-    let cleanHex = hexcolor.replace('#', '')
-    if (cleanHex.length === 3 || cleanHex.length === 4) {
-      cleanHex = cleanHex
-        .split('')
-        .map((char) => char + char)
-        .join('')
-    }
-    const r = parseInt(cleanHex.slice(0, 2), 16) || 0
-    const g = parseInt(cleanHex.slice(2, 4), 16) || 0
-    const b = parseInt(cleanHex.slice(4, 6), 16) || 0
-
-    // Strict check for bright/saturated reds where YIQ incorrectly returns white
-    if (r > 180 && g < 80 && b < 80 && r > g * 2 && r > b * 2) {
-      return '#000000'
-    }
-  }
-
   return getYiqValue(hexcolor, isDarkModeOverride) >= 128 ? '#000000' : '#FFFFFF'
 }
