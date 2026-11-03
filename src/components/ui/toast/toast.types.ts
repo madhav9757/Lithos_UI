@@ -3,7 +3,7 @@
  * - Defines intent variants, screen placement options, and auto-dismiss duration mappings.
  * - Specifies prop contracts for ToastProvider, individual ToastItem, and Context dispatchers.
  */
-import type { ReactNode, Dispatch, SetStateAction } from 'react'
+import type { ReactNode } from 'react'
 import type { HexColor, LithosElementProps } from '../../../core/types'
 import type { LithosClass } from '../../../utils/cn'
 import type { IconProps } from '../icons/icons.types'
@@ -150,9 +150,6 @@ export interface ToastItemProps {
   /** Toast configuration payload including its unique internal identifier. */
   toast: IdentifiedToastProps
 
-  /** The Toast index. */
-  index?: number
-
   /** Custom renderer function for custom toast layouts while preserving core swipe/dismiss logic. */
   renderToast?: ToastRender | undefined
 
@@ -188,18 +185,6 @@ export interface ToastProviderProps extends ToastSharedOptions, LithosElementPro
    */
   position?: ToastPosition
 
-  /**
-   * Enables card stacking layout for multiple active notifications.
-   * @default false
-   */
-  stack?: boolean
-
-  /**
-   * Maximum number of visible stacked toast items.
-   * @default 3
-   */
-  maxStack?: number
-
   /** Custom renderer function for custom toast layouts across the provider. */
   renderToast?: ToastRender
 
@@ -217,13 +202,4 @@ export interface ToastContextType extends Omit<ToastProviderProps, 'className' |
 
   /** Updates an existing active toast notification by its unique ID. */
   updateToast: (id: string, newProps: Partial<Omit<ToastProps, 'action'>>) => void
-
-  /** Whether the notification stack is currently expanded via hover or tap. */
-  isExpanded: boolean
-
-  /** Toggles or sets the expanded state of the notification stack. */
-  setIsExpanded: Dispatch<SetStateAction<boolean>>
-
-  /** Array of the current toasts */
-  toasts: IdentifiedToastProps[]
 }

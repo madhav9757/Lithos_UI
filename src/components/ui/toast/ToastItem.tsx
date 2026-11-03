@@ -4,7 +4,7 @@
  * - Manages auto-dismiss timers with pause-on-hover interaction.
  * - Implements ARIA live regions and automatic focus trapping for error alerts.
  */
-import { useState, useEffect, useRef, isValidElement, type ReactNode, type MouseEvent } from 'react'
+import { useState, useEffect, useRef, isValidElement, type ReactNode } from 'react'
 import { getContrastText } from '../../../utils/yiq'
 import { colors } from '../../../utils/colors'
 import { Button } from '../Button'
@@ -15,6 +15,7 @@ import { DEFAULT_DURATION, ICONS_MAP, TRANSITION_MAP } from './toast.utils'
 import { Spinner } from '../Spinner'
 import { Typography } from '../Typography'
 import type { IconProps } from '../icons/icons.types'
+import { isHexColor } from '../../../core/types'
 import { useToast } from './useToast'
 import { useSwipe } from '../../../core/hooks/useSwipe'
 
@@ -26,7 +27,7 @@ import { useSwipe } from '../../../core/hooks/useSwipe'
  * @param props - Customization, item data payload, and removal callback props.
  * @returns Accessible toast notification element.
  */
-export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastItemProps) => {
+export const ToastItem = ({ toast, renderToast, className }: ToastItemProps) => {
   const {
     message,
     intent = 'default',
@@ -39,12 +40,11 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
     showProgress = false,
     transition,
   } = toast
-  const { toasts, position, stack, isExpanded, setIsExpanded, removeToast } = useToast()
+  const { position, removeToast } = useToast()
   const [isHovered, setIsHovered] = useState(false)
   const [animated, setAnimated] = useState(false)
   const toastRef = useRef<HTMLDivElement | null>(null)
 
-  const totalToasts = toasts.length
   const resolvedDuration = duration ?? DEFAULT_DURATION
 
   const [isTabHidden, setIsTabHidden] = useState(false)
@@ -95,12 +95,6 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
     }
   }, [isError])
 
-  const isFrontItem = index === totalToasts - 1
-
-  // If stack is enabled and not expanded, we assume items not at the front are background items.
-  // (In a standard queue, the front/newest item is the last rendered in the array).
-  const isBackgroundStacked = stack && !isExpanded && !isFrontItem
-
   const remainingTimeRef = useRef(resolvedDuration)
   const timerIdRef = useRef<number | null>(null)
   const startTimeRef = useRef(Date.now())
@@ -112,7 +106,7 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
 
   useEffect(() => {
     // If there's hover, the tab is hidden or there's a running action -> do not apply auto-dismiss
-    if (isHovered || isTabHidden || action || isBackgroundStacked) {
+    if (isHovered || isTabHidden || action) {
       if (timerIdRef.current !== null) {
         clearTimeout(timerIdRef.current)
         timerIdRef.current = null
@@ -137,39 +131,25 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHovered, isError, resolvedDuration, action, isTabHidden, isBackgroundStacked])
+  }, [isHovered, isError, resolvedDuration, action, isTabHidden])
 
   const isAccent = intent === 'accent'
   const bgColor = color || (isAccent ? 'var(--lithos-accent)' : colors[intent as keyof typeof colors]) || colors.default
-  const textColor = isAccent && !color ? 'var(--lithos-accent-text)' : getContrastText(bgColor)
+  const textColor =
+    isAccent && !color
+      ? 'var(--lithos-accent-text)'
+      : isHexColor(bgColor)
+        ? getContrastText(bgColor)
+        : 'var(--lithos-text)'
 
   const ariaLabel = label ?? 'Close notification'
 
   const livePriority = isError ? 'assertive' : 'polite'
   const role = isError ? 'alert' : 'status'
 
-  // Calculate stack depth from the newest item (front)
-  // depth 0 is the front-most item (newest)
-  const depth = totalToasts - 1 - index
-  const isStackedMode = stack && !isExpanded
-
   // default value should follow the 'bottom-right' position... so we set false
   // if not found
   const isTopPosition = position?.includes('top') ?? false
-  const isLeftPosition = position?.includes('left') ?? false
-
-  const stackOffsetStyle = isStackedMode
-    ? {
-        position: 'absolute' as const,
-        [isTopPosition ? 'top' : 'bottom']: isTopPosition ? '2rem' : '3rem',
-        [isLeftPosition ? 'left' : 'right']: '2rem',
-        translate: `0 ${depth * 8 * (isTopPosition ? 1 : -1)}px`,
-        scale: `${1 - depth * 0.04}`,
-        opacity: depth === 0 ? 1 : Math.max(0.6, 1 - depth * 0.15),
-      }
-    : {
-        position: 'relative' as const,
-      }
 
   const defaultContent = (
     <>
@@ -268,18 +248,6 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
   const activeTransition = transition ?? defaultTransition
   const transitionClass = TRANSITION_MAP[activeTransition] ?? TRANSITION_MAP[defaultTransition]
 
-  // Handle card click safely, ignoring clicks originating from interactive elements
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement
-    const isInteractive = target.closest('button, a, input, select, [role="button"]')
-
-    if (isInteractive) return
-
-    if (stack && totalToasts > 1) {
-      setIsExpanded((prev) => !prev)
-    }
-  }
-
   return (
     <div
       ref={toastRef}
@@ -288,12 +256,10 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
       tabIndex={isError ? -1 : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleClick}
       onAnimationEnd={() => setAnimated(true)}
       {...handlers}
       className={cn(
-        'transition-[background-color,color,translate] ease-in-out pointer-events-auto touch-none select-none border-2 border-(--lithos-border) p-3 sm:p-3.5 w-full max-w-xs relative flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)',
-        !isStackedMode && 'mb-4', // apply bottom margin when not in collapsed stack mode
+        'transition-[background-color,color,translate] ease-in-out pointer-events-auto touch-none select-none border-2 border-(--lithos-border) mb-4 p-3 sm:p-3.5 w-full max-w-xs relative flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)',
         !animated && transitionClass,
         isDragging && 'cursor-grabbing',
         className
@@ -303,11 +269,9 @@ export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastIte
       style={{
         backgroundColor: bgColor,
         color: textColor,
-        zIndex: `calc(var(--lithos-z-toast, 55) + ${index})`,
         willChange: 'transform, opacity',
         backfaceVisibility: 'hidden',
         transform: 'translateZ(0)',
-        ...stackOffsetStyle,
         ...swipeStyle,
         transition: isDragging ? 'none' : 'transform 0.15s ease-in-out, opacity 0.15s ease-in-out',
       }}

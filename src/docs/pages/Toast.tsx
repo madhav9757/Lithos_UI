@@ -18,7 +18,6 @@ import { ToastProgressExample } from '../examples/toast/progress'
 import progressSource from '../examples/toast/progress?raw'
 import { ToastTransitionExample } from '../examples/toast/transition'
 import transitionSource from '../examples/toast/transition?raw'
-import { StackedToasts } from '../examples/toast/stack'
 import {
   DocCallout,
   DocExample,
@@ -54,32 +53,6 @@ const positionedCode = toastCode(positionedSource, ['ToastProvider'])
 const customIconCode = toastCode(customIconSource, ['LithosLogo'])
 const progressCode = toastCode(progressSource)
 const transitionCode = toastCode(transitionSource, [], ['ToastTransition'])
-const stackCode = toastCode(
-  `
-export const StackedToasts = () => {
-  const [count, setCount] = useState(0)
-
-  const handleClick = () => {
-    setCount(prev => prev + 1)
-  }
-
-  return (
-    <ToastProvider stack>
-      <Button
-        onClick={() => {
-          addToast({
-            title: 'My stacked toast ' + count + 'º'},
-            description: 'This is a stacked toast'
-          )
-        }}>
-        Click me!
-      </Button>
-    </ToastProvider>
-  )
-}`,
-  ['ToastProvider']
-)
-
 const asyncCode = toastCode(`
 // Simulated database API
 const fakeDatabase = {
@@ -249,24 +222,6 @@ export const ToastDoc = () => (
     >
       <PreviewBlock code={transitionCode} githubUrl={githubUrl}>
         <ToastTransitionExample />
-      </PreviewBlock>
-    </DocExample>
-
-    <DocExample
-      id="stacking"
-      title="Stacking"
-      description={
-        <>
-          Group multiple active notifications into an interactive card deck that collapses to save space and{' '}
-          <b>expands or collapses</b> on click or tap depending on its current state.
-        </>
-      }
-    >
-      <PreviewBlock code={stackCode} githubUrl={githubUrl}>
-        <div className="flex flex-col space-y-4">
-          <StackedToasts />
-          <StackedToasts position="top-left" />
-        </div>
       </PreviewBlock>
     </DocExample>
 

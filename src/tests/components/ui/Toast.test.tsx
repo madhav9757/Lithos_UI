@@ -381,53 +381,6 @@ describe('Toast Component', () => {
     })
   })
 
-  it('verifies timers and lifecycle accuracy when opening multiple async/sync toasts in stack mode', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
-
-    const MultiToastComponent = () => {
-      const { addToast } = useToast()
-      return (
-        <button
-          type="button"
-          onClick={() => {
-            addToast({ message: 'First 5s toast', duration: 5000 })
-            addToast({ message: 'Second 5s toast', duration: 5000 })
-          }}
-        >
-          Open Multiple
-        </button>
-      )
-    }
-
-    render(
-      <ToastProvider stack={true}>
-        <MultiToastComponent />
-      </ToastProvider>
-    )
-
-    await user.click(screen.getByRole('button', { name: 'Open Multiple' }))
-
-    expect(screen.getByText('First 5s toast')).toBeInTheDocument()
-    expect(screen.getByText('Second 5s toast')).toBeInTheDocument()
-
-    // In stack mode, the second toast is at the front (active timer),
-    // while the first toast is in the background (paused timer).
-    // Advance 5 seconds -> second toast should expire first.
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
-
-    expect(screen.queryByText('Second 5s toast')).not.toBeInTheDocument()
-    expect(screen.getByText('First 5s toast')).toBeInTheDocument()
-
-    // Advance another 5 seconds -> first toast (now at the front) expires.
-    act(() => {
-      vi.advanceTimersByTime(5000)
-    })
-
-    expect(screen.queryByText('First 5s toast')).not.toBeInTheDocument()
-  })
-
   it('pauses progress bar animation and dismiss timer when hovering the toast', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
 

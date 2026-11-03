@@ -17,19 +17,7 @@ export const toastProviderPropsData: PropItem[] = [
     name: 'position',
     type: "'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'",
     defaultValue: "'bottom-right'",
-    description: 'Corner position on the viewport where toasts will stack.',
-  },
-  {
-    name: 'stack',
-    type: 'boolean',
-    defaultValue: 'false',
-    description: 'Enables card stacking layout for multiple active notifications.',
-  },
-  {
-    name: 'maxStack',
-    type: 'number',
-    defaultValue: '3',
-    description: 'Maximum number of visible stacked toast items.',
+    description: 'Corner position on the viewport where toasts will be.',
   },
   {
     name: 'showProgress',
@@ -56,7 +44,7 @@ export const toastProviderPropsData: PropItem[] = [
   {
     name: 'className',
     type: 'LithosClass',
-    description: 'Additional CSS classes to apply to the stack container.',
+    description: 'Additional CSS classes to apply to the container.',
   },
 ]
 

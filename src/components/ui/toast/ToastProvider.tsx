@@ -4,7 +4,7 @@
  * - Renders a fixed-position portal container to isolate alerts from page layout flow.
  * - Handles fallback and per-intent duration resolution for auto-dismiss timers.
  */
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { ToastContext } from './useToast'
 import { cn } from '../../../utils/cn'
@@ -26,8 +26,6 @@ export const ToastProvider = ({
   duration,
   position = 'bottom-right',
   icon: defaultIcon,
-  stack = false,
-  maxStack = 3,
   showProgress: globalShowProgress = false,
   transition: globalTransition,
   renderToast,
@@ -35,14 +33,6 @@ export const ToastProvider = ({
   ...props
 }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<IdentifiedToastProps[]>([])
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  // Automatically collapse stack if there is 1 or no toasts left
-  useEffect(() => {
-    if (toasts.length <= 1 && isExpanded) {
-      setIsExpanded(false)
-    }
-  }, [toasts.length, isExpanded])
 
   const durationConfig =
     (typeof duration == 'object' &&
@@ -214,13 +204,8 @@ export const ToastProvider = ({
       updateToast,
       position,
       duration: duration || DEFAULT_DURATION,
-      stack,
-      maxStack,
-      isExpanded,
-      setIsExpanded,
-      toasts,
     }),
-    [addToast, removeToast, updateToast, position, duration, isExpanded, stack, maxStack, toasts]
+    [addToast, removeToast, updateToast, position, duration]
   )
 
   return (
@@ -238,14 +223,9 @@ export const ToastProvider = ({
             )}
             {...props}
           >
-            {toasts.map((toast, index) => {
-              // Determine if this toast is within the visible stack limit
-              const isWithinStack = !stack || index >= toasts.length - maxStack || isExpanded
-
-              if (!isWithinStack) return null
-
-              return <ToastItem key={toast.id} toast={toast} index={index} renderToast={renderToast} />
-            })}
+            {toasts.map((toast) => (
+              <ToastItem key={toast.id} toast={toast} renderToast={renderToast} />
+            ))}
           </div>,
           document.body
         )}
