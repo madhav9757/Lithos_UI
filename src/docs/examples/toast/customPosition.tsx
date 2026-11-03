@@ -10,7 +10,6 @@ const CustomToastTriggerButton = () => {
         title: 'SYSTEM TOAST',
         message: 'Structural integrity verified.',
         intent: 'accent',
-        duration: 10000,
       })
   }
 

@@ -1,8 +1,10 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { useToast, ToastProvider, ToastItem } from '../../../components/ui/Toast'
+import { useToast, ToastProvider, ToastItem, type ToastCancelOptions } from '../../../components/ui/Toast'
+
+import { IconHeart } from '../../../components/ui/icons/IconHeart'
 
 const TestComponent = ({
   toastProps = { title: 'Toast toast', message: 'Test notification' },
@@ -209,18 +211,225 @@ describe('Toast Component', () => {
     expect(triggerBtn).toHaveFocus()
   })
 
+  it('handles async action lifecycle showing loading, success, and error states', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    const mockSuccessAction = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      return 'done'
+    }
+
+    render(
+      <ToastProvider>
+        <TestComponent
+          toastProps={{
+            title: 'Async Task',
+            loading: 'Custom Loading...',
+            success: 'Custom Success!',
+            action: mockSuccessAction,
+          }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+
+    expect(screen.getByText('Custom Loading...')).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(await screen.findByText('Custom Success!')).toBeInTheDocument()
+  })
+
+  it('renders a custom icon component successfully', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    render(
+      <ToastProvider>
+        <TestComponent
+          toastProps={{
+            title: 'Heart Toast',
+            message: 'Testing custom icon',
+            icon: <IconHeart data-testid="toast-icon-heart" />,
+          }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+    expect(screen.getByText('Heart Toast')).toBeInTheDocument()
+
+    expect(screen.getByTestId('toast-icon-heart')).toBeInTheDocument()
+  })
+
+  it('pauses auto-dismiss timer when document visibility is hidden', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    render(
+      <ToastProvider>
+        <TestComponent toastProps={{ title: 'Visibility test', message: 'Tab hidden toast', duration: 4000 }} />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+    expect(screen.getByText('Tab hidden toast')).toBeInTheDocument()
+
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true })
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+
+    act(() => {
+      vi.advanceTimersByTime(6000)
+    })
+
+    expect(screen.getByText('Tab hidden toast')).toBeInTheDocument()
+
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true })
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+
+    act(() => {
+      vi.advanceTimersByTime(4000)
+    })
+
+    expect(screen.queryByText('Tab hidden toast')).not.toBeInTheDocument()
+  })
+
+  it('allows updating active toast properties manually via updateToast', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    const UpdaterComponent = () => {
+      const { addToast, updateToast } = useToast()
+
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            const id = addToast({ title: 'Original', message: 'Initial state' })
+            setTimeout(() => {
+              updateToast(id, { title: 'Updated', message: 'Restored state' })
+            }, 100)
+          }}
+        >
+          Run Update
+        </button>
+      )
+    }
+
+    render(
+      <ToastProvider>
+        <UpdaterComponent />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Run Update' }))
+    expect(screen.getByText('Initial state')).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(100)
+    })
+
+    expect(screen.queryByText('Initial state')).not.toBeInTheDocument()
+    expect(screen.getByText('Restored state')).toBeInTheDocument()
+    expect(screen.getByText('Updated')).toBeInTheDocument()
+  })
+
+  it('correctly uses cancel function inside async action to abort default state transition', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    const cancelableAction = async ({ cancel }: { cancel: (opts?: ToastCancelOptions) => void }) => {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      cancel({ message: 'Action canceled manually', intent: 'warning', duration: 3000 })
+    }
+
+    render(
+      <ToastProvider duration={{ warning: 3000 }}>
+        <TestComponent
+          toastProps={{
+            title: 'Cancelable Task',
+            loading: 'Working...',
+            action: cancelableAction,
+          }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Working...')).toBeInTheDocument()
+    })
+
+    await act(async () => {
+      vi.advanceTimersByTime(500)
+    })
+
+    await waitFor(async () => {
+      expect(await screen.findByText('Action canceled manually')).toBeInTheDocument()
+    })
+
+    await act(async () => {
+      vi.advanceTimersByTime(3000)
+    })
+
+    await waitFor(() => {
+      expect(screen.queryByText('Action canceled manually')).not.toBeInTheDocument()
+    })
+  })
+
+  it('pauses progress bar animation and dismiss timer when hovering the toast', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+
+    render(
+      <ToastProvider>
+        <TestComponent
+          toastProps={{ title: 'Progress Test', message: 'Progress bar active', showProgress: true, duration: 4000 }}
+        />
+      </ToastProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Trigger Toast' }))
+    const toastElement = screen.getByText('Progress bar active').closest('div[role]')!
+
+    // Verify progress element exists
+    const progressBar = toastElement.querySelector('.absolute.bottom-0.left-0')
+    expect(progressBar).toBeDefined()
+
+    // Hover to pause
+    await user.hover(toastElement)
+
+    act(() => {
+      vi.advanceTimersByTime(8000)
+    })
+
+    // Should still be active because hover paused the timer & progress
+    expect(screen.getByText('Progress bar active')).toBeInTheDocument()
+
+    // Unhover to resume
+    await user.unhover(toastElement)
+
+    act(() => {
+      vi.advanceTimersByTime(4000)
+    })
+
+    expect(screen.queryByText('Progress bar active')).not.toBeInTheDocument()
+  })
+
   it('passes a11y audit without violations', async () => {
     const { container } = render(
-      <ToastItem
-        toast={{
-          id: 'test-a11y',
-          message: 'Accessible message',
-          title: 'A11y Test',
-          intent: 'default',
-          duration: 5000,
-        }}
-        onRemove={vi.fn()}
-      />
+      <ToastProvider>
+        <ToastItem
+          toast={{
+            id: 'test-a11y',
+            message: 'Accessible message',
+            title: 'A11y Test',
+          }}
+        />
+      </ToastProvider>
     )
 
     const results = await axe(container)

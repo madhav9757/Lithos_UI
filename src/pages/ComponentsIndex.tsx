@@ -83,7 +83,6 @@ const ToastPreview = () => {
     <div className="w-[120%] scale-[0.7] origin-center pointer-events-none mt-6">
       <ToastItem
         toast={{ id: 'prev-toast', message: 'Yummy toast', intent: 'success', color: accentColor, title: 'SUCCESS' }}
-        onRemove={() => {}}
       />
     </div>
   )

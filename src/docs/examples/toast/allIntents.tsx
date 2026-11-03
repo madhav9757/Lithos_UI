@@ -13,6 +13,7 @@ export const AllIntentsToast = () => {
           onClick={() => {
             if (toast && toast.addToast) {
               toast.addToast({
+                title: intent.toUpperCase(),
                 message: `This is a ${intent} toast notification.`,
                 intent,
               })
