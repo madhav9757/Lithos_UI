@@ -174,7 +174,7 @@ export const DatePickerInput = ({
     }
   }
 
-  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'Select date range' : 'DD/MM/YYYY')
+  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'DD/MM/YYYY - DD/MM/YYYY' : 'DD/MM/YYYY')
 
   return (
     <div

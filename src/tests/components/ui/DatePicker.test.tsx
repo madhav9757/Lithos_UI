@@ -14,6 +14,19 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(screen.queryByRole('grid')).not.toBeInTheDocument()
   })
 
+  it('renders DD/MM/YYYY placeholder by default for DatePicker and DateField', () => {
+    const { unmount } = render(<DatePicker />)
+    expect(screen.getByPlaceholderText('DD/MM/YYYY')).toBeInTheDocument()
+    unmount()
+
+    const { unmount: unmountRange } = render(<DatePicker mode="range" />)
+    expect(screen.getByPlaceholderText('DD/MM/YYYY - DD/MM/YYYY')).toBeInTheDocument()
+    unmountRange()
+
+    render(<DateField />)
+    expect(screen.getByPlaceholderText('DD/MM/YYYY')).toBeInTheDocument()
+  })
+
   it('opens floating popover calendar on calendar button click', async () => {
     const user = userEvent.setup()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" />)

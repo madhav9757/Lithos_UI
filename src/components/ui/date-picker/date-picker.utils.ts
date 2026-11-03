@@ -260,7 +260,7 @@ export const getDisplayValue = (
   locale?: string,
   placeholder?: string
 ): string => {
-  if (!value) return placeholder ?? (mode === 'range' ? 'Select date range' : 'DD/MM/YYYY')
+  if (!value) return placeholder ?? (mode === 'range' ? 'DD/MM/YYYY - DD/MM/YYYY' : 'DD/MM/YYYY')
 
   if (mode === 'single') {
     if (value instanceof Date && isValidDate(value)) {
@@ -272,7 +272,7 @@ export const getDisplayValue = (
   if (mode === 'range') {
     const range = value as DateRange
     const formatted = formatDateRange(range, locale)
-    return formatted || (placeholder ?? 'Select date range')
+    return formatted || (placeholder ?? 'DD/MM/YYYY - DD/MM/YYYY')
   }
 
   if (mode === 'multiple') {

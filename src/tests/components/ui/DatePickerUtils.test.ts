@@ -145,7 +145,7 @@ describe('DatePicker date-picker.utils', () => {
 
   it('determines display values across modes', () => {
     expect(getDisplayValue(undefined, 'single', 'en-US', 'Custom Placeholder')).toBe('Custom Placeholder')
-    expect(getDisplayValue(undefined, 'range', 'en-US')).toBe('Select date range')
+    expect(getDisplayValue(undefined, 'range', 'en-US')).toBe('DD/MM/YYYY - DD/MM/YYYY')
 
     const date = new Date(2026, 9, 25)
     expect(getDisplayValue(date, 'single', 'en-US')).toContain('2026')
