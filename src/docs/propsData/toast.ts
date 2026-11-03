@@ -20,6 +20,40 @@ export const toastProviderPropsData: PropItem[] = [
     description: 'Corner position on the viewport where toasts will stack.',
   },
   {
+    name: 'stack',
+    type: 'boolean',
+    defaultValue: 'false',
+    description: 'Enables card stacking layout for multiple active notifications.',
+  },
+  {
+    name: 'maxStack',
+    type: 'number',
+    defaultValue: '3',
+    description: 'Maximum number of visible stacked toast items.',
+  },
+  {
+    name: 'showProgress',
+    type: 'boolean',
+    defaultValue: 'false',
+    description: 'Enables a visual progress bar indicating the remaining lifetime of the toast globally.',
+  },
+  {
+    name: 'transition',
+    type: "'slide-up' | 'slide-down' | 'fade' | 'scale' | 'none'",
+    defaultValue: "Depends on position ('slide-up' for bottom, 'slide-down' for top)",
+    description: 'Default entrance animation transition style.',
+  },
+  {
+    name: 'icon',
+    type: 'ToastIconConfig',
+    description: 'Global default icon configuration used by every toast.',
+  },
+  {
+    name: 'renderToast',
+    type: 'ToastRender',
+    description: 'Custom renderer function for custom toast layouts across the provider.',
+  },
+  {
     name: 'className',
     type: 'LithosClass',
     description: 'Additional CSS classes to apply to the stack container.',
@@ -61,6 +95,17 @@ export const toastPropsData: PropItem[] = [
     description: 'Custom lifetime in milliseconds for this specific toast, overriding the provider setting.',
   },
   {
+    name: 'showProgress',
+    type: 'boolean',
+    defaultValue: 'false',
+    description: 'Enables a visual progress bar indicating the remaining lifetime for this specific toast.',
+  },
+  {
+    name: 'transition',
+    type: "'slide-up' | 'slide-down' | 'fade' | 'scale' | 'none'",
+    description: 'Custom entrance animation transition style for this specific toast.',
+  },
+  {
     name: 'loading',
     type: 'ReactNode',
     defaultValue: 'Processing...',
@@ -85,7 +130,13 @@ export const toastPropsData: PropItem[] = [
   },
   {
     name: 'icon',
-    type: 'ComponentType<unknown> | ReactNode',
+    type: 'ToastIconConfig',
     description: 'Custom icon component reference or rendered React element override.',
+  },
+  {
+    name: 'preserveIntent',
+    type: 'boolean',
+    defaultValue: 'false',
+    description: "Prevents intent from changing to 'success' or 'error' automatically when an async action finishes.",
   },
 ]
