@@ -18,7 +18,7 @@ export const ToastTransitionExample = () => {
   return (
     <div className="-mb-4 -mr-4 flex flex-wrap">
       {transitions.map((transition) => (
-        <Button className="capitalize mb-4 mr-4" onClick={() => handleTransitionToast(transition)}>
+        <Button key={transition} className="capitalize mb-4 mr-4" onClick={() => handleTransitionToast(transition)}>
           {transition.replace('-', ' ')}
         </Button>
       ))}
