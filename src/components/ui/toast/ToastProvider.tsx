@@ -4,13 +4,14 @@
  * - Renders a fixed-position portal container to isolate alerts from page layout flow.
  * - Handles fallback and per-intent duration resolution for auto-dismiss timers.
  */
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { ToastContext } from './useToast'
 import { cn } from '../../../utils/cn'
-import type { ToastProps, ToastProviderProps, IdentifiedToastProps } from './toast.types'
-import { DEFAULT_DURATION, positionStyles } from './toast.utils'
+import type { ToastProps, ToastProviderProps, IdentifiedToastProps, ToastActionContext } from './toast.types'
+import { DEFAULT_DURATION, ERROR_DURATION, positionStyles } from './toast.utils'
 import { ToastItem } from './ToastItem'
+import './toast.css'
 
 /**
  * Context provider and floating portal container for managing toast notifications.
@@ -20,19 +21,39 @@ import { ToastItem } from './ToastItem'
  * @param props - Configuration props for default duration, position, and children.
  * @returns Provider wrapper with portal rendering for active toast items.
  */
-export const ToastProvider = ({ children, duration, position = 'bottom-right', className }: ToastProviderProps) => {
+export const ToastProvider = ({
+  children,
+  duration,
+  position = 'bottom-right',
+  icon: defaultIcon,
+  stack = false,
+  maxStack = 3,
+  showProgress: globalShowProgress = false,
+  transition: globalTransition,
+  renderToast,
+  className,
+  ...props
+}: ToastProviderProps) => {
   const [toasts, setToasts] = useState<IdentifiedToastProps[]>([])
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  // Automatically collapse stack if there is 1 or no toasts left
+  useEffect(() => {
+    if (toasts.length <= 1 && isExpanded) {
+      setIsExpanded(false)
+    }
+  }, [toasts.length, isExpanded])
 
   const durationConfig =
     (typeof duration == 'object' &&
       Object.assign(
         {
-          success: 5000,
-          error: 8000,
-          warning: 5000,
-          info: 5000,
-          default: 5000,
-          accent: 5000,
+          success: DEFAULT_DURATION,
+          error: ERROR_DURATION,
+          warning: DEFAULT_DURATION,
+          info: DEFAULT_DURATION,
+          default: DEFAULT_DURATION,
+          accent: DEFAULT_DURATION,
         },
         duration
       )) ||
@@ -53,11 +74,14 @@ export const ToastProvider = ({ children, duration, position = 'bottom-right', c
       color,
       title,
       duration: customDuration,
+      showProgress = globalShowProgress,
+      transition = globalTransition,
       loading = 'Processing...',
       success = 'Done!',
       error = 'Failed',
       action,
-      icon,
+      icon: customIcon,
+      preserveIntent = false,
     }: ToastProps) => {
       const id = Math.random().toString(36).substring(2, 9)
       let toastDuration = customDuration
@@ -92,59 +116,136 @@ export const ToastProvider = ({ children, duration, position = 'bottom-right', c
           color,
           title,
           duration: toastDuration,
+          showProgress,
+          transition,
           loading,
           success,
           error,
           action,
-          icon,
+          icon: customIcon || defaultIcon,
+          preserveIntent,
         },
       ])
 
+      let isCancelled = false
+
+      const controls: ToastActionContext = {
+        cancel: (options) => {
+          if (isCancelled) return
+          isCancelled = true
+
+          const targetIntent = options?.intent || initialIntent
+
+          const cancelDuration =
+            options?.duration ||
+            (typeof duration === 'number' && duration) ||
+            (typeof durationConfig === 'object' && durationConfig?.[targetIntent]) ||
+            DEFAULT_DURATION
+
+          updateToast(id, {
+            action: undefined,
+            intent: targetIntent,
+            message: options?.message,
+            title: options?.title,
+            duration: cancelDuration,
+            status: targetIntent === 'success' || targetIntent === 'error' ? targetIntent : undefined,
+          })
+        },
+      }
+
       if (!action) return id
 
-      action()
+      // duration priority:
+      // 1º provider duration if passed as number.
+      // 2º provider duration if passed as object; (success or error)
+      // 3º success (5000) and error (8000) if not customDuration passed (via the addToast)
+      // 4º the duration (customDuration) passed via the addToast
+      action(controls)
         .then(() => {
-          const successDuration = (typeof duration === 'object' && duration?.success) || 5000
+          if (isCancelled) return
+
+          let successDuration =
+            (typeof duration === 'number' && duration) ||
+            (typeof durationConfig === 'object' && durationConfig?.success) ||
+            DEFAULT_DURATION
+
+          if (typeof customDuration === 'number') {
+            successDuration = customDuration
+          }
 
           updateToast(id, {
             message: success,
-            intent: 'success',
+            intent: preserveIntent ? initialIntent : 'success',
             duration: successDuration,
             action: undefined,
+            status: 'success',
           })
         })
         .catch(() => {
-          const errorDuration = (typeof duration === 'object' && duration?.error) || 8000
+          if (isCancelled) return
+
+          let errorDuration =
+            (typeof duration === 'number' && duration) ||
+            (typeof durationConfig === 'object' && durationConfig?.error) ||
+            ERROR_DURATION
+
+          if (typeof customDuration === 'number') {
+            errorDuration = customDuration
+          }
 
           updateToast(id, {
             message: error,
-            intent: 'error',
+            intent: preserveIntent ? initialIntent : 'error',
             duration: errorDuration,
             action: undefined,
+            status: 'error',
           })
         })
 
       return id
     },
-    [durationConfig, duration, updateToast]
+    [durationConfig, duration, updateToast, defaultIcon, globalShowProgress, globalTransition]
+  )
+
+  const contextValue = useMemo(
+    () => ({
+      addToast,
+      removeToast,
+      updateToast,
+      position,
+      duration: duration || DEFAULT_DURATION,
+      stack,
+      maxStack,
+      isExpanded,
+      setIsExpanded,
+      toasts,
+    }),
+    [addToast, removeToast, updateToast, position, duration, isExpanded, stack, maxStack, toasts]
   )
 
   return (
-    <ToastContext.Provider value={{ addToast, removeToast, updateToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       {typeof document !== 'undefined' &&
         createPortal(
           <div
+            role="region"
+            aria-label="Notifications"
             className={cn(
-              'fixed p-4 sm:p-6 md:p-8 z-50 pointer-events-none flex flex-col w-full max-w-xs',
+              'fixed p-4 sm:p-6 md:p-8 z-50 pointer-events-none flex flex-col w-full max-w-sm',
               positionStyles[position],
-              position.includes('left') ? 'items-start' : 'items-end',
               className
             )}
+            {...props}
           >
-            {toasts.map((toast) => (
-              <ToastItem key={toast.id} toast={toast} onRemove={() => removeToast(toast.id)} />
-            ))}
+            {toasts.map((toast, index) => {
+              // Determine if this toast is within the visible stack limit
+              const isWithinStack = !stack || index >= toasts.length - maxStack || isExpanded
+
+              if (!isWithinStack) return null
+
+              return <ToastItem key={toast.id} toast={toast} index={index} renderToast={renderToast} />
+            })}
           </div>,
           document.body
         )}

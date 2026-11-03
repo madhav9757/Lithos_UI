@@ -4,42 +4,65 @@
  * - Manages auto-dismiss timers with pause-on-hover interaction.
  * - Implements ARIA live regions and automatic focus trapping for error alerts.
  */
-import { useState, useEffect, useRef, isValidElement, type ReactNode } from 'react'
+import { useState, useEffect, useRef, isValidElement, type ReactNode, type MouseEvent } from 'react'
 import { getContrastText } from '../../../utils/yiq'
 import { colors } from '../../../utils/colors'
 import { Button } from '../Button'
 import { IconClose } from '../icons/IconClose'
 import { cn } from '../../../utils/cn'
-import type { ToastItemProps } from './toast.types'
-import { DEFAULT_DURATION } from './toast.utils'
+import type { ToastItemProps, ToastIconConfig } from './toast.types'
+import { DEFAULT_DURATION, ICONS_MAP, TRANSITION_MAP } from './toast.utils'
 import { Spinner } from '../Spinner'
 import { Typography } from '../Typography'
-import { IconAlertCircle, IconCheck, IconInfo, IconAlertTriangle, IconBell } from '../icons/index'
-
-const ICONS_MAP = {
-  success: IconCheck,
-  info: IconInfo,
-  warning: IconAlertTriangle,
-  error: IconAlertCircle,
-  default: IconBell,
-  accent: IconBell,
-}
+import type { IconProps } from '../icons/icons.types'
+import { useToast } from './useToast'
+import { useSwipe } from '../../../core/hooks/useSwipe'
 
 /**
  * Individual toast notification tile component.
  * Renders an accessible alert panel with dynamic color contrast, pause-on-hover timers,
- * and automatic focus management for error notifications.
+ * progress indicator, and custom transition animations.
  *
  * @param props - Customization, item data payload, and removal callback props.
  * @returns Accessible toast notification element.
  */
-export const ToastItem = ({ toast, onRemove, className }: ToastItemProps) => {
-  const { message, intent = 'default', color, title, duration, label, action, icon } = toast
+export const ToastItem = ({ toast, renderToast, index = 0, className }: ToastItemProps) => {
+  const {
+    message,
+    intent = 'default',
+    color,
+    title,
+    duration,
+    label,
+    action,
+    icon,
+    showProgress = false,
+    transition,
+  } = toast
+  const { toasts, position, stack, isExpanded, setIsExpanded, removeToast } = useToast()
   const [isHovered, setIsHovered] = useState(false)
+  const [animated, setAnimated] = useState(false)
   const toastRef = useRef<HTMLDivElement | null>(null)
+
+  const totalToasts = toasts.length
+  const resolvedDuration = duration ?? DEFAULT_DURATION
 
   const [isTabHidden, setIsTabHidden] = useState(false)
   const isError = intent === 'error'
+
+  const onRemove = () => removeToast(toast.id)
+
+  const swipePlacement = position?.includes('left') ? 'left' : 'right'
+  const {
+    handlers,
+    style: swipeStyle,
+    isDragging,
+  } = useSwipe({
+    placement: swipePlacement,
+    open: true,
+    onDismiss: onRemove,
+    threshold: 70,
+  })
 
   // detect when the user moves to another tab
   useEffect(() => {
@@ -72,20 +95,49 @@ export const ToastItem = ({ toast, onRemove, className }: ToastItemProps) => {
     }
   }, [isError])
 
-  // Toast persists on hover; auto-dismiss timer pauses while hovered
-  useEffect(() => {
-    // if there's hover, the tab is hidden or there's a running action -> do not
-    // apply auto-dismiss
-    if (isHovered || isTabHidden || action) return
+  const isFrontItem = index === totalToasts - 1
 
-    let timeout = duration
-    if (!timeout) {
-      timeout = DEFAULT_DURATION
+  // If stack is enabled and not expanded, we assume items not at the front are background items.
+  // (In a standard queue, the front/newest item is the last rendered in the array).
+  const isBackgroundStacked = stack && !isExpanded && !isFrontItem
+
+  const remainingTimeRef = useRef(resolvedDuration)
+  const timerIdRef = useRef<number | null>(null)
+  const startTimeRef = useRef(Date.now())
+
+  // Sync remaining time when resolvedDuration changes (e.g., when an async action finishes and updates its duration)
+  useEffect(() => {
+    remainingTimeRef.current = resolvedDuration
+  }, [resolvedDuration])
+
+  useEffect(() => {
+    // If there's hover, the tab is hidden or there's a running action -> do not apply auto-dismiss
+    if (isHovered || isTabHidden || action || isBackgroundStacked) {
+      if (timerIdRef.current !== null) {
+        clearTimeout(timerIdRef.current)
+        timerIdRef.current = null
+
+        const elapsed = Date.now() - startTimeRef.current
+        remainingTimeRef.current = Math.max(0, remainingTimeRef.current - elapsed)
+      }
+      return
     }
 
-    const timer = setTimeout(onRemove, timeout)
-    return () => clearTimeout(timer)
-  }, [isHovered, onRemove, isError, duration, action, isTabHidden])
+    // Set start time for the current running slice
+    startTimeRef.current = Date.now()
+    const currentRemaining = remainingTimeRef.current || resolvedDuration
+
+    timerIdRef.current = setTimeout(onRemove, currentRemaining)
+
+    return () => {
+      if (timerIdRef.current) {
+        clearTimeout(timerIdRef.current)
+        timerIdRef.current = null
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHovered, isError, resolvedDuration, action, isTabHidden, isBackgroundStacked])
 
   const isAccent = intent === 'accent'
   const bgColor = color || (isAccent ? 'var(--lithos-accent)' : colors[intent as keyof typeof colors]) || colors.default
@@ -96,72 +148,188 @@ export const ToastItem = ({ toast, onRemove, className }: ToastItemProps) => {
   const livePriority = isError ? 'assertive' : 'polite'
   const role = isError ? 'alert' : 'status'
 
-  return (
+  // Calculate stack depth from the newest item (front)
+  // depth 0 is the front-most item (newest)
+  const depth = totalToasts - 1 - index
+  const isStackedMode = stack && !isExpanded
+
+  // default value should follow the 'bottom-right' position... so we set false
+  // if not found
+  const isTopPosition = position?.includes('top') ?? false
+  const isLeftPosition = position?.includes('left') ?? false
+
+  const stackOffsetStyle = isStackedMode
+    ? {
+        position: 'absolute' as const,
+        [isTopPosition ? 'top' : 'bottom']: isTopPosition ? '2rem' : '3rem',
+        [isLeftPosition ? 'left' : 'right']: '2rem',
+        translate: `0 ${depth * 8 * (isTopPosition ? 1 : -1)}px`,
+        scale: `${1 - depth * 0.04}`,
+        opacity: depth === 0 ? 1 : Math.max(0.6, 1 - depth * 0.15),
+      }
+    : {
+        position: 'relative' as const,
+      }
+
+  const defaultContent = (
     <>
-      <div
-        ref={toastRef}
-        role={role}
-        aria-live={livePriority}
-        tabIndex={isError ? -1 : undefined}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={cn(
-          'transition-[background-color] ease-in-out pointer-events-auto border-2 border-(--lithos-border) p-3 sm:p-4 mb-4 w-full flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] animate-[slide-up_0.3s_ease-out_forwards] rounded-(--lithos-radius)',
-          className
-        )}
+      <div className="flex items-center justify-between w-full mb-1">
+        <div className="flex items-center space-x-2">
+          <div className="shrink-0 flex items-center">
+            {(() => {
+              let currentState: keyof typeof ICONS_MAP = intent
+              let isFinishedAction = false
 
-        /* - Per-toast override keeps contrast local to the alert tile. */
-        style={{ backgroundColor: bgColor, color: textColor }}
-      >
-        <div className="flex items-center justify-between w-full mb-2">
-          <div className="flex items-center space-x-2">
-            <div className="shrink-0 flex items-center">
-              {(() => {
-                if (isLoading) return <Spinner size={18} />
-                if (isValidElement(icon)) return icon
-
-                if (typeof icon === 'function') {
-                  const CustomIcon = icon as (props: { size?: number; [key: string]: unknown }) => ReactNode
-                  return <CustomIcon size={18} aria-hidden={true} />
+              if (isLoading) {
+                currentState = 'loading'
+              } else if (!action) {
+                if (toast.status === 'success') {
+                  currentState = 'success'
+                  isFinishedAction = true
                 }
+                if (toast.status === 'error') {
+                  currentState = 'error'
+                  isFinishedAction = true
+                }
+              }
 
-                const FallbackIcon = ICONS_MAP[intent as keyof typeof ICONS_MAP] || IconBell
-                return <FallbackIcon size={18} aria-hidden={true} />
-              })()}
-            </div>
+              const isIconObject = icon && typeof icon === 'object' && !isValidElement(icon)
+              let candidateIcon: ToastIconConfig
 
-            {title && (
-              <Typography variant="h4" className="font-black text-lg uppercase tracking-tighter leading-none m-0">
-                {title}
-              </Typography>
-            )}
+              if (isIconObject) {
+                const iconMap = icon as Record<string, ToastIconConfig>
+                const defaultIcon = iconMap['default']
+
+                if (isLoading) {
+                  candidateIcon = iconMap['loading'] || iconMap[intent] || defaultIcon
+                } else if (isFinishedAction) {
+                  candidateIcon = iconMap[toast.status!] || defaultIcon
+                } else {
+                  candidateIcon = iconMap[intent] || defaultIcon
+                }
+              } else {
+                candidateIcon = icon
+              }
+
+              if (isValidElement(candidateIcon)) return candidateIcon
+
+              if (typeof candidateIcon === 'function') {
+                const CustomIcon = candidateIcon as (props: IconProps) => ReactNode
+                return <CustomIcon size={18} aria-hidden={true} />
+              }
+
+              if (isLoading && !candidateIcon) {
+                return <Spinner size={18} aria-hidden={true} />
+              }
+
+              const activeFallbackState = isLoading && !isIconObject ? 'loading' : currentState
+              const FallbackIcon = ICONS_MAP[activeFallbackState] || ICONS_MAP[intent] || ICONS_MAP.default
+
+              return <FallbackIcon size={18} aria-hidden={true} />
+            })()}
           </div>
 
-          <Button
-            onClick={onRemove}
-            className="shrink-0 ml-2"
-            aria-label={ariaLabel}
-            style={{
-              backgroundColor: bgColor,
-              borderColor: textColor,
-              color: textColor,
-              '--lithos-shadow': textColor,
-            }}
-          >
-            <IconClose aria-hidden="true" />
-          </Button>
-        </div>
-
-        <div className="w-full">
-          {typeof message === 'string' ? (
-            <Typography variant="p" className="text-sm leading-tight m-0 font-body">
-              {message}
+          {title && (
+            <Typography variant="h4" className="font-black text-base uppercase tracking-tighter leading-none m-0">
+              {title}
             </Typography>
-          ) : (
-            message
           )}
         </div>
+
+        <Button
+          onClick={onRemove}
+          className="shrink-0"
+          aria-label={ariaLabel}
+          style={{
+            backgroundColor: bgColor,
+            borderColor: textColor,
+            color: textColor,
+            '--lithos-shadow': textColor,
+          }}
+        >
+          <IconClose aria-hidden="true" />
+        </Button>
+      </div>
+
+      <div className="w-full">
+        {typeof message === 'string' ? (
+          <Typography variant="p" className="text-sm leading-tight m-0 font-body">
+            {message}
+          </Typography>
+        ) : (
+          message
+        )}
       </div>
     </>
+  )
+
+  // Resolve transition animation style (default to slide-down for top positions, slide-up for bottom)
+  const defaultTransition = isTopPosition ? 'slide-down' : 'slide-up'
+  const activeTransition = transition ?? defaultTransition
+  const transitionClass = TRANSITION_MAP[activeTransition] ?? TRANSITION_MAP[defaultTransition]
+
+  // Handle card click safely, ignoring clicks originating from interactive elements
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+    const isInteractive = target.closest('button, a, input, select, [role="button"]')
+
+    if (isInteractive) return
+
+    if (stack && totalToasts > 1) {
+      setIsExpanded((prev) => !prev)
+    }
+  }
+
+  return (
+    <div
+      ref={toastRef}
+      role={role}
+      aria-live={livePriority}
+      tabIndex={isError ? -1 : undefined}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handleClick}
+      onAnimationEnd={() => setAnimated(true)}
+      {...handlers}
+      className={cn(
+        'transition-[background-color,color,translate] ease-in-out pointer-events-auto touch-none select-none border-2 border-(--lithos-border) p-3 sm:p-3.5 w-full max-w-xs relative flex flex-col items-start shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)',
+        !isStackedMode && 'mb-4', // apply bottom margin when not in collapsed stack mode
+        !animated && transitionClass,
+        isDragging && 'cursor-grabbing',
+        className
+      )}
+
+      /* - Per-toast override keeps contrast local to the alert tile. */
+      style={{
+        backgroundColor: bgColor,
+        color: textColor,
+        zIndex: `calc(var(--lithos-z-toast, 55) + ${index})`,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
+        ...stackOffsetStyle,
+        ...swipeStyle,
+        transition: isDragging ? 'none' : 'transform 0.15s ease-in-out, opacity 0.15s ease-in-out',
+      }}
+    >
+      {renderToast ? renderToast(toast, { onRemove }) : defaultContent}
+
+      {showProgress && duration !== Infinity && (
+        <div
+          className="absolute bottom-0 left-0 h-1 w-full opacity-75 overflow-hidden"
+          style={{ backgroundColor: 'transparent' }}
+        >
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundColor: textColor,
+              transformOrigin: 'left',
+              animation: `shrink-progress ${duration}ms linear forwards`,
+              animationPlayState: isHovered || isTabHidden ? 'paused' : 'running',
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }
