@@ -125,10 +125,18 @@ export const DatePickerInput = ({
 
   const handleBlur = () => {
     isFocusedRef.current = false
-    if (value) {
-      setInputValue(formattedDisplay)
-    } else if (inputValue.trim() === '') {
+    if (inputValue.trim() === '') {
       setInputValue('')
+      setValue(null)
+    } else {
+      const parsed = mode === 'range' ? parseDateRangeString(inputValue) : parseDateString(inputValue)
+      if (parsed) {
+        setValue(parsed)
+      } else if (value) {
+        setInputValue(formattedDisplay)
+      } else {
+        setInputValue('')
+      }
     }
   }
 
@@ -166,7 +174,7 @@ export const DatePickerInput = ({
     }
   }
 
-  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'Select date range' : 'MM/DD/YYYY')
+  const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'Select date range' : 'DD/MM/YYYY')
 
   return (
     <div

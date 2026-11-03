@@ -38,7 +38,7 @@ export const DateField = ({
   value: controlledValue,
   defaultValue = null,
   onChange,
-  placeholder = 'MM/DD/YYYY',
+  placeholder = 'DD/MM/YYYY',
   disabled = false,
   invalid = false,
   clearable = false,
@@ -58,10 +58,10 @@ export const DateField = ({
 
   const formattedDisplay = useMemo(() => {
     if (!selectedDate || !isValidDate(selectedDate)) return ''
-    const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
     const day = String(selectedDate.getDate()).padStart(2, '0')
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
     const year = selectedDate.getFullYear()
-    return `${month}/${day}/${year}`
+    return `${day}/${month}/${year}`
   }, [selectedDate])
 
   const [inputValue, setInputValue] = useState(formattedDisplay)
@@ -131,10 +131,24 @@ export const DateField = ({
 
   const handleInputBlur = () => {
     isFocusedRef.current = false
-    if (selectedDate) {
-      setInputValue(formattedDisplay)
-    } else if (inputValue.trim() === '') {
+    if (inputValue.trim() === '') {
       setInputValue('')
+      if (!isControlled) {
+        setLocalValue(null)
+      }
+      onChange?.(null)
+    } else {
+      const parsed = parseDateString(inputValue)
+      if (parsed) {
+        if (!isControlled) {
+          setLocalValue(parsed)
+        }
+        onChange?.(parsed)
+      } else if (selectedDate) {
+        setInputValue(formattedDisplay)
+      } else {
+        setInputValue('')
+      }
     }
     onBlur?.()
   }

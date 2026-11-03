@@ -83,6 +83,27 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(onChange).toHaveBeenCalledWith(null)
   })
 
+  it('supports typing and deleting character by character in DatePickerInput', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DatePicker onChange={onChange} />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '25')
+    expect(input).toHaveValue('25/')
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveValue('25')
+
+    await user.type(input, '102026')
+    expect(input).toHaveValue('25/10/2026')
+    expect(onChange).toHaveBeenCalledWith(expect.any(Date))
+
+    await user.clear(input)
+    expect(input).toHaveValue('')
+    expect(onChange).toHaveBeenCalledWith(null)
+  })
+
   it('selects a date and closes popover in single mode', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
@@ -320,9 +341,9 @@ describe('DatePicker Component - Dual Month Range Variant', () => {
 
 describe('DateField Component', () => {
   it('renders fieldset with label, input, and calendar button', () => {
-    render(<DateField label="Controlled picker" placeholder="MM/DD/YYYY" />)
+    render(<DateField label="Controlled picker" placeholder="DD/MM/YYYY" />)
     expect(screen.getByText('Controlled picker')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('MM/DD/YYYY')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('DD/MM/YYYY')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Open calendar/i })).toBeInTheDocument()
   })
 
@@ -332,7 +353,7 @@ describe('DateField Component', () => {
     render(<DateField label="Controlled picker" onChange={onChange} />)
 
     const input = screen.getByRole('textbox')
-    await user.type(input, '10/25/2026')
+    await user.type(input, '25/10/2026')
 
     expect(onChange).toHaveBeenCalledWith(expect.any(Date))
     const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
@@ -341,6 +362,26 @@ describe('DateField Component', () => {
     expect(calledDate.getDate()).toBe(25)
     expect(calledDate.getMonth()).toBe(9)
     expect(calledDate.getFullYear()).toBe(2026)
+  })
+
+  it('supports typing and deleting character by character in DateField', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(<DateField label="Controlled picker" onChange={onChange} />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '25')
+    expect(input).toHaveValue('25/')
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveValue('25')
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveValue('2')
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveValue('')
+    expect(onChange).toHaveBeenCalledWith(null)
   })
 
   it('updates input immediately when date is clicked in calendar', async () => {

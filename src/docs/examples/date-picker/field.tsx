@@ -6,7 +6,7 @@ export const ControlledDateFieldExample = () => {
 
   return (
     <div className="flex justify-center py-4 w-full">
-      <DateField label="Controlled picker" placeholder="MM/DD/YYYY" value={date} onChange={setDate} clearable />
+      <DateField label="Controlled picker" placeholder="DD/MM/YYYY" value={date} onChange={setDate} clearable />
     </div>
   )
 }

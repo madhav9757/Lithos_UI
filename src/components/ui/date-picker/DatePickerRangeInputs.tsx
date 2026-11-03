@@ -56,10 +56,18 @@ export const DatePickerRangeInputs = ({
 
   const handleFromBlur = () => {
     fromFocusedRef.current = false
-    if (range.from) {
-      setFromText(formatDateNumeric(range.from))
-    } else if (fromText.trim() === '') {
+    if (fromText.trim() === '') {
       setFromText('')
+      setValue({ from: null, to: range.to })
+    } else {
+      const parsed = parseDateString(fromText)
+      if (parsed) {
+        setValue({ from: parsed, to: range.to })
+      } else if (range.from) {
+        setFromText(formatDateNumeric(range.from))
+      } else {
+        setFromText('')
+      }
     }
   }
 
@@ -83,10 +91,18 @@ export const DatePickerRangeInputs = ({
 
   const handleToBlur = () => {
     toFocusedRef.current = false
-    if (range.to) {
-      setToText(formatDateNumeric(range.to))
-    } else if (toText.trim() === '') {
+    if (toText.trim() === '') {
       setToText('')
+      setValue({ from: range.from, to: null })
+    } else {
+      const parsed = parseDateString(toText)
+      if (parsed) {
+        setValue({ from: range.from, to: parsed })
+      } else if (range.to) {
+        setToText(formatDateNumeric(range.to))
+      } else {
+        setToText('')
+      }
     }
   }
 

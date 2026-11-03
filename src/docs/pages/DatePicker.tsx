@@ -186,11 +186,11 @@ export const DatePickerDoc = () => {
           Use the turnkey DatePicker for immediate usage or compound subcomponents for full layout control:
         </p>
         <CodeViewer
-          code={`<DatePicker mode="range" value={range} onChange={setRange}>
-  <DatePickerInput placeholder="Select dates" />
+          code={`<DatePicker>
+  <DatePickerInput>
   <DatePickerContent>
     <DatePickerPresets />
-    <Calendar mode="range" />
+    <Calendar/>
   </DatePickerContent>
 </DatePicker>`}
           language="tsx"
