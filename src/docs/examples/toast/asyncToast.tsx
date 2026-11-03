@@ -22,7 +22,6 @@ export const AsyncToastExample = () => {
       loading: 'Uploading file...',
       success: 'File uploaded!',
       error: 'Upload failed.',
-      preserveIntent: true,
       action: !withError ? mockSuccessfulFetch : mockFailedFetch,
     })
   }
