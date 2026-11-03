@@ -5,6 +5,8 @@
  * - Contrast integrity: custom hex colors automatically route background and contrast foreground text through the YIQ engine.
  */
 import type { ComponentPropsWithRef, ReactNode, ElementType } from 'react'
+import { useContext, useEffect, useId, useMemo, useState } from 'react'
+import { FieldContext } from '../../core/FieldContext'
 import { cn, type LithosClass } from '../../utils/cn'
 import { getContrastText } from '../../utils/yiq'
 import { isHexColor, type HexColor } from '../../core/types'
@@ -105,5 +107,68 @@ export const Typography = <T extends TypographyComponent = 'p'>({
     >
       {children}
     </Component>
+  )
+}
+
+export interface FieldProps extends ComponentPropsWithRef<'div'> {
+  /** ID of the labeled control. Generated automatically when omitted. */
+  controlId?: string
+}
+
+/** Groups one control with its Typography label and optional description. */
+export const Field = ({ controlId, className, children, ...props }: FieldProps) => {
+  const generatedId = useId()
+  const id = controlId ?? generatedId
+  const [hasDescription, setHasDescription] = useState(false)
+  const value = useMemo(
+    () => ({
+      controlId: id,
+      descriptionId: `${id}-description`,
+      hasDescription,
+      setHasDescription,
+    }),
+    [id, hasDescription]
+  )
+
+  return (
+    <FieldContext.Provider value={value}>
+      <div {...props} className={cn('w-full', className)}>
+        {children}
+      </div>
+    </FieldContext.Provider>
+  )
+}
+
+/** Native label using the shared Typography label scale. */
+export const FieldLabel = ({ className, htmlFor, ...props }: Omit<ComponentPropsWithRef<'label'>, 'color'>) => {
+  const field = useContext(FieldContext)
+  return (
+    <Typography
+      {...props}
+      as="label"
+      variant="label"
+      htmlFor={htmlFor ?? field?.controlId}
+      className={cn('mb-2 block', className)}
+    />
+  )
+}
+
+/** Helper or error text linked automatically to the control inside Field. */
+export const FieldDescription = ({ className, ...props }: Omit<ComponentPropsWithRef<'p'>, 'id' | 'color'>) => {
+  const field = useContext(FieldContext)
+  const setHasDescription = field?.setHasDescription
+  useEffect(() => {
+    setHasDescription?.(true)
+    return () => setHasDescription?.(false)
+  }, [setHasDescription])
+
+  return (
+    <Typography
+      {...props}
+      as="p"
+      variant="small"
+      id={field?.descriptionId}
+      className={cn('mt-2 text-(--lithos-text)/70', className)}
+    />
   )
 }
