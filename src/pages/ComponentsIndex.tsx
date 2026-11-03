@@ -45,6 +45,7 @@ import {
   IconSearch,
 } from '../components/ui/icons'
 import { Input } from '../components/ui/Input'
+import { Textarea } from '../components/ui/Textarea'
 import { Kbd, KbdGroup } from '../components/ui/Kbd'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table'
@@ -299,6 +300,17 @@ const getComponentPreview = (name: string) => {
       )
     case 'Input':
       return <Input placeholder="Input" className="w-24 pointer-events-none" />
+    case 'Textarea':
+      return (
+        <Textarea
+          aria-label="Textarea preview"
+          placeholder="Describe your idea..."
+          rows={2}
+          readOnly
+          resize="none"
+          className="w-48 pointer-events-none"
+        />
+      )
     case 'Kbd':
       return (
         <KbdGroup>
