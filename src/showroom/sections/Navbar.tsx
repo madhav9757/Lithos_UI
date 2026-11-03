@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { RouteLink } from '../../components/site/RouteLink'
 import { Button } from '../../components/ui/Button'
 import { IconMenu, IconClose, IconMoon, IconSun, IconGithub } from '../../components/ui/icons'
 import { useTheme } from '../../core/hooks/useTheme'
@@ -30,22 +30,28 @@ export const Navbar = () => {
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-1.5 md:py-2">
           {/* - Brand block flex-1 balances the center lane. */}
           <div className="flex items-center justify-start lg:flex-1">
-            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center">
+            <RouteLink
+              to="/"
+              className="flex items-center"
+              importRoute={() => import('../Index')}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
               <LithosLogo className="h-8 md:h-9" />
-            </Link>
+            </RouteLink>
           </div>
 
           {/* - Center lane is reserved for wayfinding and sized exactly to its content. */}
           <nav className="hidden items-center justify-center lg:flex lg:flex-none">
             {LITHOS_UI_LINKS.map((link) => (
-              <Link
+              <RouteLink
                 key={link.label}
                 to={link.to}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="mx-4 font-black uppercase tracking-tighter leading-none text-(--lithos-text) transition-all duration-150 ease-out hover:text-(--lithos-accent) cursor-pointer"
+                importRoute={link.importRoute}
               >
                 {link.label}
-              </Link>
+              </RouteLink>
             ))}
           </nav>
 
@@ -90,7 +96,7 @@ export const Navbar = () => {
       {isMenuOpen && (
         <nav className="fixed inset-0 z-40 pt-32 pb-6 px-6 bg-(--lithos-strata) overflow-y-auto flex flex-col justify-start lg:hidden">
           {LITHOS_UI_LINKS.map((link) => (
-            <Link
+            <RouteLink
               key={link.label}
               to={link.to}
               onClick={() => {
@@ -98,9 +104,10 @@ export const Navbar = () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
               className="block w-full text-left text-4xl sm:text-5xl font-black uppercase tracking-tighter text-(--lithos-text) opacity-80 hover:opacity-100 hover:text-(--lithos-text) hover:translate-x-2 mb-8 cursor-pointer transition-all duration-150"
+              importRoute={link.importRoute}
             >
               {link.label}
-            </Link>
+            </RouteLink>
           ))}
           <div className="mt-auto flex items-center justify-between">
             <Button

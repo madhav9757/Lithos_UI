@@ -1,4 +1,5 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { RouteLink } from '../components/site/RouteLink'
 import { templateCategories } from '../components/templates/registry'
 import { ComingSoon } from '../showroom/sections/ComingSoon'
 import { PreviewBlock } from '../components/ui/PreviewBlock'
@@ -57,12 +58,13 @@ export const TemplateCategoryPage = () => {
       <main className="pt-24 min-h-screen bg-(--lithos-bg) text-(--lithos-text)">
         <section className="border-b-2 border-(--lithos-border) bg-(--lithos-bg)">
           <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
-            <Link
+            <RouteLink
               to="/templates"
               className="inline-flex items-center text-sm font-bold uppercase tracking-widest text-(--lithos-accent) mb-8 hover:opacity-80"
+              importRoute={() => import('./TemplatesIndex')}
             >
               ← Back to Catalog
-            </Link>
+            </RouteLink>
             <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter leading-none md:text-7xl lg:text-8xl text-(--lithos-text)">
               {category.title}
             </h1>

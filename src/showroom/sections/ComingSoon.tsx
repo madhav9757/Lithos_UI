@@ -11,9 +11,9 @@
  * - Button shadow fixed (no translate on interaction)
  */
 
-import { useNavigate } from 'react-router-dom'
 import { KineticGrid } from '../../components/ui/KineticGrid'
 import { Button } from '../../components/ui/Button'
+import { RouteButton } from '../../components/site/RouteButton'
 
 interface ComingSoonProps {
   eyebrow?: string
@@ -36,7 +36,6 @@ export const ComingSoon = ({
   primaryAction = { label: 'Go to Docs', to: '/docs' },
   secondaryAction = { label: 'Contribute Code', href: 'https://github.com/lithosui/Lithos_UI/issues' },
 }: ComingSoonProps) => {
-  const navigate = useNavigate()
   return (
     <KineticGrid baseOpacity="opacity-10" className="min-h-screen bg-(--lithos-bg) text-(--lithos-text) px-4">
       <div className="text-center max-w-5xl mx-auto w-full">
@@ -57,9 +56,14 @@ export const ComingSoon = ({
         {/* Zero-Gap enforcement: stacking behavior controlled by explicit margins */}
         <div className="mt-8 flex flex-col sm:flex-row justify-center items-center">
           {/* Return button */}
-          <Button variant="primary" className="mb-4 sm:mb-0 sm:mr-4" onClick={() => navigate(primaryAction.to)}>
+          <RouteButton
+            variant="primary"
+            className="mb-4 sm:mb-0 sm:mr-4"
+            to={primaryAction.to}
+            importRoute={() => import('../Index')}
+          >
             {primaryAction.label}
-          </Button>
+          </RouteButton>
 
           {/* Contribute button */}
           <Button variant="secondary" onClick={() => window.open(secondaryAction.href, '_blank')}>

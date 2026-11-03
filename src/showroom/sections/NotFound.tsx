@@ -11,7 +11,7 @@
  * - Button shadow fixed (no translate on interaction)
  */
 
-import { Link } from 'react-router-dom'
+import { RouteLink } from '../../components/site/RouteLink'
 import { KineticGrid } from '../../components/ui/KineticGrid'
 
 export const NotFound = () => (
@@ -33,9 +33,13 @@ export const NotFound = () => (
       {/* Vertical spacer for button positioning */}
       <div className="mt-8">
         {/* Return to Base button - hard brutalist styling */}
-        <Link to="/" className="bg-(--lithos-accent) text-(--lithos-accent-text) lithos-click">
+        <RouteLink
+          to="/"
+          className="bg-(--lithos-accent) text-(--lithos-accent-text) lithos-click"
+          importRoute={() => import('../Index')}
+        >
           Return to Base
-        </Link>
+        </RouteLink>
       </div>
     </div>
   </KineticGrid>

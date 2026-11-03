@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { RouteLink } from '../../components/site/RouteLink'
 
 export const Introduction = () => {
   return (
@@ -31,12 +31,13 @@ export const Introduction = () => {
         </p>
         <p className="mb-4 text-lg md:text-xl text-(--lithos-text) max-w-3xl font-body">
           Follow the{' '}
-          <Link
+          <RouteLink
             to="/docs/installation"
             className="text-lg md:text-xl underline decoration-2 underline-offset-4 decoration-inherit hover:decoration-(--lithos-accent) transition-colors duration-200"
+            importRoute={() => import('./Installation')}
           >
             Installation Guide
-          </Link>{' '}
+          </RouteLink>{' '}
           to get started.
         </p>
       </header>
@@ -49,7 +50,6 @@ export const Introduction = () => {
           className="absolute inset-0 w-full h-full"
           src="https://www.youtube.com/embed/9ORW8yjorJE?si=rO7sIYy9tUHkcZPa"
           title="YouTube video player"
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen

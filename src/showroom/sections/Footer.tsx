@@ -5,9 +5,9 @@
  * - Couples the theme toggle with toast feedback so state changes are visible and immediate.
  */
 
-import { Link } from 'react-router-dom'
 import { IconHeart } from '../../components/ui/icons'
 import { Button } from '../../components/ui/Button'
+import { RouteLink } from '../../components/site/RouteLink'
 import { LITHOS_UI_LINKS } from '../../core/lithos.utils'
 
 export const Footer = () => {
@@ -35,13 +35,14 @@ export const Footer = () => {
         {/* - Navigation stays vertical so the exit path reads as a stack, not a menu bar. */}
         <div className="mt-12 flex w-full flex-col lg:mt-0 lg:w-1/4 space-y-4">
           {LITHOS_UI_LINKS.map((link) => (
-            <Link
+            <RouteLink
               key={link.to}
               to={link.to}
+              importRoute={link.importRoute}
               className="text-2xl space-y-4 font-black uppercase tracking-tighter leading-none md:text-4xl cursor-pointer text-(--lithos-accent-text)"
             >
               {link.label}
-            </Link>
+            </RouteLink>
           ))}
         </div>
 

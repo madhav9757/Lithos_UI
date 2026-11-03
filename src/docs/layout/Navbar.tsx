@@ -1,57 +1,16 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
+import { RouteLink } from '../../components/site/RouteLink'
 import { getUnreleasedComponentInfo } from '../../core/unreleasedRegistry'
+import { LITHOS_UI_LINKS, gettingStartedPages, componentPages } from '../../core/lithos.utils'
 import { IconMenu, IconClose, IconMoon, IconSun, IconGithub } from '../../components/ui/icons'
-import { LITHOS_UI_LINKS } from '../../core/lithos.utils'
 import { useTheme } from '../../core/hooks/useTheme'
 import { LithosLogo } from '../../components/ui/LithosLogo'
 
 const groupedLinks = [
-  {
-    category: 'Getting Started',
-    links: [
-      { label: 'Introduction', href: '/docs' },
-      { label: 'Installation', href: '/docs/installation' },
-    ],
-  },
-  {
-    category: 'Components',
-    links: [
-      { label: 'Accordion', href: '/docs/accordion' },
-      { label: 'Alert', href: '/docs/alert' },
-      { label: 'Avatar', href: '/docs/avatar' },
-      { label: 'Badge', href: '/docs/badge' },
-      { label: 'Breadcrumb', href: '/docs/breadcrumb' },
-      { label: 'Button', href: '/docs/button' },
-      { label: 'Calendar', href: '/docs/calendar' },
-      { label: 'Card', href: '/docs/card' },
-      { label: 'Carousel', href: '/docs/carousel' },
-      { label: 'Checkbox', href: '/docs/checkbox' },
-      { label: 'Command', href: '/docs/command' },
-      { label: 'Dialog', href: '/docs/dialog' },
-      { label: 'Drawer', href: '/docs/drawer' },
-      { label: 'Dropdown', href: '/docs/dropdown' },
-      { label: 'Icons', href: '/docs/icons' },
-      { label: 'Input', href: '/docs/input' },
-      { label: 'Kbd', href: '/docs/kbd' },
-      { label: 'Marquee', href: '/docs/marquee' },
-      { label: 'Pagination', href: '/docs/pagination' },
-      { label: 'Popover', href: '/docs/popover' },
-      { label: 'Select', href: '/docs/select' },
-      { label: 'Sidebar', href: '/docs/sidebar' },
-      { label: 'Skeleton', href: '/docs/skeleton' },
-      { label: 'Slider', href: '/docs/slider' },
-      { label: 'Spinner', href: '/docs/spinner' },
-      { label: 'Table', href: '/docs/table' },
-      { label: 'Tabs', href: '/docs/tabs' },
-      { label: 'Toast', href: '/docs/toast' },
-      { label: 'Toggle', href: '/docs/toggle' },
-      { label: 'Tooltip', href: '/docs/tooltip' },
-      { label: 'Typography', href: '/docs/typography' },
-    ].sort((a, b) => a.label.localeCompare(b.label)),
-  },
+  { category: 'Getting Started', links: gettingStartedPages },
+  { category: 'Components', links: componentPages },
 ]
 
 export const DocsNavbar = () => {
@@ -68,21 +27,22 @@ export const DocsNavbar = () => {
     >
       <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-1.5 md:py-2">
         <div className="flex items-center justify-start lg:w-1/3">
-          <Link to="/" className="flex items-center">
+          <RouteLink to="/" importRoute={() => import('../../showroom/Index')} className="flex items-center">
             <LithosLogo className="h-8 md:h-9" />
-          </Link>
+          </RouteLink>
         </div>
 
         {/* - Center lane for main wayfinding */}
         <nav className="hidden items-center justify-center lg:flex lg:w-1/3">
           {LITHOS_UI_LINKS.map((link) => (
-            <Link
+            <RouteLink
               key={link.label}
               to={link.to}
-              className="mx-4 font-black uppercase tracking-tighter leading-none text-(--lithos-text) transition-all duration-150 ease-out hover:text-(--lithos-accent) cursor-pointer"
+              importRoute={link.importRoute}
+              className="mx-4 font-black uppercase tracking-tighter leading-none text-(--lithos-text) transition-colors duration-150 ease-out hover:text-(--lithos-accent) cursor-pointer"
             >
               {link.label}
-            </Link>
+            </RouteLink>
           ))}
         </nav>
 
@@ -128,14 +88,15 @@ export const DocsNavbar = () => {
           {/* Main Top-level Links */}
           <div className="mb-8 border-b-2 border-(--lithos-border) pb-4">
             {LITHOS_UI_LINKS.map((link) => (
-              <Link
+              <RouteLink
                 key={link.label}
                 to={link.to}
+                importRoute={link.importRoute}
                 onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-left text-4xl sm:text-5xl font-black uppercase tracking-tighter text-(--lithos-text) opacity-80 hover:opacity-100 hover:text-(--lithos-text) hover:translate-x-2 mb-6 cursor-pointer transition-all duration-150"
+                className="block w-full text-left text-4xl sm:text-5xl font-black uppercase tracking-tighter text-(--lithos-text) opacity-80 hover:opacity-100 hover:text-(--lithos-text) hover:translate-x-2 mb-6 cursor-pointer transition-[opacity,color,translate] duration-150"
               >
                 {link.label}
-              </Link>
+              </RouteLink>
             ))}
           </div>
 
@@ -144,6 +105,7 @@ export const DocsNavbar = () => {
             {groupedLinks.map((group) => (
               <div key={group.category} className="mb-8">
                 <button
+                  type="button"
                   onClick={() => setExpandedCategory(expandedCategory === group.category ? null : group.category)}
                   className="flex w-full items-center justify-between border-b-2 border-(--lithos-border) pb-2 mb-4 text-left text-3xl sm:text-4xl font-black uppercase tracking-tighter text-(--lithos-text) cursor-pointer"
                 >
@@ -156,16 +118,19 @@ export const DocsNavbar = () => {
                 {/* Accordion Content */}
                 {expandedCategory === group.category && (
                   <div className="pl-2 flex flex-col mt-4">
-                    {group.links.map((link) => {
-                      const unreleased = getUnreleasedComponentInfo(link.label)
+                    {group.links.map((page) => {
+                      const unreleased = getUnreleasedComponentInfo(page.path)
+
                       return (
-                        <Link
-                          key={link.label}
-                          to={link.href}
+                        <RouteLink
+                          key={page.label}
+                          to={page.to}
+                          importRoute={page.loader}
+                          rootMargin="35px"
                           onClick={() => setIsMenuOpen(false)}
-                          className="flex items-center justify-between w-full text-left text-xl sm:text-2xl font-bold uppercase tracking-tight text-(--lithos-text) opacity-80 hover:opacity-100 hover:text-(--lithos-text) hover:translate-x-2 mb-4 cursor-pointer transition-all duration-150"
+                          className="flex items-center justify-between w-full text-left text-xl sm:text-2xl font-bold uppercase tracking-tight text-(--lithos-text) opacity-80 hover:opacity-100 hover:text-(--lithos-text) hover:translate-x-2 mb-4 cursor-pointer transition-[opacity,color,translate] duration-150"
                         >
-                          <span>{link.label}</span>
+                          <span>{page.label}</span>
                           {unreleased && (
                             <Badge
                               intent="accent"
@@ -175,7 +140,7 @@ export const DocsNavbar = () => {
                               {unreleased.badgeLabel}
                             </Badge>
                           )}
-                        </Link>
+                        </RouteLink>
                       )
                     })}
                   </div>

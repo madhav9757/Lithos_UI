@@ -6,11 +6,25 @@
  */
 import { useToast } from './toast/useToast'
 import { useTheme } from '../../core/hooks/useTheme'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx'
+import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typescript'
+import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript'
+import css from 'react-syntax-highlighter/dist/esm/languages/prism/css'
+import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash'
+import json from 'react-syntax-highlighter/dist/esm/languages/prism/json'
+import okaidia from 'react-syntax-highlighter/dist/esm/styles/prism/okaidia'
 import { cn, type LithosClass } from '../../utils/cn'
 import { Button } from './Button'
 import { IconCopy } from './icons'
+
+// Register only the required languages to keep bundle size minimal
+SyntaxHighlighter.registerLanguage('tsx', tsx)
+SyntaxHighlighter.registerLanguage('typescript', typescript)
+SyntaxHighlighter.registerLanguage('javascript', javascript)
+SyntaxHighlighter.registerLanguage('css', css)
+SyntaxHighlighter.registerLanguage('bash', bash)
+SyntaxHighlighter.registerLanguage('json', json)
 
 export interface CodeViewerProps {
   code: string

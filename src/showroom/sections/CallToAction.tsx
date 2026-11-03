@@ -28,10 +28,7 @@ export const CallToAction = () => {
             6 ${accentColor},
             7 ${accentColor},
             8 ${accentColor},
-            9 ${accentColor},
-            10 ${accentColor},
-            11 ${accentColor},
-            12 ${accentColor};
+            9 ${accentColor};
         }
 
         .nabla-outline {

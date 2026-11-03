@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { RouteLink } from '../components/site/RouteLink'
 import { Navbar } from '../showroom/sections/Navbar'
 import { Footer } from '../showroom/sections/Footer'
 import { Toggle } from '../components/ui/Toggle'
@@ -54,6 +54,9 @@ import { TooltipTrigger } from '../components/ui/tooltip/TooltipTrigger'
 import { TooltipContent } from '../components/ui/tooltip/TooltipContent'
 import card1 from '../docs/assets/images/card1.webp'
 
+import { componentPages, type DocPageConfig } from '../core/lithos.utils'
+import { useMediaQuery } from '../core/hooks/useMediaQuery'
+
 const SIDEBAR_ITEMS = [
   { id: 'home', label: 'Home', icon: IconHome },
   { id: 'projects', label: 'Projects', icon: IconFolder },
@@ -66,6 +69,8 @@ const FRAMEWORK_OPTIONS = [
   { label: 'Vue.js', value: 'vue' },
   { label: 'Svelte', value: 'svelte' },
 ]
+
+const slideClass = 'h-[3.5rem] flex items-center justify-center font-black text-sm'
 
 const TogglePreview = () => {
   const [on, setOn] = useState(true)
@@ -94,144 +99,6 @@ const AlertPreview = () => {
     </div>
   )
 }
-
-const CarouselPreview = () => {
-  const slideClass = 'h-[3.5rem] flex items-center justify-center font-black text-sm'
-
-  return (
-    <div className="w-full h-full scale-[0.9] pointer-events-none">
-      <Carousel title="LITHOS UI!" hidePagination loop playInfinite playInterval={3000}>
-        <CarouselSlide className={slideClass}>Slide 1</CarouselSlide>
-        <CarouselSlide className={slideClass}>Slide 2</CarouselSlide>
-        <CarouselSlide className={slideClass}>Slide 3</CarouselSlide>
-      </Carousel>
-    </div>
-  )
-}
-
-const DialogPreview = () => (
-  <div className="w-[130%] scale-[0.45] origin-center pointer-events-none border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) shadow-[6px_6px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)">
-    <div className="flex items-center justify-between p-4 border-b-2 border-(--lithos-border)">
-      <p className="font-black uppercase tracking-tight leading-none m-0 text-lg">Confirm</p>
-      <IconClose aria-hidden="true" className="w-4 h-4" />
-    </div>
-    <div className="p-4 font-body text-sm opacity-70">Delete this item?</div>
-    <div className="flex items-center justify-end p-4 border-t-2 border-(--lithos-border)">
-      <Button className="text-sm">Delete</Button>
-    </div>
-  </div>
-)
-
-const DropdownPreview = () => (
-  <Dropdown placement="bottom-start">
-    <DropdownTrigger asChild>
-      <Button variant="accent">My account</Button>
-    </DropdownTrigger>
-
-    <DropdownContent className="w-56">
-      <DropdownGroup label="Settings">
-        <DropdownItem onClick={() => console.log('Go to profile')}>Profile</DropdownItem>
-
-        <DropdownItem onClick={() => console.log('Go to plan')}>Plan</DropdownItem>
-
-        <DropdownItem disabled className="flex flex-col items-start space-y-2">
-          <span>Integrations</span>
-          <span className="opacity-60">(Coming soon)</span>
-        </DropdownItem>
-      </DropdownGroup>
-
-      <DropdownSeparator />
-
-      <DropdownSub
-        trigger={
-          <span className="flex items-center justify-between w-full">
-            Preferences <span>▶</span>
-          </span>
-        }
-      >
-        <DropdownItem>Dark Mode</DropdownItem>
-        <DropdownItem>Language</DropdownItem>
-      </DropdownSub>
-
-      <DropdownSeparator />
-
-      <DropdownGroup>
-        <DropdownItem
-          onClick={() => console.log('Log out')}
-          className="text-red-500 hover:bg-red-500/5 focus:bg-red-500/5"
-        >
-          Log out
-        </DropdownItem>
-      </DropdownGroup>
-    </DropdownContent>
-  </Dropdown>
-)
-
-const PopoverPreview = () => (
-  <div className="w-full scale-[0.6] origin-center flex flex-col items-center pointer-events-none mt-2">
-    <Popover open={true} modal={false}>
-      <PopoverTrigger asChild>
-        <Button className="mb-2">Open</Button>
-      </PopoverTrigger>
-      <PopoverContent
-        portaled={false}
-        className="p-3 w-32 border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius) z-0"
-      >
-        <p className="font-bold text-sm m-0 leading-tight">Settings</p>
-        <p className="text-[10px] opacity-70 m-0 leading-tight mt-1">Preferences.</p>
-      </PopoverContent>
-    </Popover>
-  </div>
-)
-
-const DrawerPreview = () => (
-  <div className="w-full h-full scale-[0.7] origin-center flex items-end justify-center pointer-events-none pb-4">
-    <div className="w-[80%] h-24 border-2 border-(--lithos-border) bg-(--lithos-surface) shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-t-(--lithos-radius) flex flex-col items-center pt-2 px-4 relative">
-      <div className="w-8 h-1 bg-(--lithos-border) rounded-full mb-2 opacity-50" />
-      <div className="w-full h-4 bg-(--lithos-border)/10 rounded-sm mb-2" />
-      <div className="w-3/4 h-4 bg-(--lithos-border)/10 rounded-sm" />
-    </div>
-  </div>
-)
-
-const CommandPreview = () => (
-  <div className="w-[120%] scale-[0.5] origin-center pointer-events-none">
-    <Command className="h-48 border-2 border-(--lithos-border) shadow-[4px_4px_0_0_var(--lithos-shadow)]">
-      <CommandInput placeholder="Search..." />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>Calendar</CommandItem>
-          <CommandItem>Search Emoji</CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </Command>
-  </div>
-)
-
-const TabsPreview = () => (
-  <div className="w-[120%] scale-[0.55] origin-center pointer-events-none mt-2">
-    <Tabs defaultValue="1">
-      <TabsList>
-        <TabsTrigger value="1">Tab 1</TabsTrigger>
-        <TabsTrigger value="2">Tab 2</TabsTrigger>
-      </TabsList>
-      <TabsContent value="1">Content 1</TabsContent>
-      <TabsContent value="2">Content 2</TabsContent>
-    </Tabs>
-  </div>
-)
-
-const TooltipPreview = () => (
-  <div className="w-full scale-[0.7] origin-center flex justify-center pointer-events-none mt-10">
-    <Tooltip initialOpen={true} placement="top">
-      <TooltipTrigger asChild>
-        <Button>Hover Me</Button>
-      </TooltipTrigger>
-      <TooltipContent className="z-0">Tooltips provide context</TooltipContent>
-    </Tooltip>
-  </div>
-)
 
 const SidebarPreview = () => {
   const [active, setActive] = useState('home')
@@ -274,263 +141,325 @@ const SidebarPreview = () => {
   )
 }
 
-const componentsList = [
-  {
-    name: 'Accordion',
-    to: '/docs/accordion',
-    preview: (
-      <Accordion
-        title="Is this product free?"
-        classes={{ container: 'min-w-20', header: 'text-sm', content: 'text-xs' }}
+const getComponentPreview = (name: string) => {
+  switch (name) {
+    case 'Accordion':
+      return (
+        <Accordion
+          title="Is this product free?"
+          classes={{ container: 'min-w-20', header: 'text-sm', content: 'text-xs' }}
+        >
+          Yeah! This product is 100% free.
+        </Accordion>
+      )
+    case 'Alert':
+      return <AlertPreview />
+    case 'Avatar':
+      return <Avatar variant="solid" alt="Jane Doe" />
+    case 'Badge':
+      return (
+        <Badge intent="accent" size="md">
+          Feature
+        </Badge>
+      )
+    case 'Breadcrumb':
+      return (
+        <div className="scale-[0.75] origin-center">
+          <Breadcrumb
+            items={[
+              { label: 'Home', href: '#' },
+              { label: 'Docs', active: true },
+            ]}
+          />
+        </div>
+      )
+    case 'Button':
+      return <Button className="cursor-pointer">Button</Button>
+    case 'Calendar':
+      return <Calendar className="pointer-events-none scale-[0.32] origin-center" />
+    case 'Card':
+      return (
+        <Card
+          variant="accent"
+          className="pointer-events-none w-32 group-hover/link:bg-(--lithos-accent) group-hover/link:text-(--lithos-accent-text) transition-colors"
+        >
+          <CardImage src={card1} alt="Preview" className="h-16!" />
+          <CardContent className="p-2">
+            <p className="font-black uppercase text-[10px] tracking-tight leading-none mb-1">Accent Card</p>
+            <p className="font-body opacity-70 text-[8px] leading-tight">Hover to see fill.</p>
+          </CardContent>
+        </Card>
+      )
+    case 'Carousel':
+      return (
+        <div className="w-full h-full scale-[0.9] pointer-events-none">
+          <Carousel title="LITHOS UI!" hidePagination loop playInfinite playInterval={3000}>
+            <CarouselSlide className={slideClass}>Slide 1</CarouselSlide>
+            <CarouselSlide className={slideClass}>Slide 2</CarouselSlide>
+            <CarouselSlide className={slideClass}>Slide 3</CarouselSlide>
+          </Carousel>
+        </div>
+      )
+    case 'Checkbox':
+      return (
+        <div className="flex flex-col items-start [&>*:not(:first-child)]:mt-2 pointer-events-none">
+          <Checkbox label="Checked" defaultChecked />
+          <Checkbox label="Unchecked" />
+        </div>
+      )
+    case 'Command':
+      return (
+        <div className="w-[120%] scale-[0.5] origin-center pointer-events-none">
+          <Command className="h-48 border-2 border-(--lithos-border) shadow-[4px_4px_0_0_var(--lithos-shadow)]">
+            <CommandInput placeholder="Search..." />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Suggestions">
+                <CommandItem>Calendar</CommandItem>
+                <CommandItem>Search Emoji</CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </div>
+      )
+    case 'Dialog':
+      return (
+        <div className="w-[130%] scale-[0.45] origin-center pointer-events-none border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) shadow-[6px_6px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)">
+          <div className="flex items-center justify-between p-4 border-b-2 border-(--lithos-border)">
+            <p className="font-black uppercase tracking-tight leading-none m-0 text-lg">Confirm</p>
+            <IconClose aria-hidden="true" className="w-4 h-4" />
+          </div>
+          <div className="p-4 font-body text-sm opacity-70">Delete this item?</div>
+          <div className="flex items-center justify-end p-4 border-t-2 border-(--lithos-border)">
+            <Button className="text-sm">Delete</Button>
+          </div>
+        </div>
+      )
+    case 'Drawer':
+      return (
+        <div className="w-full h-full scale-[0.7] origin-center flex items-end justify-center pointer-events-none pb-4">
+          <div className="w-[80%] h-24 border-2 border-(--lithos-border) bg-(--lithos-surface) shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-t-(--lithos-radius) flex flex-col items-center pt-2 px-4 relative">
+            <div className="w-8 h-1 bg-(--lithos-border) rounded-full mb-2 opacity-50" />
+            <div className="w-full h-4 bg-(--lithos-border)/10 rounded-sm mb-2" />
+            <div className="w-3/4 h-4 bg-(--lithos-border)/10 rounded-sm" />
+          </div>
+        </div>
+      )
+    case 'Dropdown':
+      return (
+        <Dropdown placement="bottom-start">
+          <DropdownTrigger asChild>
+            <Button variant="accent">My account</Button>
+          </DropdownTrigger>
+
+          <DropdownContent className="w-56">
+            <DropdownGroup label="Settings">
+              <DropdownItem onClick={() => console.log('Go to profile')}>Profile</DropdownItem>
+
+              <DropdownItem onClick={() => console.log('Go to plan')}>Plan</DropdownItem>
+
+              <DropdownItem disabled className="flex flex-col items-start space-y-2">
+                <span>Integrations</span>
+                <span className="opacity-60">(Coming soon)</span>
+              </DropdownItem>
+            </DropdownGroup>
+
+            <DropdownSeparator />
+
+            <DropdownSub
+              trigger={
+                <span className="flex items-center justify-between w-full">
+                  Preferences <span>▶</span>
+                </span>
+              }
+            >
+              <DropdownItem>Dark Mode</DropdownItem>
+              <DropdownItem>Language</DropdownItem>
+            </DropdownSub>
+
+            <DropdownSeparator />
+
+            <DropdownGroup>
+              <DropdownItem
+                onClick={() => console.log('Log out')}
+                className="text-red-500 hover:bg-red-500/5 focus:bg-red-500/5"
+              >
+                Log out
+              </DropdownItem>
+            </DropdownGroup>
+          </DropdownContent>
+        </Dropdown>
+      )
+    case 'Icons':
+      return (
+        <div className="flex items-center space-x-3 text-(--lithos-text)">
+          <IconHeart size={22} className="text-(--lithos-accent)" fill="var(--lithos-accent)" />
+          <IconSearch size={22} strokeWidth={3} />
+          <IconArrowRight size={22} strokeWidth={3} />
+        </div>
+      )
+    case 'Input':
+      return <Input placeholder="Input" className="w-24 pointer-events-none" />
+    case 'Kbd':
+      return (
+        <KbdGroup>
+          <Kbd size="sm">⌘</Kbd>
+          <Kbd size="sm">K</Kbd>
+        </KbdGroup>
+      )
+    case 'Marquee':
+      return (
+        <div className="w-full py-1 overflow-hidden pointer-events-none">
+          <Marquee speed="normal" noPause className="shadow-none border-y-2 border-x-0 py-1.5 bg-(--lithos-bg)">
+            <span className="font-mono font-black text-[11px] tracking-widest text-(--lithos-accent)">NEO-BRUTAL</span>
+            <span className="font-mono text-xs text-(--lithos-text)">✦</span>
+            <span className="font-mono font-bold text-[11px] uppercase tracking-wider text-(--lithos-text)">
+              LITHOS UI
+            </span>
+            <span className="font-mono text-xs text-(--lithos-text)">✦</span>
+            <span className="font-mono font-black text-[11px] tracking-widest text-(--lithos-accent)">CONTINUOUS</span>
+            <span className="font-mono text-xs text-(--lithos-text)">✦</span>
+          </Marquee>
+        </div>
+      )
+    case 'Pagination':
+      return (
+        <div inert aria-hidden="true">
+          <Pagination count={3} defaultPage={2} size="sm" aria-label="Pagination preview" />
+        </div>
+      )
+    case 'Popover':
+      return (
+        <div className="w-full scale-[0.6] origin-center flex flex-col items-center pointer-events-none mt-2">
+          <Popover open={true} modal={false}>
+            <PopoverTrigger asChild>
+              <Button className="mb-2">Open</Button>
+            </PopoverTrigger>
+            <PopoverContent
+              portaled={false}
+              className="p-3 w-32 border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius) z-0"
+            >
+              <p className="font-bold text-sm m-0 leading-tight">Settings</p>
+              <p className="text-[10px] opacity-70 m-0 leading-tight mt-1">Preferences.</p>
+            </PopoverContent>
+          </Popover>
+        </div>
+      )
+    case 'Select':
+      return <Select options={FRAMEWORK_OPTIONS} placeholder="Select a framework..." />
+    case 'Sidebar':
+      return <SidebarPreview />
+    case 'Skeleton':
+      return (
+        <div className="w-full max-w-48 p-2">
+          <Skeleton variant="rectangular" height={44} tone="accent" className="mb-4" />
+          <SkeletonText lines={2} className="text-xs" />
+        </div>
+      )
+    case 'Slider':
+      return <Slider size="sm" defaultValue={40} aria-label="Example volume" className="max-w-48" />
+    case 'Spinner':
+      return (
+        <div className="w-full flex justify-center p-2">
+          <Spinner size={32} variant="accent" />
+        </div>
+      )
+    case 'Table':
+      return (
+        <div className="w-full p-3">
+          <Table size="sm" aria-label="Example invoices">
+            <TableHeader variant="accent">
+              <TableRow>
+                <TableHead scope="col">Invoice</TableHead>
+                <TableHead scope="col" className="text-end">
+                  Amount
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableHead scope="row">INV-001</TableHead>
+                <TableCell className="text-end">$250</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableHead scope="row">INV-002</TableHead>
+                <TableCell className="text-end">$150</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      )
+    case 'Tabs':
+      return (
+        <div className="w-[120%] scale-[0.55] origin-center pointer-events-none mt-2">
+          <Tabs defaultValue="1">
+            <TabsList>
+              <TabsTrigger value="1">Tab 1</TabsTrigger>
+              <TabsTrigger value="2">Tab 2</TabsTrigger>
+            </TabsList>
+            <TabsContent value="1">Content 1</TabsContent>
+            <TabsContent value="2">Content 2</TabsContent>
+          </Tabs>
+        </div>
+      )
+    case 'Toast':
+      return <ToastPreview />
+    case 'Toggle':
+      return <TogglePreview />
+    case 'Tooltip':
+      return (
+        <div className="w-full scale-[0.7] origin-center flex justify-center pointer-events-none mt-10">
+          <Tooltip initialOpen={true} placement="top">
+            <TooltipTrigger asChild>
+              <Button>Hover Me</Button>
+            </TooltipTrigger>
+            <TooltipContent className="z-0">Tooltips provide context</TooltipContent>
+          </Tooltip>
+        </div>
+      )
+    case 'Typography':
+      return (
+        <Typography variant="mark" className="-rotate-3">
+          14 Typography Variants!
+        </Typography>
+      )
+    default:
+      return null
+  }
+}
+
+const ComponentCard = ({ page }: { page: DocPageConfig }) => {
+  const isMobile = useMediaQuery('(max-width: 640px)')
+  const rootMargin = isMobile ? '500px' : '200px'
+
+  return (
+    <div className="w-full sm:w-[50%] md:w-[33.333%] lg:w-[25%] p-3">
+      <RouteLink
+        to={page.to}
+        importRoute={page.loader}
+        rootMargin={rootMargin}
+        className="block group/link h-full outline-none"
       >
-        Yeah! This product is 100% free.
-      </Accordion>
-    ),
-  },
-  {
-    name: 'Alert',
-    to: '/docs/alert',
-    preview: <AlertPreview />,
-  },
-  {
-    name: 'Avatar',
-    to: '/docs/avatar',
-    preview: <Avatar variant="solid" alt="Jane Doe" />,
-  },
-  {
-    name: 'Badge',
-    to: '/docs/badge',
-    preview: (
-      <Badge intent="accent" size="md">
-        Feature
-      </Badge>
-    ),
-  },
-  {
-    name: 'Breadcrumb',
-    to: '/docs/breadcrumb',
-    preview: (
-      <div className="scale-[0.75] origin-center">
-        <Breadcrumb
-          items={[
-            { label: 'Home', href: '#' },
-            { label: 'Docs', active: true },
-          ]}
-        />
-      </div>
-    ),
-  },
-  {
-    name: 'Button',
-    to: '/docs/button',
-    preview: <Button className="cursor-pointer">Button</Button>,
-  },
-  {
-    name: 'Calendar',
-    to: '/docs/calendar',
-    preview: <Calendar className="pointer-events-none scale-[0.32] origin-center" />,
-  },
-  {
-    name: 'Card',
-    to: '/docs/card',
-    preview: (
-      <Card
-        variant="accent"
-        className="pointer-events-none w-32 group-hover/link:bg-(--lithos-accent) group-hover/link:text-(--lithos-accent-text) transition-colors"
-      >
-        <CardImage src={card1} alt="Preview" className="h-16!" />
-        <CardContent className="p-2">
-          <p className="font-black uppercase text-[10px] tracking-tight leading-none mb-1">Accent Card</p>
-          <p className="font-body opacity-70 text-[8px] leading-tight">Hover to see fill.</p>
-        </CardContent>
-      </Card>
-    ),
-  },
-  {
-    name: 'Carousel',
-    to: '/docs/carousel',
-    preview: <CarouselPreview />,
-  },
-  {
-    name: 'Checkbox',
-    to: '/docs/checkbox',
-    preview: (
-      <div className="flex flex-col items-start [&>*:not(:first-child)]:mt-2 pointer-events-none">
-        <Checkbox label="Checked" defaultChecked />
-        <Checkbox label="Unchecked" />
-      </div>
-    ),
-  },
-  {
-    name: 'Command',
-    to: '/docs/command',
-    preview: <CommandPreview />,
-  },
-  {
-    name: 'Dialog',
-    to: '/docs/dialog',
-    preview: <DialogPreview />,
-  },
-  {
-    name: 'Drawer',
-    to: '/docs/drawer',
-    preview: <DrawerPreview />,
-  },
-  {
-    name: 'Dropdown',
-    to: '/docs/dropdown',
-    preview: <DropdownPreview />,
-  },
-  {
-    name: 'Icons',
-    to: '/docs/icons',
-    preview: (
-      <div className="flex items-center space-x-3 text-(--lithos-text)">
-        <IconHeart size={22} className="text-(--lithos-accent)" fill="var(--lithos-accent)" />
-        <IconSearch size={22} strokeWidth={3} />
-        <IconArrowRight size={22} strokeWidth={3} />
-      </div>
-    ),
-  },
-  {
-    name: 'Input',
-    to: '/docs/input',
-    preview: <Input placeholder="Input" className="w-24 pointer-events-none" />,
-  },
-  {
-    name: 'Kbd',
-    to: '/docs/kbd',
-    preview: (
-      <KbdGroup>
-        <Kbd size="sm">⌘</Kbd>
-        <Kbd size="sm">K</Kbd>
-      </KbdGroup>
-    ),
-  },
-  {
-    name: 'Marquee',
-    to: '/docs/marquee',
-    preview: (
-      <div className="w-full py-1 overflow-hidden pointer-events-none">
-        <Marquee speed="normal" noPause className="shadow-none border-y-2 border-x-0 py-1.5 bg-(--lithos-bg)">
-          <span className="font-mono font-black text-[11px] tracking-widest text-(--lithos-accent)">NEO-BRUTAL</span>
-          <span className="font-mono text-xs text-(--lithos-text)">✦</span>
-          <span className="font-mono font-bold text-[11px] uppercase tracking-wider text-(--lithos-text)">
-            LITHOS UI
-          </span>
-          <span className="font-mono text-xs text-(--lithos-text)">✦</span>
-          <span className="font-mono font-black text-[11px] tracking-widest text-(--lithos-accent)">CONTINUOUS</span>
-          <span className="font-mono text-xs text-(--lithos-text)">✦</span>
-        </Marquee>
-      </div>
-    ),
-  },
-  {
-    name: 'Pagination',
-    to: '/docs/pagination',
-    preview: (
-      <div inert aria-hidden="true">
-        <Pagination count={3} defaultPage={2} size="sm" aria-label="Pagination preview" />
-      </div>
-    ),
-  },
-  {
-    name: 'Popover',
-    to: '/docs/popover',
-    preview: <PopoverPreview />,
-  },
-  {
-    name: 'Select',
-    to: '/docs/select',
-    preview: <Select options={FRAMEWORK_OPTIONS} placeholder="Select a framework..." />,
-  },
-  {
-    name: 'Sidebar',
-    to: '/docs/sidebar',
-    preview: <SidebarPreview />,
-  },
-  {
-    name: 'Skeleton',
-    to: '/docs/skeleton',
-    preview: (
-      <div className="w-full max-w-48 p-2">
-        <Skeleton variant="rectangular" height={44} tone="accent" className="mb-4" />
-        <SkeletonText lines={2} className="text-xs" />
-      </div>
-    ),
-  },
-  {
-    name: 'Slider',
-    to: '/docs/slider',
-    preview: <Slider size="sm" defaultValue={40} aria-label="Example volume" className="max-w-48" />,
-  },
-  {
-    name: 'Spinner',
-    to: '/docs/spinner',
-    preview: (
-      <div className="w-full flex justify-center p-2">
-        <Spinner size={32} variant="accent" />
-      </div>
-    ),
-  },
-  {
-    name: 'Table',
-    to: '/docs/table',
-    preview: (
-      <div className="w-full p-3">
-        <Table size="sm" aria-label="Example invoices">
-          <TableHeader variant="accent">
-            <TableRow>
-              <TableHead scope="col">Invoice</TableHead>
-              <TableHead scope="col" className="text-end">
-                Amount
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableHead scope="row">INV-001</TableHead>
-              <TableCell className="text-end">$250</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableHead scope="row">INV-002</TableHead>
-              <TableCell className="text-end">$150</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    ),
-  },
-  {
-    name: 'Tabs',
-    to: '/docs/tabs',
-    preview: <TabsPreview />,
-  },
-  {
-    name: 'Toast',
-    to: '/docs/toast',
-    preview: <ToastPreview />,
-  },
-  {
-    name: 'Toggle',
-    to: '/docs/toggle',
-    preview: <TogglePreview />,
-  },
-  {
-    name: 'Tooltip',
-    to: '/docs/tooltip',
-    preview: <TooltipPreview />,
-  },
-  {
-    name: 'Typography',
-    to: '/docs/typography',
-    preview: (
-      <Typography variant="mark" className="-rotate-3">
-        14 Typography Variants!
-      </Typography>
-    ),
-  },
-]
+        <Card interactive className="h-full flex flex-col p-0">
+          {/* Top Zone: Live Preview */}
+          <div className="w-full aspect-4/3 sm:aspect-3/2 md:aspect-video flex items-center justify-center bg-(--lithos-surface) p-2 overflow-hidden relative border-b-2 border-(--lithos-border) font-normal tracking-normal leading-normal">
+            {getComponentPreview(page.label)}
+          </div>
+
+          {/* Bottom Zone: Thin Label Strip */}
+          <CardContent spacing="sm" className="grow flex flex-row items-center justify-between bg-(--lithos-strata)">
+            <h2 className="text-xl font-black tracking-tighter leading-none text-(--lithos-text)">{page.label}</h2>
+            {isUnreleasedComponent(page.label) && (
+              <Badge intent="accent" size="sm" className="font-mono font-black text-[10px] tracking-wider">
+                NEW
+              </Badge>
+            )}
+          </CardContent>
+        </Card>
+      </RouteLink>
+    </div>
+  )
+}
 
 export const ComponentsIndex = () => (
   <>
@@ -557,32 +486,8 @@ export const ComponentsIndex = () => (
       <section className="py-24 bg-(--lithos-strata)">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-wrap -m-3">
-            {componentsList.map((comp) => (
-              <div key={comp.name} className="w-full sm:w-[50%] md:w-[33.333%] lg:w-[25%] p-3">
-                <Link to={comp.to} className="block group/link h-full outline-none">
-                  <Card interactive className="h-full flex flex-col p-0">
-                    {/* Top Zone: Live Preview */}
-                    <div className="w-full aspect-4/3 sm:aspect-3/2 md:aspect-video flex items-center justify-center bg-(--lithos-surface) p-2 overflow-hidden relative border-b-2 border-(--lithos-border) font-normal tracking-normal leading-normal">
-                      {comp.preview}
-                    </div>
-
-                    {/* Bottom Zone: Thin Label Strip */}
-                    <CardContent
-                      spacing="sm"
-                      className="grow flex flex-row items-center justify-between bg-(--lithos-strata)"
-                    >
-                      <h2 className="text-xl font-black tracking-tighter leading-none text-(--lithos-text)">
-                        {comp.name}
-                      </h2>
-                      {isUnreleasedComponent(comp.name) && (
-                        <Badge intent="accent" size="sm" className="font-mono font-black text-[10px] tracking-wider">
-                          NEW
-                        </Badge>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              </div>
+            {componentPages.map((page) => (
+              <ComponentCard key={page.to} page={page} />
             ))}
           </div>
         </div>

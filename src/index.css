@@ -6,15 +6,10 @@
  * - Registers brutalist keyframes (hard physical stops, no soft easing).
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Fragment+Mono:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Faster+One:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inconsolata:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;0,900;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nabla&display=swap');
 @import 'tailwindcss';
+
 @import './tokens.css';
+@import './fonts.css';
 
 /* - Tailwind v4 API: Overrides default sans/mono stacks with the brutalist Fragment Mono. */
 @theme {
@@ -42,6 +37,19 @@ body {
   background-color: var(--lithos-bg);
   color: var(--lithos-text);
   font-family: var(--font-mono);
+}
+
+@keyframes lithos-route-loading {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 * {
