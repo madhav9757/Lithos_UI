@@ -40,6 +40,7 @@ export * from './components/ui/Tooltip'
 export * from './components/ui/Sidebar'
 export * from './components/ui/MiniThemeEngine'
 export * from './components/ui/Typography'
+export * from './components/ui/StrataBackground'
 
 export * from './core/ThemeProvider'
 export * from './core/ThemeProviderContext'

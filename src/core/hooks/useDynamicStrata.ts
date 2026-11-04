@@ -5,12 +5,12 @@
  * blended with var(--lithos-accent) to give surfaces atmospheric depth.
  * Ensures zero center hotspots and zero layout shifts.
  */
-import { useMemo, type CSSProperties, type HTMLAttributes } from 'react'
+import { useMemo, type CSSProperties } from 'react'
 
 export interface DynamicStrataOptions {
   /**
    * 'full-page': 4 corners + alternating lateral flanks (for long-scrolling pages).
-   * 'compact': strictly the 4 corners (for fixed viewport tools like Theme Studio or modals).
+   * 'compact': corners tailored for fixed viewport tools like Theme Studio or modals.
    */
   variant?: 'full-page' | 'compact'
   /** Optional intensity scale factor (defaults to 1) */
@@ -46,11 +46,12 @@ const FULL_PAGE_ANCHORS: AnchorZone[] = [
 ]
 
 const COMPACT_ANCHORS: AnchorZone[] = [
-  // 4 corners tailored for 100vh studio workbenches & modals
-  { xMin: 90, xMax: 104, yMin: -6, yMax: 8, radMin: 650, radMax: 950, intMin: 20, intMax: 26 },
-  { xMin: -6, xMax: 8, yMin: -6, yMax: 8, radMin: 600, radMax: 900, intMin: 18, intMax: 24 },
-  { xMin: -6, xMax: 8, yMin: 88, yMax: 106, radMin: 600, radMax: 900, intMin: 18, intMax: 24 },
-  { xMin: 90, xMax: 104, yMin: 88, yMax: 106, radMin: 650, radMax: 950, intMin: 20, intMax: 26 },
+  // Anchored comfortably below the navbar (y: 16% to 24%) so the glow emanates smoothly
+  // without being abruptly sliced by the bottom edge of the fixed 56px navbar
+  { xMin: 90, xMax: 104, yMin: 16, yMax: 24, radMin: 700, radMax: 950, intMin: 18, intMax: 24 },
+  { xMin: -6, xMax: 8, yMin: 16, yMax: 24, radMin: 650, radMax: 900, intMin: 16, intMax: 22 },
+  { xMin: -6, xMax: 8, yMin: 85, yMax: 102, radMin: 650, radMax: 900, intMin: 16, intMax: 22 },
+  { xMin: 90, xMax: 104, yMin: 85, yMax: 102, radMin: 700, radMax: 950, intMin: 18, intMax: 24 },
 ]
 
 /**
@@ -87,32 +88,4 @@ export const useDynamicStrata = (options: DynamicStrataOptions = {}): CSSPropert
       backgroundImage: generateDynamicStrataGradient(variant, intensityMultiplier),
     }
   }, [variant, intensityMultiplier])
-}
-
-export interface StrataBackgroundProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'full-page' | 'compact'
-  intensityMultiplier?: number
-}
-
-/**
- * Declarative background component that layers an atmospheric strata aura.
- * Place inside a `relative` container.
- */
-export const StrataBackground = ({
-  variant = 'full-page',
-  intensityMultiplier = 1,
-  className = '',
-  style,
-  ...rest
-}: StrataBackgroundProps) => {
-  const strataStyle = useDynamicStrata({ variant, intensityMultiplier })
-
-  return (
-    <div
-      aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 z-0 overflow-hidden ${className}`}
-      style={{ ...strataStyle, ...style }}
-      {...rest}
-    />
-  )
 }
