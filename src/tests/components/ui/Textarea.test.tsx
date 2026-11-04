@@ -3,11 +3,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { describe, expect, it } from 'vitest'
-import { Textarea } from '../../../components/ui/Textarea'
 import { TextareaGroupExample } from '../../../docs/examples/textarea/group'
 import { AutoSizeTextareaExample } from '../../../docs/examples/textarea/autoSize'
 import { Input } from '../../../components/ui/Input'
-import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typography'
+import { Textarea, Field, FieldLabel, FieldDescription } from '../../../components/ui/Textarea'
 import { TextareaFormExample } from '../../../docs/examples/textarea/form'
 import { colors } from '../../../utils/colors'
 import { CharacterCountTextareaExample } from '../../../docs/examples/textarea/characterCount'
@@ -122,7 +121,7 @@ describe('Textarea', () => {
     expect(field).toBeRequired()
   })
 
-  it('connects Typography field labels and descriptions, preserving extra descriptions', () => {
+  it('connects Textarea field labels and descriptions, preserving extra descriptions', () => {
     const Example = ({ description = true }: { description?: boolean }) => (
       <>
         <Field controlId="message">

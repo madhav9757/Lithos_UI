@@ -1,8 +1,17 @@
 import type { LithosElementProps } from '../../core/types'
-import { useContext } from 'react'
-import { FieldContext } from '../../core/FieldContext'
+import { createContext, useContext, useEffect, useId, useMemo, useState } from 'react'
+import type { ComponentPropsWithRef, Dispatch, SetStateAction } from 'react'
 import { cn } from '../../utils/cn'
 import { colors } from '../../utils/colors'
+
+interface FieldContextValue {
+  controlId: string
+  descriptionId: string
+  hasDescription: boolean
+  setHasDescription: Dispatch<SetStateAction<boolean>>
+}
+
+const FieldContext = createContext<FieldContextValue | null>(null)
 
 export interface TextareaProps extends LithosElementProps<'textarea'> {
   /** Visual treatment; validation is independent of the variant. */
@@ -81,6 +90,63 @@ export const Textarea = ({
         className
       )}
       style={invalid ? { borderColor: colors.error, ...style } : style}
+    />
+  )
+}
+
+export interface FieldProps extends ComponentPropsWithRef<'div'> {
+  /** ID of the labeled control. Generated automatically when omitted. */
+  controlId?: string
+}
+
+/** Groups a Textarea with its label and optional description. */
+export const Field = ({ controlId, className, children, ...props }: FieldProps) => {
+  const generatedId = useId()
+  const id = controlId ?? generatedId
+  const [hasDescription, setHasDescription] = useState(false)
+  const value = useMemo(
+    () => ({ controlId: id, descriptionId: `${id}-description`, hasDescription, setHasDescription }),
+    [id, hasDescription]
+  )
+
+  return (
+    <FieldContext.Provider value={value}>
+      <div {...props} className={cn('w-full', className)}>
+        {children}
+      </div>
+    </FieldContext.Provider>
+  )
+}
+
+/** Native label connected to the Textarea inside Field. */
+export const FieldLabel = ({ className, htmlFor, ...props }: Omit<ComponentPropsWithRef<'label'>, 'color'>) => {
+  const field = useContext(FieldContext)
+  return (
+    <label
+      {...props}
+      htmlFor={htmlFor ?? field?.controlId}
+      className={cn('mb-2 block text-(length:--lithos-label-size) font-extrabold tracking-wide uppercase', className)}
+    />
+  )
+}
+
+/** Helper or validation text linked automatically to the Textarea inside Field. */
+export const FieldDescription = ({ className, ...props }: Omit<ComponentPropsWithRef<'p'>, 'id' | 'color'>) => {
+  const field = useContext(FieldContext)
+  const setHasDescription = field?.setHasDescription
+  useEffect(() => {
+    setHasDescription?.(true)
+    return () => setHasDescription?.(false)
+  }, [setHasDescription])
+
+  return (
+    <p
+      {...props}
+      id={field?.descriptionId}
+      className={cn(
+        'mt-2 text-(length:--lithos-small-size) font-semibold leading-normal text-(--lithos-text)/70',
+        className
+      )}
     />
   )
 }

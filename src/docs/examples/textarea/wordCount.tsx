@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Textarea } from '../../../components/ui/Textarea'
-import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typography'
+import { Textarea, Field, FieldLabel, FieldDescription } from '../../../components/ui/Textarea'
 
 const MAX_WORDS = 300
 

@@ -1,5 +1,4 @@
-import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typography'
-import { Textarea } from '../../../components/ui/Textarea'
+import { Textarea, Field, FieldLabel, FieldDescription } from '../../../components/ui/Textarea'
 
 export const RequiredTextareaExample = () => (
   <Field className="max-w-lg">

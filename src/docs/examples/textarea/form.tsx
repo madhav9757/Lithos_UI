@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typography'
-import { Textarea } from '../../../components/ui/Textarea'
+import { Textarea, Field, FieldLabel, FieldDescription } from '../../../components/ui/Textarea'
 import { Button } from '../../../components/ui/Button'
 
 export const TextareaFormExample = () => {

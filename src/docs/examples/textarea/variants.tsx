@@ -1,5 +1,4 @@
-import { Field, FieldLabel } from '../../../components/ui/Typography'
-import { Textarea } from '../../../components/ui/Textarea'
+import { Textarea, Field, FieldLabel } from '../../../components/ui/Textarea'
 
 export const TextareaVariantsExample = () => (
   <div className="w-full max-w-lg space-y-6">

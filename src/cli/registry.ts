@@ -747,7 +747,7 @@ export const registry: Record<string, RegistryItem> = {
     name: 'Textarea',
     type: 'ui',
     githubUrl: `${GITHUB_BASE}/components/ui/Textarea.tsx`,
-    requires: ['core/FieldContext.ts', 'core/types.ts', 'utils/cn.ts', 'utils/colors.ts'],
+    requires: ['core/types.ts', 'utils/cn.ts', 'utils/colors.ts'],
     dependencies: ['clsx', 'tailwind-merge'],
   },
   'theme-engine-1': {
@@ -827,7 +827,7 @@ export const registry: Record<string, RegistryItem> = {
     name: 'Typography',
     type: 'ui',
     githubUrl: `${GITHUB_BASE}/components/ui/Typography.tsx`,
-    requires: ['core/FieldContext.ts', 'core/types.ts', 'utils/cn.ts', 'utils/yiq.ts'],
+    requires: ['core/types.ts', 'utils/cn.ts', 'utils/yiq.ts'],
     dependencies: ['clsx', 'tailwind-merge'],
   },
 }

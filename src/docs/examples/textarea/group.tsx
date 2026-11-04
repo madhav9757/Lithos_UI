@@ -1,7 +1,6 @@
 import { useId, useRef, useState } from 'react'
-import { Textarea } from '../../../components/ui/Textarea'
 import { Button } from '../../../components/ui/Button'
-import { Field, FieldLabel, FieldDescription } from '../../../components/ui/Typography'
+import { Textarea, Field, FieldLabel, FieldDescription } from '../../../components/ui/Textarea'
 import { FiPaperclip, FiSmile } from 'react-icons/fi'
 
 const MAX_LENGTH = 2000

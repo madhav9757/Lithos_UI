@@ -137,10 +137,14 @@ export const TextareaDoc = () => (
     />
     <DocSection>
       <DocHeading id="installation">Installation</DocHeading>
-      <SetupGuide slug="textarea" componentNames={['Textarea']} manualPath={manualPath} />
+      <SetupGuide
+        slug="textarea"
+        componentNames={['Textarea', 'Field', 'FieldLabel', 'FieldDescription']}
+        manualPath={manualPath}
+      />
       <p className="mb-4">
-        Field, FieldLabel, and FieldDescription are exported from Typography. For source installation, also add
-        typography; the action examples use button and icons.
+        Field, FieldLabel, and FieldDescription are included with Textarea. The action examples also use button and
+        icons.
       </p>
     </DocSection>
     <DocHeading id="examples">Examples</DocHeading>
@@ -165,9 +169,6 @@ export const TextareaDoc = () => (
             ],
             manualPath: {
               others: manualPath,
-              Field: '../../components/ui/Typography',
-              FieldLabel: '../../components/ui/Typography',
-              FieldDescription: '../../components/ui/Typography',
               Button: '../../components/ui/Button',
               'react-icons/fi': ['FiPaperclip', 'FiSmile'],
               react: ['useId', 'useRef', 'useState'],
@@ -198,7 +199,7 @@ export const TextareaDoc = () => (
       <DocHeading id="accessibility">Accessibility</DocHeading>
       <DocList>
         <li>
-          Wrap Textarea in Field with a FieldLabel and optional FieldDescription, imported from Typography. Label and
+          Wrap Textarea in Field with a FieldLabel and optional FieldDescription, imported from Textarea. Label and
           description IDs connect automatically; use Field controlId for an explicit control ID.
         </li>
         <li>
