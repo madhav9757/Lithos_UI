@@ -41,7 +41,7 @@ const features: FeatureItem[] = [
 
 const FeatureGrid = () => {
   return (
-    <section id="features" className="border-b-2 border-(--lithos-border) bg-(--lithos-strata) py-24">
+    <section id="features" className="border-b-2 border-(--lithos-border) py-24">
       <div className="mx-auto max-w-6xl px-6">
         <h2 className="text-4xl font-black uppercase tracking-tighter leading-none text-center text-(--lithos-text) md:text-5xl">
           Four Architectural Pillars

@@ -13,34 +13,41 @@
 
 import { RouteLink } from '../../components/site/RouteLink'
 import { KineticGrid } from '../../components/ui/KineticGrid'
+import { useDynamicStrata } from '../../core/hooks/useDynamicStrata'
 
-export const NotFound = () => (
-  <KineticGrid baseOpacity="opacity-5" className="min-h-screen bg-(--lithos-bg) text-(--lithos-text) px-4">
-    <div className="text-center max-w-2xl">
-      {/* Error code - massive and brutalist */}
-      <h1 className="text-8xl md:text-[12rem] font-black leading-none tracking-tighter mb-10 select-none text-(--lithos-accent)">
-        404
-      </h1>
+export const NotFound = () => {
+  const strataStyle = useDynamicStrata({ variant: 'compact' })
 
-      {/* Primary error title */}
-      <h2 className="text-2xl md:text-4xl font-black uppercase tracking-widest mb-4">Structural Failure</h2>
+  return (
+    <div className="min-h-screen bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
+      <KineticGrid baseOpacity="opacity-5" className="min-h-screen px-4">
+        <div className="text-center max-w-2xl">
+          {/* Error code - massive and brutalist */}
+          <h1 className="text-8xl md:text-[12rem] font-black leading-none tracking-tighter mb-10 select-none text-(--lithos-accent)">
+            404
+          </h1>
 
-      {/* Secondary description */}
-      <p className="text-base md:text-lg font-medium opacity-70 mb-12 leading-relaxed">
-        The coordinate you seek exists beyond the boundaries of this realm.
-      </p>
+          {/* Primary error title */}
+          <h2 className="text-2xl md:text-4xl font-black uppercase tracking-widest mb-4">Structural Failure</h2>
 
-      {/* Vertical spacer for button positioning */}
-      <div className="mt-8">
-        {/* Return to Base button - hard brutalist styling */}
-        <RouteLink
-          to="/"
-          className="bg-(--lithos-accent) text-(--lithos-accent-text) lithos-click"
-          importRoute={() => import('../Index')}
-        >
-          Return to Base
-        </RouteLink>
-      </div>
+          {/* Secondary description */}
+          <p className="text-base md:text-lg font-medium opacity-70 mb-12 leading-relaxed">
+            The coordinate you seek exists beyond the boundaries of this realm.
+          </p>
+
+          {/* Vertical spacer for button positioning */}
+          <div className="mt-8">
+            {/* Return to Base button - hard brutalist styling */}
+            <RouteLink
+              to="/"
+              className="bg-(--lithos-accent) text-(--lithos-accent-text) lithos-click"
+              importRoute={() => import('../Index')}
+            >
+              Return to Base
+            </RouteLink>
+          </div>
+        </div>
+      </KineticGrid>
     </div>
-  </KineticGrid>
-)
+  )
+}

@@ -7,6 +7,7 @@ import { BlocksShowcase } from './sections/BlocksShowcase'
 import { StatsStrip } from './sections/StatsStrip'
 import { CallToAction } from './sections/CallToAction'
 import { Footer } from './sections/Footer'
+import { useDynamicStrata } from '../core/hooks/useDynamicStrata'
 
 /**
  * Showroom Component - Landing Page UI Composition
@@ -16,11 +17,13 @@ import { Footer } from './sections/Footer'
  * - Slabs stack seamlessly with unified strata atmosphere and 2px hard dividers.
  */
 export const Showroom = () => {
+  const strataStyle = useDynamicStrata()
+
   return (
     <>
       <Navbar />
 
-      <main className="bg-(--lithos-strata)">
+      <main className="relative bg-(--lithos-strata)" style={strataStyle}>
         {/* Viewport Hero Anchor */}
         <Hero />
 

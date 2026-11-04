@@ -5,6 +5,7 @@ import { ComingSoon } from '../showroom/sections/ComingSoon'
 import { PreviewBlock } from '../components/ui/PreviewBlock'
 import { Navbar } from '../showroom/sections/Navbar'
 import { Footer } from '../showroom/sections/Footer'
+import { useDynamicStrata } from '../core/hooks/useDynamicStrata'
 
 const rewriteBlockImports = (code: string): string => {
   const importsToCombine: string[] = []
@@ -38,6 +39,7 @@ const rewriteBlockImports = (code: string): string => {
 
 export const TemplateCategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>()
+  const strataStyle = useDynamicStrata()
 
   const category = templateCategories.find((c) => c.slug === categorySlug)
 
@@ -55,8 +57,8 @@ export const TemplateCategoryPage = () => {
   return (
     <>
       <Navbar />
-      <main className="pt-24 min-h-screen bg-(--lithos-bg) text-(--lithos-text)">
-        <section className="border-b-2 border-(--lithos-border) bg-(--lithos-bg)">
+      <main className="pt-24 min-h-screen bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
+        <section className="border-b-2 border-(--lithos-border)">
           <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
             <RouteLink
               to="/templates"

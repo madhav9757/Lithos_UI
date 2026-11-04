@@ -57,6 +57,7 @@ import card1 from '../docs/assets/images/card1.webp'
 
 import { componentPages, type DocPageConfig } from '../core/lithos.utils'
 import { useMediaQuery } from '../core/hooks/useMediaQuery'
+import { useDynamicStrata } from '../core/hooks/useDynamicStrata'
 
 const SIDEBAR_ITEMS = [
   { id: 'home', label: 'Home', icon: IconHome },
@@ -472,38 +473,42 @@ const ComponentCard = ({ page }: { page: DocPageConfig }) => {
   )
 }
 
-export const ComponentsIndex = () => (
-  <>
-    <Navbar />
-    <main className="min-h-screen bg-(--lithos-strata) text-(--lithos-text)">
-      <section className="border-b-2 border-(--lithos-border) bg-(--lithos-strata)">
-        <KineticGrid baseOpacity="opacity-10" className="pt-20 pb-12 md:pt-28 md:pb-24 w-full">
-          <div className="mx-auto max-w-7xl px-6 w-full flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
-            <div className="w-full text-center lg:text-left flex flex-col items-center lg:items-start">
-              <p className="mb-4 text-sm font-bold uppercase tracking-widest text-(--lithos-text) opacity-60">
-                EVERY PRIMITIVE. ONE SOURCE.
-              </p>
-              <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter leading-none md:text-7xl lg:text-8xl text-(--lithos-text)">
-                THE PARTS THAT <br /> DON'T BREAK
-              </h1>
-              <h2 className="mt-4 text-3xl sm:text-4xl font-display md:text-5xl italic text-(--lithos-accent) max-w-4xl mx-auto lg:mx-0">
-                Every primitive is built with strict adherence to structural integrity.
-              </h2>
+export const ComponentsIndex = () => {
+  const strataStyle = useDynamicStrata()
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
+        <section className="border-b-2 border-(--lithos-border)">
+          <KineticGrid baseOpacity="opacity-10" className="pt-20 pb-12 md:pt-28 md:pb-24 w-full">
+            <div className="mx-auto max-w-7xl px-6 w-full flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
+              <div className="w-full text-center lg:text-left flex flex-col items-center lg:items-start">
+                <p className="mb-4 text-sm font-bold uppercase tracking-widest text-(--lithos-text) opacity-60">
+                  EVERY PRIMITIVE. ONE SOURCE.
+                </p>
+                <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter leading-none md:text-7xl lg:text-8xl text-(--lithos-text)">
+                  THE PARTS THAT <br /> DON'T BREAK
+                </h1>
+                <h2 className="mt-4 text-3xl sm:text-4xl font-display md:text-5xl italic text-(--lithos-accent) max-w-4xl mx-auto lg:mx-0">
+                  Every primitive is built with strict adherence to structural integrity.
+                </h2>
+              </div>
+            </div>
+          </KineticGrid>
+        </section>
+
+        <section className="py-24">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="flex flex-wrap -m-3">
+              {componentPages.map((page) => (
+                <ComponentCard key={page.to} page={page} />
+              ))}
             </div>
           </div>
-        </KineticGrid>
-      </section>
-
-      <section className="py-24 bg-(--lithos-strata)">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-wrap -m-3">
-            {componentPages.map((page) => (
-              <ComponentCard key={page.to} page={page} />
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </>
-)
+        </section>
+      </main>
+      <Footer />
+    </>
+  )
+}

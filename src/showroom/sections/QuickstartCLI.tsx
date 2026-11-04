@@ -31,7 +31,7 @@ export const QuickstartCLI = () => {
   const activeCommand = COMMANDS[pm]
 
   return (
-    <section id="quickstart" className="border-b-2 border-(--lithos-border) bg-(--lithos-strata) py-20 md:py-28">
+    <section id="quickstart" className="border-b-2 border-(--lithos-border) py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <p className="text-xs font-mono font-bold uppercase tracking-widest text-(--lithos-accent) mb-3">
