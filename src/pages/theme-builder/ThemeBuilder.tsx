@@ -31,6 +31,7 @@ import {
   IconSmartphone,
   IconCopy,
 } from '../../components/ui/icons'
+import { useDynamicStrata } from '../../core/hooks/useDynamicStrata'
 
 type StageTab = 'preview' | 'code' | 'swatches'
 
@@ -62,12 +63,16 @@ export const ThemeBuilder = () => {
     activePresetId,
   } = useThemeHistory()
   const { addToast } = useToast()
+  const strataStyle = useDynamicStrata({ variant: 'compact' })
 
   return (
     <>
       <Navbar />
 
-      <main className="min-h-screen lg:h-screen pt-14 flex flex-col overflow-y-auto lg:overflow-hidden bg-(--lithos-strata) text-(--lithos-text) antialiased">
+      <main
+        className="min-h-screen lg:h-screen pt-14 flex flex-col overflow-y-auto lg:overflow-hidden bg-(--lithos-strata) text-(--lithos-text) antialiased"
+        style={strataStyle}
+      >
         {/* Strict monolithic flex container for exact height sharing and sharp border intersections */}
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row w-full items-stretch">
           {/* PANEL 1: CONFIGURATION */}
@@ -247,7 +252,7 @@ export const ThemeBuilder = () => {
           </div>
 
           {/* PANEL 3: STAGE */}
-          <div className="flex flex-col min-w-0 flex-1 h-auto min-h-[600px] lg:min-h-0 lg:h-full overflow-hidden bg-(--lithos-surface) font-sans text-(--lithos-text)">
+          <div className="flex flex-col min-w-0 flex-1 h-auto min-h-[600px] lg:min-h-0 lg:h-full overflow-hidden bg-(--lithos-strata) font-sans text-(--lithos-text)">
             {/* Stage Header */}
             {/* Reset */}
             <div className="min-h-[64px] px-4 md:px-6 pt-4 md:pt-0 border-b-2 border-(--lithos-border) bg-(--lithos-strata) flex flex-col md:flex-row items-center md:items-end justify-between space-y-4 md:space-y-0">
@@ -358,7 +363,7 @@ export const ThemeBuilder = () => {
                             }}
                           >
                             <span
-                              className="inline-block max-w-[85%] text-center break-words text-[10px] sm:text-xs font-mono font-bold bg-(--lithos-surface) text-(--lithos-text) px-3 py-1.5 border-[3px] border-(--lithos-border) rounded-(--lithos-radius) cursor-pointer"
+                              className="inline-block max-w-[85%] text-center wrap-break-word text-[10px] sm:text-xs font-mono font-bold bg-(--lithos-surface) text-(--lithos-text) px-3 py-1.5 border-[3px] border-(--lithos-border) rounded-(--lithos-radius) cursor-pointer"
                               onClick={() => {
                                 navigator.clipboard.writeText(val)
                                 addToast({
@@ -381,10 +386,10 @@ export const ThemeBuilder = () => {
                           </div>
 
                           <CardContent className="p-4 sm:p-5 flex flex-col space-y-2 flex-1 justify-start bg-(--lithos-surface) min-w-0">
-                            <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-(--lithos-text) break-words">
+                            <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-(--lithos-text) wrap-break-word">
                               {prop.label}
                             </p>
-                            <code className="text-[10px] sm:text-[11px] font-mono text-(--lithos-muted) font-bold p-1.5 bg-(--lithos-bg) border-2 border-(--lithos-border)/20 rounded break-words whitespace-normal w-full inline-block">
+                            <code className="text-[10px] sm:text-[11px] font-mono text-(--lithos-muted) font-bold p-1.5 bg-(--lithos-bg) border-2 border-(--lithos-border)/20 rounded wrap-break-word whitespace-normal w-full inline-block">
                               {prop.key}
                             </code>
                           </CardContent>

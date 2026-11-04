@@ -4,16 +4,18 @@ import { KineticGrid } from '../components/ui/KineticGrid'
 import { blockCategories } from '../components/blocks/registry'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '../components/ui/Card'
+import { useDynamicStrata } from '../core/hooks/useDynamicStrata'
 
 export const BlocksIndex = () => {
   const navigate = useNavigate()
+  const strataStyle = useDynamicStrata()
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-(--lithos-strata) text-(--lithos-text)">
+      <main className="min-h-screen bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
         {/* Hero Section */}
-        <section className="border-b-2 border-(--lithos-border) bg-(--lithos-strata)">
+        <section className="border-b-2 border-(--lithos-border)">
           <KineticGrid baseOpacity="opacity-10" className="pt-20 pb-12 md:pt-28 md:pb-24 w-full">
             <div className="mx-auto max-w-7xl px-6 w-full flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
               <div className="w-full text-center lg:text-left flex flex-col items-center lg:items-start">
@@ -33,7 +35,7 @@ export const BlocksIndex = () => {
         </section>
 
         {/* Category Catalog */}
-        <section className="py-12 md:py-24 bg-(--lithos-strata)">
+        <section className="py-12 md:py-24">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex flex-wrap -m-3">
               {blockCategories.map((category) => {

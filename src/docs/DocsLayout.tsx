@@ -10,10 +10,13 @@ import { DocsNavbar as Navbar } from './layout/Navbar'
 import { Sidebar } from './layout/Sidebar'
 import { TableOfContents } from './layout/TableOfContents'
 import { Footer } from '../showroom/sections/Footer'
+import { useDynamicStrata } from '../core/hooks/useDynamicStrata'
 
 export const DocsLayout = ({ children }: { children: ReactNode }) => {
+  const strataStyle = useDynamicStrata()
+
   return (
-    <div className="min-h-screen flex flex-col bg-(--lithos-strata) text-(--lithos-text)">
+    <div className="min-h-screen flex flex-col bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
       <Navbar />
 
       <div className="flex-1 w-full max-w-screen-2xl mx-auto grid grid-cols-12 pt-24 items-start">

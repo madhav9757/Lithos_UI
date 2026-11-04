@@ -26,7 +26,7 @@ export const StatsStrip = () => {
   }, [])
 
   return (
-    <section className="border-b-2 border-(--lithos-border) bg-(--lithos-strata) py-16">
+    <section className="border-b-2 border-(--lithos-border) py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-wrap -m-3">
           {/* Stat 1: Components */}
