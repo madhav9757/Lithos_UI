@@ -153,11 +153,13 @@ export const Hero = () => {
                         onClick={() => updateRadius(r.value)}
                         aria-label={`Set border radius to ${r.label}`}
                         title={`${r.label} (${r.value}px)`}
-                        className={`flex-1 h-8 flex items-center justify-center text-xs font-bold font-mono transition-colors cursor-pointer ${idx !== 0 ? 'border-l-2 border-(--lithos-border)' : ''
-                          } ${isSelected
+                        className={`flex-1 h-8 flex items-center justify-center text-xs font-bold font-mono transition-colors cursor-pointer ${
+                          idx !== 0 ? 'border-l-2 border-(--lithos-border)' : ''
+                        } ${
+                          isSelected
                             ? 'bg-(--lithos-accent) text-(--lithos-accent-text)'
                             : 'bg-(--lithos-bg) text-(--lithos-text) hover:bg-(--lithos-surface)'
-                          }`}
+                        }`}
                       >
                         <IconRadius variant={r.variant} size={14} />
                       </button>
