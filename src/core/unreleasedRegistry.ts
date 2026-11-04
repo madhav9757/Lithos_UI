@@ -14,22 +14,30 @@ export interface UnreleasedComponentEntry {
   releaseTarget?: string
 }
 
-export const UNRELEASED_COMPONENTS: string[] = ['slider', 'marquee']
+export const DEFAULT_UNRELEASED_BADGE_LABEL = 'NEW'
+export const DEFAULT_UNRELEASED_WARNING_MESSAGE =
+  'UNRELEASED COMPONENT · DO NOT USE YET · THIS COMPONENT IS YET TO BE RELEASED ⚠'
 
-export const UNRELEASED_REGISTRY: Record<string, UnreleasedComponentEntry> = {
-  slider: {
-    slug: 'slider',
-    name: 'Slider',
-    badgeLabel: 'NEW',
-    warningMessage: 'UNRELEASED COMPONENT · DO NOT USE YET · THIS COMPONENT IS YET TO BE RELEASED ⚠',
-  },
-  marquee: {
-    slug: 'marquee',
-    name: 'Marquee',
-    badgeLabel: 'NEW',
-    warningMessage: 'UNRELEASED COMPONENT · DO NOT USE YET · THIS COMPONENT IS YET TO BE RELEASED ⚠',
-  },
-}
+type UnreleasedComponentConfig = Pick<UnreleasedComponentEntry, 'slug' | 'name'> &
+  Partial<Pick<UnreleasedComponentEntry, 'badgeLabel' | 'warningMessage' | 'releaseTarget'>>
+
+const COMPONENTS: UnreleasedComponentConfig[] = [
+  { slug: 'slider', name: 'Slider' },
+  { slug: 'marquee', name: 'Marquee' },
+]
+
+export const UNRELEASED_REGISTRY: Record<string, UnreleasedComponentEntry> = Object.fromEntries(
+  COMPONENTS.map((component) => [
+    component.slug,
+    {
+      badgeLabel: DEFAULT_UNRELEASED_BADGE_LABEL,
+      warningMessage: DEFAULT_UNRELEASED_WARNING_MESSAGE,
+      ...component,
+    },
+  ])
+)
+
+export const UNRELEASED_COMPONENTS: string[] = Object.keys(UNRELEASED_REGISTRY)
 
 /**
  * Checks whether a given component slug or name is currently unreleased on npm.

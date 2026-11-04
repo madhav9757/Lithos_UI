@@ -71,7 +71,7 @@ export const ThemeBuilder = () => {
         {/* Strict monolithic flex container for exact height sharing and sharp border intersections */}
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row w-full items-stretch">
           {/* PANEL 1: CONFIGURATION */}
-          <div className="flex flex-col w-full lg:w-[280px] h-auto lg:h-full overflow-hidden bg-(--lithos-surface) lg:border-r-2 border-(--lithos-border) text-(--lithos-text) shrink-0">
+          <div className="flex flex-col w-full lg:w-[280px] h-auto lg:h-full overflow-hidden bg-(--lithos-strata) lg:border-r-2 border-(--lithos-border) text-(--lithos-text) shrink-0">
             <div className="h-16 border-b-2 border-(--lithos-border) bg-(--lithos-strata) flex items-center justify-between shrink-0 px-5">
               <h2 className="text-sm tracking-widest uppercase mt-0.5 font-bold font-mono">Configuration</h2>
             </div>
@@ -207,7 +207,7 @@ export const ThemeBuilder = () => {
           </div>
 
           {/* PANEL 2: DESIGN TOKENS */}
-          <div className="flex flex-col w-full lg:w-[340px] h-auto lg:h-full overflow-hidden bg-(--lithos-surface) border-b lg:border-b-0 lg:border-r-2 border-(--lithos-border) text-(--lithos-text) shrink-0">
+          <div className="flex flex-col w-full lg:w-[340px] h-auto lg:h-full overflow-hidden bg-(--lithos-strata) border-b lg:border-b-0 lg:border-r-2 border-(--lithos-border) text-(--lithos-text) shrink-0">
             <div className="h-16 border-b-2 border-(--lithos-border) bg-(--lithos-strata) flex items-center justify-between shrink-0 px-5">
               <h2 className="text-sm tracking-widest uppercase mt-0.5 font-bold font-mono">Design Tokens</h2>
             </div>
