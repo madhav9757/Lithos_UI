@@ -58,7 +58,7 @@ export const BlockCategoryPage = () => {
     <>
       <Navbar />
       <main className="pt-24 min-h-screen bg-(--lithos-strata) text-(--lithos-text)" style={strataStyle}>
-        <section className="border-b-2 border-(--lithos-border)">
+        <section>
           <div className="mx-auto max-w-7xl px-6 py-12 md:py-24">
             <Link
               to="/blocks"

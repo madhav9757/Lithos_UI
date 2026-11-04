@@ -32,7 +32,7 @@ export const Hero = () => {
   const { accentColor, updateAccentColor, radius, updateRadius } = useTheme()
 
   return (
-    <section id="top" className="border-b-2 border-(--lithos-border)">
+    <section id="top">
       {/* Deploying the tracking engine to the main landing viewport */}
       <KineticGrid baseOpacity="opacity-10" className="pt-20 pb-12 md:pt-28 md:pb-24 w-full">
         <div className="mx-auto max-w-7xl px-6 w-full flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
@@ -153,13 +153,11 @@ export const Hero = () => {
                         onClick={() => updateRadius(r.value)}
                         aria-label={`Set border radius to ${r.label}`}
                         title={`${r.label} (${r.value}px)`}
-                        className={`flex-1 h-8 flex items-center justify-center text-xs font-bold font-mono transition-colors cursor-pointer ${
-                          idx !== 0 ? 'border-l-2 border-(--lithos-border)' : ''
-                        } ${
-                          isSelected
+                        className={`flex-1 h-8 flex items-center justify-center text-xs font-bold font-mono transition-colors cursor-pointer ${idx !== 0 ? 'border-l-2 border-(--lithos-border)' : ''
+                          } ${isSelected
                             ? 'bg-(--lithos-accent) text-(--lithos-accent-text)'
                             : 'bg-(--lithos-bg) text-(--lithos-text) hover:bg-(--lithos-surface)'
-                        }`}
+                          }`}
                       >
                         <IconRadius variant={r.variant} size={14} />
                       </button>

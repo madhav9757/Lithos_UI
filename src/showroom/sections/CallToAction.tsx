@@ -13,7 +13,7 @@ export const CallToAction = () => {
   const { accentColor } = useTheme()
 
   return (
-    <section className="border-b-2 border-(--lithos-border) py-24 md:py-32 relative overflow-hidden">
+    <section className="py-24 md:py-32 relative overflow-hidden">
       <style>{`
         @font-palette-values --nabla-cta-accent {
           font-family: 'Nabla';

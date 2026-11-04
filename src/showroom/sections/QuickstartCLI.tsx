@@ -31,7 +31,7 @@ export const QuickstartCLI = () => {
   const activeCommand = COMMANDS[pm]
 
   return (
-    <section id="quickstart" className="border-b-2 border-(--lithos-border) py-20 md:py-28">
+    <section id="quickstart" className="py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <p className="text-xs font-mono font-bold uppercase tracking-widest text-(--lithos-accent) mb-3">
@@ -67,13 +67,11 @@ export const QuickstartCLI = () => {
                   key={tab}
                   type="button"
                   onClick={() => setPm(tab)}
-                  className={`flex-1 sm:flex-initial sm:px-4 py-1.5 px-3 font-mono text-xs font-bold transition-colors cursor-pointer text-center ${
-                    idx > 0 ? 'border-l-2 border-(--lithos-border)' : ''
-                  } ${
-                    pm === tab
+                  className={`flex-1 sm:flex-initial sm:px-4 py-1.5 px-3 font-mono text-xs font-bold transition-colors cursor-pointer text-center ${idx > 0 ? 'border-l-2 border-(--lithos-border)' : ''
+                    } ${pm === tab
                       ? 'bg-(--lithos-accent) text-(--lithos-accent-text)'
                       : 'bg-(--lithos-bg) text-(--lithos-text) hover:bg-(--lithos-surface)'
-                  }`}
+                    }`}
                 >
                   {tab}
                 </button>
