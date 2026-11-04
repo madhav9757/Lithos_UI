@@ -25,9 +25,8 @@ export const Navbar = () => {
         className="fixed top-0 z-50 w-full bg-(--lithos-strata)"
         style={{ paddingRight: 'var(--removed-scrollbar-width, 0px)' }}
       >
-        {/* - Fixed rail: the 4px bottom border marks the top boundary of the app. */}
-        {/* - 24px vertical padding gives the bar enough mass to read as a slab, not a strip. */}
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-1.5 md:py-2">
+        {/* - Fixed rail: full bleed edges so brand and actions stay pinned to viewport margins */}
+        <div className="w-full flex items-center justify-between px-6 md:px-8 py-1.5 md:py-2">
           {/* - Brand block flex-1 balances the center lane. */}
           <div className="flex items-center justify-start lg:flex-1">
             <RouteLink

@@ -44,11 +44,11 @@
     "*.css"
   ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:cli": "tsc -p tsconfig.cli.json",
-    "build:registry": "pnpm build:cli && node dist/cli/build-registry.js",
-    "build:lib": "vite build -c vite.lib.config.ts && npx @tailwindcss/cli -i ./src/tokens.css -o ./dist/tokens.css",
+    "dev": "node init && vite",
+    "build": "node init && vite build",
+    "build:cli": "node init && tsc -p tsconfig.cli.json",
+    "build:registry": "node init && pnpm build:cli && node dist/cli/build-registry.js",
+    "build:lib": "node init && vite build -c vite.lib.config.ts && npx @tailwindcss/cli -i ./src/tokens.css -o ./dist/tokens.css",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",

@@ -25,7 +25,7 @@ export const DocsNavbar = () => {
       className="fixed top-0 z-50 w-full bg-(--lithos-strata)"
       style={{ paddingRight: 'var(--removed-scrollbar-width, 0px)' }}
     >
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-1.5 md:py-2">
+      <div className="w-full flex items-center justify-between px-6 md:px-8 py-1.5 md:py-2">
         <div className="flex items-center justify-start lg:w-1/3">
           <RouteLink to="/" importRoute={() => import('../../showroom/Index')} className="flex items-center">
             <LithosLogo className="h-8 md:h-9" />
