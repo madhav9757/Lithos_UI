@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added (0.1.5)
 
+- **Textarea:** Added a native multiline field matching Input sizing, with plain, outlined, soft, and solid variants, accessible validation, automatic sizing, and manual resize controls.
+- Added Textarea documentation, code-only Anatomy, props reference, lazy route, navigation, component showcase, package exports, CLI installation, and behavior/accessibility tests.
+- Added Field, FieldLabel, and FieldDescription helpers within Textarea for connected labels and descriptions, plus examples with submit buttons, local attachments, emoji insertion, and separate character-count and word-count samples showing used/total and remaining counts with enforced limits.
+- Registered Textarea as an unreleased component for navigation badges and documentation notices.
+
 - **Slider:** Added a native horizontal/vertical range primitive with controlled/uncontrolled values, numeric change callbacks, bounds and steps, disabled state, three thumb sizes, native form support, and theme-token track/thumb styling.
 - Added Slider documentation, standalone examples, props reference, component showcase, navigation, package exports, CLI registry entry, and behavior/accessibility tests.
 - Added square and round shapes, filled sliders controlling whole-app brightness with both icons inside or outside, a three-color Easy/Medium/Hard distribution slider with adjustable shares totaling 100%, and optional custom thumb colors with YIQ border contrast.

@@ -24,6 +24,7 @@ type UnreleasedComponentConfig = Pick<UnreleasedComponentEntry, 'slug' | 'name'>
 const COMPONENTS: UnreleasedComponentConfig[] = [
   { slug: 'slider', name: 'Slider' },
   { slug: 'marquee', name: 'Marquee' },
+  { slug: 'textarea', name: 'Textarea' },
 ]
 
 export const UNRELEASED_REGISTRY: Record<string, UnreleasedComponentEntry> = Object.fromEntries(

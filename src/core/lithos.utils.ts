@@ -181,6 +181,13 @@ export const DOC_PAGES: readonly DocPageConfig[] = [
     loader: () => import('../docs/pages/Input').then((m) => ({ default: m.InputDoc })),
   },
   {
+    path: 'textarea',
+    to: '/docs/textarea',
+    label: 'Textarea',
+    category: 'Components',
+    loader: () => import('../docs/pages/Textarea').then((m) => ({ default: m.TextareaDoc })),
+  },
+  {
     path: 'kbd',
     to: '/docs/kbd',
     label: 'Kbd',
