@@ -41,13 +41,13 @@ export const LIGHT_DEFAULTS: Record<string, string> = {
 }
 
 export const DARK_DEFAULTS: Record<string, string> = {
-  '--lithos-bg': '#000000',
+  '--lithos-bg': '#0a0a0a',
   '--lithos-text': '#ffffff',
-  '--lithos-border': '#ffffff',
+  '--lithos-border': '#000000',
   '--lithos-accent': '#00ff00',
-  '--lithos-surface': '#000000',
-  '--lithos-muted': 'rgba(255, 255, 255, 1)',
-  '--lithos-shadow': 'rgba(255, 255, 255, 1)',
+  '--lithos-surface': '#141414',
+  '--lithos-muted': 'rgba(255, 255, 255, 0.4)',
+  '--lithos-shadow': 'rgba(0, 0, 0, 1)',
   '--lithos-radius': '0px',
 }
 

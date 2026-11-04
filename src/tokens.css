@@ -52,18 +52,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* - Obsidian Mode: Inverts the environmental tokens without touching the structural CSS. */
-/* - Shadows use maximum opacity (rgba 1) to remain solid blocks against the dark background. */
+/* - Obsidian Mode: Inverts the environmental tokens with layered obsidian surface and pitch-black physical mass. */
 .obsidian,
 body.obsidian {
-  --lithos-bg: #000000;
+  --lithos-bg: #0a0a0a;
   --lithos-text: #ffffff;
-  --lithos-border: #ffffff;
-  --lithos-surface: #000000;
-  --lithos-surface-hover: color-mix(in srgb, var(--lithos-surface), #ffffff 12%);
+  --lithos-border: #000000;
+  --lithos-surface: #141414;
+  --lithos-surface-hover: color-mix(in srgb, var(--lithos-surface), #ffffff 8%);
   --lithos-strata: color-mix(in srgb, var(--lithos-accent) 7%, #0a0a0a);
-  --lithos-muted: rgba(255, 255, 255, 0.3);
-  --lithos-shadow: rgba(255, 255, 255, 1);
+  --lithos-muted: rgba(255, 255, 255, 0.4);
+  --lithos-shadow: rgba(0, 0, 0, 1);
   color-scheme: dark;
 }
 
