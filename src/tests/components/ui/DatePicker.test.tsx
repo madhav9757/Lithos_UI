@@ -463,4 +463,51 @@ describe('DateField Component', () => {
       expect(onChange).toHaveBeenCalledWith(expect.any(Date))
     }
   })
+
+  it('marks DateField invalid when year is greater than current year or DD/MM exceeds limits and applies alert red styles', async () => {
+    const user = userEvent.setup()
+    const currentYear = new Date().getFullYear()
+    const { container } = render(<DateField label="Basic date picker" />)
+
+    const input = screen.getByRole('textbox')
+    const fieldset = container.querySelector('fieldset')
+    const legend = container.querySelector('legend')
+
+    await user.type(input, `25/10/${currentYear + 1}`)
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(fieldset).toHaveClass('border-red-500')
+    expect(legend).toHaveClass('text-red-500')
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveAttribute('aria-invalid', 'false')
+    expect(fieldset).not.toHaveClass('border-red-500')
+    expect(legend).not.toHaveClass('text-red-500')
+
+    await user.clear(input)
+    await user.type(input, '98/76/')
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(fieldset).toHaveClass('border-red-500')
+    expect(legend).toHaveClass('text-red-500')
+  })
+
+  it('marks DatePickerInput invalid when year exceeds current year or DD/MM exceeds limits', async () => {
+    const user = userEvent.setup()
+    const currentYear = new Date().getFullYear()
+    const { container } = render(<DatePicker />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, `15/08/${currentYear + 1}`)
+
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    const wrapper = container.querySelector('.border-red-500')
+    expect(wrapper).toBeInTheDocument()
+
+    await user.keyboard('{Backspace}')
+    expect(input).toHaveAttribute('aria-invalid', 'false')
+
+    await user.clear(input)
+    await user.type(input, '98/76/')
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(container.querySelector('.border-red-500')).toBeInTheDocument()
+  })
 })

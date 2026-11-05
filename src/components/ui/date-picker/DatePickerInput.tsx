@@ -20,6 +20,7 @@ import {
   formatDateInput,
   formatDateRangeInput,
   isValidDate,
+  isDateInputInvalid,
 } from './date-picker.utils'
 import { IconCalendar } from '../icons/IconCalendar'
 import { IconClose } from '../icons/IconClose'
@@ -63,7 +64,6 @@ export const DatePickerInput = ({
   } = useDatePickerContext()
 
   const isDisabled = propDisabled ?? contextDisabled
-  const isInvalid = propInvalid ?? contextInvalid
   const activeDateFormat = propDateFormat ?? contextDateFormat ?? 'numeric'
 
   const internalInputRef = useRef<HTMLInputElement>(null)
@@ -118,12 +118,12 @@ export const DatePickerInput = ({
 
     if (mode === 'single') {
       const parsed = parseDateString(formatted)
-      if (parsed) {
+      if (parsed && !isDateInputInvalid(parsed)) {
         setValue(parsed)
       }
     } else if (mode === 'range') {
       const parsedRange = parseDateRangeString(formatted)
-      if (parsedRange) {
+      if (parsedRange && !isDateInputInvalid(parsedRange)) {
         setValue(parsedRange)
       }
     }
@@ -185,6 +185,10 @@ export const DatePickerInput = ({
   }
 
   const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'DD/MM/YYYY - DD/MM/YYYY' : 'DD/MM/YYYY')
+  const isInputInvalid = isDateInputInvalid(inputValue)
+  const isValueInvalid = isDateInputInvalid(value)
+  const isInvalid = Boolean(propInvalid || contextInvalid || (inputValue ? isInputInvalid : isValueInvalid))
+
   const remainingPlaceholder =
     inputValue.length > 0 && inputValue.length < defaultPlaceholder.length
       ? defaultPlaceholder.slice(inputValue.length)
@@ -195,11 +199,12 @@ export const DatePickerInput = ({
       ref={triggerRef}
       style={isInvalid ? { borderColor: colors.error } : undefined}
       className={cn(
-        'relative flex w-full items-center justify-between border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) shadow-[2px_2px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius) transition',
+        'relative flex w-full items-center justify-between border-2 rounded-(--lithos-radius) bg-(--lithos-surface) text-(--lithos-text) transition',
+        isInvalid
+          ? 'border-red-500 shadow-[2px_2px_0_0_#FF0000] hover:shadow-[4px_4px_0_0_#FF0000] focus-within:shadow-[4px_4px_0_0_#FF0000]'
+          : 'border-(--lithos-border) shadow-[2px_2px_0_0_var(--lithos-shadow)] hover:shadow-[4px_4px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)]',
         inputSizeStyles[size],
         {
-          'hover:shadow-[4px_4px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)]':
-            !isDisabled,
           'opacity-50 cursor-not-allowed': isDisabled,
         },
         className
@@ -228,6 +233,7 @@ export const DatePickerInput = ({
             disabled={isDisabled}
             placeholder={inputValue ? '' : defaultPlaceholder}
             aria-label={ariaLabel ?? defaultPlaceholder}
+            aria-invalid={isInvalid ? 'true' : 'false'}
             className="relative z-10 w-full bg-transparent outline-none font-mono font-bold text-(--lithos-text) placeholder:text-(--lithos-text)/40 select-text"
             {...props}
           />

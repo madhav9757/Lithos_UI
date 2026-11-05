@@ -22,6 +22,9 @@ export {
   getDisplayValue,
   getDefaultPresets,
   isValidDate,
+  isYearGreaterThanCurrent,
+  isDateInputInvalid,
+  isSingleDateStringInvalid,
 } from './date-picker/date-picker.utils'
 
 export type * from './date-picker/date-picker.types'

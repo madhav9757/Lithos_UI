@@ -12,7 +12,7 @@ import { useFloating, autoUpdate, offset, flip, shift, FloatingFocusManager, Flo
 import { Calendar } from '../calendar/Calendar'
 import { IconCalendar } from '../icons/IconCalendar'
 import { IconClose } from '../icons/IconClose'
-import { parseDateString, formatDateInput, isValidDate } from './date-picker.utils'
+import { parseDateString, formatDateInput, isValidDate, isDateInputInvalid } from './date-picker.utils'
 import { cn } from '../../../utils/cn'
 import { colors } from '../../../utils/colors'
 import type { LithosClass } from '../../../utils/cn'
@@ -106,10 +106,12 @@ export const DateField = ({
 
     const parsed = parseDateString(formatted)
     if (parsed) {
-      if (!isControlled) {
-        setLocalValue(parsed)
+      if (!isDateInputInvalid(parsed)) {
+        if (!isControlled) {
+          setLocalValue(parsed)
+        }
+        onChange?.(parsed)
       }
-      onChange?.(parsed)
     }
   }
 
@@ -176,6 +178,10 @@ export const DateField = ({
 
   const hasValue = Boolean(selectedDate && isValidDate(selectedDate))
   const defaultPlaceholder = placeholder ?? 'DD/MM/YYYY'
+  const isInputInvalid = isDateInputInvalid(inputValue)
+  const isValueInvalid = isDateInputInvalid(selectedDate)
+  const isInvalid = Boolean(invalid || (inputValue ? isInputInvalid : isValueInvalid))
+
   const remainingPlaceholder =
     inputValue.length > 0 && inputValue.length < defaultPlaceholder.length
       ? defaultPlaceholder.slice(inputValue.length)
@@ -184,17 +190,28 @@ export const DateField = ({
   return (
     <div ref={floating.refs.setReference} className={cn('relative inline-block w-full max-w-xs', className)}>
       <fieldset
-        style={invalid ? { borderColor: colors.error } : undefined}
+        style={isInvalid ? { borderColor: colors.error } : undefined}
         className={cn(
-          'border-2 border-(--lithos-border) rounded-(--lithos-radius) px-3 py-1 bg-(--lithos-surface) text-(--lithos-text) shadow-[2px_2px_0_0_var(--lithos-shadow)] transition select-none',
+          'border-2 rounded-(--lithos-radius) px-3 py-1 bg-(--lithos-surface) text-(--lithos-text) transition select-none',
+          isInvalid
+            ? 'border-red-500 shadow-[2px_2px_0_0_#FF0000] hover:shadow-[4px_4px_0_0_#FF0000] focus-within:shadow-[4px_4px_0_0_#FF0000]'
+            : 'border-(--lithos-border) shadow-[2px_2px_0_0_var(--lithos-shadow)] hover:shadow-[4px_4px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)]',
           {
-            'hover:shadow-[4px_4px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)]':
-              !disabled,
             'opacity-50 cursor-not-allowed': disabled,
           }
         )}
       >
-        {label && <legend className="px-1 text-xs font-mono font-bold text-(--lithos-text)">{label}</legend>}
+        {label && (
+          <legend
+            style={isInvalid ? { color: colors.error } : undefined}
+            className={cn(
+              'px-1 text-xs font-mono font-bold transition-colors',
+              isInvalid ? 'text-red-500' : 'text-(--lithos-text)'
+            )}
+          >
+            {label}
+          </legend>
+        )}
 
         <div className="flex items-center justify-between pb-0.5">
           <div className="relative flex-1 min-w-0 flex items-center overflow-hidden">
@@ -222,6 +239,7 @@ export const DateField = ({
               onBlur={handleInputBlur}
               onKeyDown={handleKeyDown}
               aria-label={label ?? defaultPlaceholder}
+              aria-invalid={isInvalid ? 'true' : 'false'}
               className="relative z-10 w-full bg-transparent outline-none font-mono font-bold text-sm text-(--lithos-text) placeholder:text-(--lithos-text)/40 select-text"
               {...props}
             />
@@ -249,7 +267,7 @@ export const DateField = ({
               data-state={open ? 'open' : 'closed'}
               onClick={handleCalendarClick}
               className={cn(
-                'p-1 flex items-center justify-center hover:bg-(--lithos-border)/10 rounded-sm cursor-pointer text-(--lithos-text) transition-colors',
+                'p-1 flex items-center justify-center hover:bg-(--lithos-border)/10 rounded-sm cursor-pointer transition-colors text-(--lithos-text)',
                 disabled && 'cursor-not-allowed opacity-50'
               )}
             >

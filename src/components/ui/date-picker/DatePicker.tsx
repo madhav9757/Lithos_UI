@@ -6,6 +6,7 @@ import { DatePickerRangeInputs } from './DatePickerRangeInputs'
 import { DatePickerDualCalendar } from './DatePickerDualCalendar'
 import { DatePickerActions } from './DatePickerActions'
 import { Calendar } from '../calendar/Calendar'
+import { isDateInputInvalid } from './date-picker.utils'
 import { cn } from '../../../utils/cn'
 import type { DatePickerProps } from './date-picker.types'
 import type { CalendarProps, CalendarValue } from '../calendar/calendar.types'
@@ -85,6 +86,9 @@ export const DatePicker = ({
     ...(yearRange !== undefined && { yearRange }),
   }
 
+  const isValueInvalid = isDateInputInvalid(datePicker.value)
+  const isInvalid = Boolean(invalid || isValueInvalid)
+
   return (
     <DatePickerContext.Provider
       value={{
@@ -92,7 +96,7 @@ export const DatePicker = ({
         minDate,
         maxDate,
         disabled,
-        invalid,
+        invalid: isInvalid,
       }}
     >
       <div className={cn('relative inline-block w-full', className)}>

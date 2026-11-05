@@ -11,6 +11,9 @@ import {
   parseDateRangeString,
   getDisplayValue,
   getDefaultPresets,
+  isYearGreaterThanCurrent,
+  isDateInputInvalid,
+  isSingleDateStringInvalid,
 } from '../../../components/ui/date-picker/date-picker.utils'
 
 describe('DatePicker date-picker.utils', () => {
@@ -175,5 +178,52 @@ describe('DatePicker date-picker.utils', () => {
     expect(rangePresets.length).toBeGreaterThan(0)
     expect(rangePresets.some((p) => p.label === 'Last 7 Days')).toBe(true)
     expect(rangePresets.some((p) => p.label === 'This Month')).toBe(true)
+  })
+
+  it('correctly identifies when a year exceeds current year', () => {
+    const currentYear = new Date().getFullYear()
+    expect(isYearGreaterThanCurrent(`25/10/${currentYear}`)).toBe(false)
+    expect(isYearGreaterThanCurrent(`25/10/${currentYear + 1}`)).toBe(true)
+    expect(isYearGreaterThanCurrent(`25/10/${currentYear - 1}`)).toBe(false)
+    expect(isYearGreaterThanCurrent('25/10/20')).toBe(false)
+    expect(isYearGreaterThanCurrent(new Date(currentYear, 0, 1))).toBe(false)
+    expect(isYearGreaterThanCurrent(new Date(currentYear + 1, 0, 1))).toBe(true)
+    expect(isYearGreaterThanCurrent({ from: new Date(currentYear, 0, 1), to: new Date(currentYear + 1, 0, 1) })).toBe(
+      true
+    )
+    expect(isYearGreaterThanCurrent({ from: new Date(currentYear, 0, 1), to: new Date(currentYear, 5, 1) })).toBe(false)
+    expect(isYearGreaterThanCurrent(null)).toBe(false)
+    expect(isYearGreaterThanCurrent(undefined)).toBe(false)
+  })
+  it('validates human date entry rules including DD <= 31, MM <= 12, days per month, and leap years', () => {
+    expect(isDateInputInvalid('98/76/YYYY')).toBe(true)
+    expect(isDateInputInvalid('98/76/')).toBe(true)
+    expect(isDateInputInvalid('98/')).toBe(true)
+    expect(isDateInputInvalid('32/10/2026')).toBe(true)
+    expect(isDateInputInvalid('00/10/2026')).toBe(true)
+
+    expect(isDateInputInvalid('15/76/')).toBe(true)
+    expect(isDateInputInvalid('15/13/2026')).toBe(true)
+    expect(isDateInputInvalid('15/00/2026')).toBe(true)
+
+    expect(isDateInputInvalid('31/04/2026')).toBe(true)
+    expect(isDateInputInvalid('31/06/2026')).toBe(true)
+    expect(isDateInputInvalid('31/09/2026')).toBe(true)
+    expect(isDateInputInvalid('31/11/2026')).toBe(true)
+
+    expect(isDateInputInvalid('30/02/2026')).toBe(true)
+    expect(isDateInputInvalid('31/02/2026')).toBe(true)
+    expect(isDateInputInvalid('29/02/2026')).toBe(true)
+    expect(isDateInputInvalid('29/02/2024')).toBe(false)
+    expect(isDateInputInvalid('28/02/2026')).toBe(false)
+
+    expect(isDateInputInvalid('11/11/0002')).toBe(true)
+    expect(isDateInputInvalid('25/10/2026')).toBe(false)
+    expect(isDateInputInvalid('25/10/')).toBe(false)
+    expect(isDateInputInvalid('25')).toBe(false)
+    expect(isDateInputInvalid('')).toBe(false)
+
+    expect(isSingleDateStringInvalid('98/76/YYYY')).toBe(true)
+    expect(isSingleDateStringInvalid('25/10/2026')).toBe(false)
   })
 })

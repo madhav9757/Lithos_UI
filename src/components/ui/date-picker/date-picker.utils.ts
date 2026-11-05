@@ -343,3 +343,126 @@ export const getDefaultPresets = (mode: DatePickerMode = 'single'): DatePickerPr
     },
   ]
 }
+
+export const isSingleDateStringInvalid = (input: string): boolean => {
+  const trimmed = input.trim()
+  if (!trimmed) return false
+
+  const normalized = trimmed.replace(/[-.]/g, '/')
+  const parts = normalized.split('/')
+  const dayStr = parts[0] ?? ''
+  const monthStr = parts[1] ?? ''
+  const yearStr = parts[2] ?? ''
+
+  const currentYear = new Date().getFullYear()
+
+  if (dayStr) {
+    const day = Number(dayStr)
+    if (isNaN(day)) return true
+    if (dayStr.length >= 2 && day === 0) return true
+    if (parts.length > 1 && day === 0) return true
+    if (day > 31) return true
+  }
+
+  if (monthStr) {
+    const month = Number(monthStr)
+    if (isNaN(month)) return true
+    if (monthStr.length >= 2 && month === 0) return true
+    if (parts.length > 2 && month === 0) return true
+    if (month > 12) return true
+
+    if (dayStr) {
+      const day = Number(dayStr)
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+        if ([4, 6, 9, 11].includes(month) && day > 30) {
+          return true
+        }
+        if (month === 2) {
+          if (day > 29) return true
+          if (day === 29 && yearStr.length === 4) {
+            const y = Number(yearStr)
+            const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0
+            if (!isLeap) return true
+          }
+        }
+      }
+    }
+  }
+
+  if (yearStr) {
+    const year = Number(yearStr)
+    if (isNaN(year)) return true
+    if (yearStr.length >= 4) {
+      if (year > currentYear || year < 1000) return true
+    }
+  }
+
+  if (normalized.length === 10 && parts.length === 3) {
+    if (!parseDateString(normalized)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export const isDateInputInvalid = (valueOrInput: string | Date | DateRange | Date[] | null | undefined): boolean => {
+  const currentYear = new Date().getFullYear()
+  if (!valueOrInput) return false
+  if (valueOrInput instanceof Date) {
+    if (!isValidDate(valueOrInput)) return true
+    const year = valueOrInput.getFullYear()
+    return year > currentYear || year < 1000
+  }
+  if (Array.isArray(valueOrInput)) {
+    return valueOrInput.some((d) => {
+      if (!(d instanceof Date) || !isValidDate(d)) return true
+      const year = d.getFullYear()
+      return year > currentYear || year < 1000
+    })
+  }
+  if (typeof valueOrInput === 'object' && 'from' in valueOrInput) {
+    const range = valueOrInput as DateRange
+    if (range.from) {
+      if (!isValidDate(range.from)) return true
+      const y = range.from.getFullYear()
+      if (y > currentYear || y < 1000) return true
+    }
+    if (range.to) {
+      if (!isValidDate(range.to)) return true
+      const y = range.to.getFullYear()
+      if (y > currentYear || y < 1000) return true
+    }
+    if (range.from && range.to && isValidDate(range.from) && isValidDate(range.to)) {
+      if (range.from.getTime() > range.to.getTime()) return true
+    }
+    return false
+  }
+  if (typeof valueOrInput === 'string') {
+    const trimmed = valueOrInput.trim()
+    if (!trimmed) return false
+    if (trimmed.includes(' - ')) {
+      const [fromPart = '', toPart = ''] = trimmed.split(' - ')
+      const cleanFrom = fromPart.trim()
+      const cleanTo = toPart.trim()
+      if (cleanFrom && isSingleDateStringInvalid(cleanFrom)) return true
+      if (cleanTo && isSingleDateStringInvalid(cleanTo)) return true
+      if (cleanFrom.length === 10 && cleanTo.length === 10) {
+        const fromDate = parseDateString(cleanFrom)
+        const toDate = parseDateString(cleanTo)
+        if (fromDate && toDate && fromDate.getTime() > toDate.getTime()) {
+          return true
+        }
+      }
+      return false
+    }
+    return isSingleDateStringInvalid(trimmed)
+  }
+  return false
+}
+
+export const isYearGreaterThanCurrent = (
+  valueOrInput: string | Date | DateRange | Date[] | null | undefined
+): boolean => {
+  return isDateInputInvalid(valueOrInput)
+}
