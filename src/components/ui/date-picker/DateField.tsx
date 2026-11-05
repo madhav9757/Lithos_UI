@@ -175,6 +175,11 @@ export const DateField = ({
   }
 
   const hasValue = Boolean(selectedDate && isValidDate(selectedDate))
+  const defaultPlaceholder = placeholder ?? 'DD/MM/YYYY'
+  const remainingPlaceholder =
+    inputValue.length > 0 && inputValue.length < defaultPlaceholder.length
+      ? defaultPlaceholder.slice(inputValue.length)
+      : ''
 
   return (
     <div ref={floating.refs.setReference} className={cn('relative inline-block w-full max-w-xs', className)}>
@@ -192,25 +197,35 @@ export const DateField = ({
         {label && <legend className="px-1 text-xs font-mono font-bold text-(--lithos-text)">{label}</legend>}
 
         <div className="flex items-center justify-between pb-0.5">
-          <input
-            ref={(node) => {
-              internalInputRef.current = node
-              if (typeof propRef === 'function') propRef(node)
-              else if (propRef && 'current' in propRef) (propRef as { current: HTMLInputElement | null }).current = node
-            }}
-            type="text"
-            disabled={disabled}
-            maxLength={10}
-            value={inputValue}
-            placeholder={placeholder}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            onKeyDown={handleKeyDown}
-            aria-label={label ?? placeholder}
-            className="w-full bg-transparent outline-none font-mono font-bold text-sm text-(--lithos-text) placeholder:text-(--lithos-text)/40 select-text"
-            {...props}
-          />
+          <div className="relative flex-1 min-w-0 flex items-center overflow-hidden">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-center font-mono font-bold text-sm select-none overflow-hidden"
+            >
+              <span className="invisible whitespace-pre">{inputValue}</span>
+              <span className="text-(--lithos-text)/40 whitespace-pre">{remainingPlaceholder}</span>
+            </div>
+            <input
+              ref={(node) => {
+                internalInputRef.current = node
+                if (typeof propRef === 'function') propRef(node)
+                else if (propRef && 'current' in propRef)
+                  (propRef as { current: HTMLInputElement | null }).current = node
+              }}
+              type="text"
+              disabled={disabled}
+              maxLength={10}
+              value={inputValue}
+              placeholder={inputValue ? '' : defaultPlaceholder}
+              onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              onKeyDown={handleKeyDown}
+              aria-label={label ?? defaultPlaceholder}
+              className="relative z-10 w-full bg-transparent outline-none font-mono font-bold text-sm text-(--lithos-text) placeholder:text-(--lithos-text)/40 select-text"
+              {...props}
+            />
+          </div>
 
           <div className="flex items-center shrink-0 ml-2">
             {clearable && hasValue && !disabled && (
@@ -251,8 +266,8 @@ export const DateField = ({
               ref={floating.refs.setFloating}
               style={floating.floatingStyles}
               role="dialog"
-              aria-label="Choose date"
-              className="z-(--lithos-z-popover) inline-block border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] text-(--lithos-text) outline-none rounded-(--lithos-radius) w-fit max-w-[calc(100vw-1rem)]"
+              aria-label="Calendar Popover"
+              className="z-50 border-2 border-(--lithos-border) bg-(--lithos-surface) p-3 shadow-[4px_4px_0_0_var(--lithos-shadow)] rounded-(--lithos-radius)"
             >
               <Calendar
                 mode="single"
@@ -262,7 +277,6 @@ export const DateField = ({
                 locale={locale}
                 {...(minDate !== undefined && { minDate })}
                 {...(maxDate !== undefined && { maxDate })}
-                className="w-full"
               />
             </div>
           </FloatingFocusManager>

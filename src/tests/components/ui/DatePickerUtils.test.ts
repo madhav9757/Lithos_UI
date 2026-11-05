@@ -4,6 +4,7 @@ import {
   formatDate,
   formatDateNumeric,
   formatDateRange,
+  formatDateRangeNumeric,
   formatDateInput,
   formatDateRangeInput,
   parseDateString,
@@ -43,6 +44,10 @@ describe('DatePicker date-picker.utils', () => {
     const rangeFormatted = formatDateRange({ from, to }, 'en-US')
     expect(rangeFormatted).toContain(' - ')
     expect(rangeFormatted).toContain('2026')
+
+    expect(formatDateRangeNumeric(null)).toBe('')
+    expect(formatDateRangeNumeric({ from, to: null })).toBe('10/10/2026 - ')
+    expect(formatDateRangeNumeric({ from, to })).toBe('10/10/2026 - 15/10/2026')
   })
 
   it('parses valid date strings and rejects invalid inputs', () => {
@@ -148,14 +153,16 @@ describe('DatePicker date-picker.utils', () => {
     expect(getDisplayValue(undefined, 'range', 'en-US')).toBe('DD/MM/YYYY - DD/MM/YYYY')
 
     const date = new Date(2026, 9, 25)
-    expect(getDisplayValue(date, 'single', 'en-US')).toContain('2026')
+    expect(getDisplayValue(date, 'single')).toBe('25/10/2026')
+    expect(getDisplayValue(date, 'single', 'en-US', undefined, 'natural')).toContain('Oct 25')
 
     const from = new Date(2026, 9, 10)
     const to = new Date(2026, 9, 20)
-    expect(getDisplayValue({ from, to }, 'range', 'en-US')).toContain(' - ')
+    expect(getDisplayValue({ from, to }, 'range')).toBe('10/10/2026 - 20/10/2026')
+    expect(getDisplayValue({ from, to }, 'range', 'en-US', undefined, 'natural')).toContain('Oct 10')
 
     expect(getDisplayValue([], 'multiple', 'en-US')).toBe('Select dates')
-    expect(getDisplayValue([date], 'multiple', 'en-US')).toContain('2026')
+    expect(getDisplayValue([date], 'multiple')).toBe('25/10/2026')
     expect(getDisplayValue([from, to], 'multiple', 'en-US')).toBe('2 dates selected')
   })
 

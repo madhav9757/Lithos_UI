@@ -169,7 +169,7 @@ export const DatePickerDoc = () => {
           Outlined Field
         </h3>
         <p className="mb-4 text-sm font-body opacity-80 max-w-2xl">
-          Outlined date field with top label, MM/DD/YYYY format, and calendar trigger.
+          Outlined date field with top label, DD/MM/YYYY format, and calendar trigger.
         </p>
         <PreviewBlock code={getCode(ControlledDateFieldSource)} githubUrl={githubUrl}>
           <div className="flex justify-center py-6 max-w-sm mx-auto">

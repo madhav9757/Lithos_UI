@@ -117,7 +117,7 @@ describe('DatePicker Component - Single & Toggle', () => {
     expect(onChange).toHaveBeenCalledWith(null)
   })
 
-  it('selects a date and closes popover in single mode', async () => {
+  it('selects a date and closes popover in single mode with DD/MM/YYYY format', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
     render(<DatePicker defaultMonth={BASE_MONTH} locale="en-US" onChange={onChange} />)
@@ -130,17 +130,53 @@ describe('DatePicker Component - Single & Toggle', () => {
 
     expect(onChange).toHaveBeenCalledWith(expect.any(Date))
 
+    const input = screen.getByRole('textbox')
+    expect(input).toHaveValue('15/08/2026')
+
     await waitFor(() => {
       expect(screen.queryByRole('grid')).not.toBeInTheDocument()
     })
   })
 
-  it('respects controlled value prop over selection', () => {
+  it('respects controlled value prop with DD/MM/YYYY numeric default', () => {
     const selectedDate = new Date(2026, 7, 20)
-    render(<DatePicker value={selectedDate} locale="en-US" />)
+    render(<DatePicker value={selectedDate} />)
+
+    const input = screen.getByRole('textbox')
+    expect(input).toHaveValue('20/08/2026')
+  })
+
+  it('supports natural format mode when dateFormat is natural', () => {
+    const selectedDate = new Date(2026, 7, 20)
+    render(<DatePicker value={selectedDate} dateFormat="natural" locale="en-US" />)
 
     const input = screen.getByRole('textbox')
     expect(input).toHaveValue('Aug 20, 2026')
+  })
+
+  it('keeps remaining DD/MM/YYYY placeholder visible when typing partial dates', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<DatePicker />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '2')
+    expect(input).toHaveValue('2')
+    expect(container.textContent).toContain('D/MM/YYYY')
+
+    await user.type(input, '5')
+    expect(input).toHaveValue('25/')
+    expect(container.textContent).toContain('MM/YYYY')
+
+    await user.type(input, '10')
+    expect(input).toHaveValue('25/10/')
+    expect(container.textContent).toContain('YYYY')
+
+    await user.type(input, '202')
+    expect(input).toHaveValue('25/10/202')
+    expect(container.textContent).toContain('Y')
+
+    await user.type(input, '6')
+    expect(input).toHaveValue('25/10/2026')
   })
 
   it('disables trigger when disabled prop is passed', async () => {
@@ -395,6 +431,20 @@ describe('DateField Component', () => {
     await user.keyboard('{Backspace}')
     expect(input).toHaveValue('')
     expect(onChange).toHaveBeenCalledWith(null)
+  })
+
+  it('keeps remaining DD/MM/YYYY placeholder visible in DateField', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<DateField />)
+
+    const input = screen.getByRole('textbox')
+    await user.type(input, '2')
+    expect(input).toHaveValue('2')
+    expect(container.textContent).toContain('D/MM/YYYY')
+
+    await user.type(input, '5')
+    expect(input).toHaveValue('25/')
+    expect(container.textContent).toContain('MM/YYYY')
   })
 
   it('updates input immediately when date is clicked in calendar', async () => {

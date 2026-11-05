@@ -1,6 +1,6 @@
 import { isSameDay, normalizeToMidnight, addDays, startOfMonth, endOfMonth } from '../../../utils/date'
 import type { DateRange } from '../calendar/calendar.types'
-import type { DatePickerMode, DatePickerValue, DatePickerPreset } from './date-picker.types'
+import type { DatePickerMode, DatePickerValue, DatePickerPreset, DatePickerDateFormat } from './date-picker.types'
 
 export const isValidDate = (date: unknown): date is Date => {
   return date instanceof Date && !isNaN(date.getTime())
@@ -44,6 +44,14 @@ export const formatDateRange = (range: DateRange | null | undefined, locale?: st
   if (!range.to) return fromFormatted
   if (isSameDay(range.from, range.to)) return fromFormatted
   const toFormatted = formatDate(range.to, locale)
+  return `${fromFormatted} - ${toFormatted}`
+}
+
+export const formatDateRangeNumeric = (range: DateRange | null | undefined): string => {
+  if (!range || !range.from || !isValidDate(range.from)) return ''
+  const fromFormatted = formatDateNumeric(range.from)
+  if (!range.to || !isValidDate(range.to)) return `${fromFormatted} - `
+  const toFormatted = formatDateNumeric(range.to)
   return `${fromFormatted} - ${toFormatted}`
 }
 
@@ -258,27 +266,35 @@ export const getDisplayValue = (
   value: DatePickerValue | undefined,
   mode: DatePickerMode,
   locale?: string,
-  placeholder?: string
+  placeholder?: string,
+  dateFormat: DatePickerDateFormat = 'numeric'
 ): string => {
   if (!value) return placeholder ?? (mode === 'range' ? 'DD/MM/YYYY - DD/MM/YYYY' : 'DD/MM/YYYY')
 
   if (mode === 'single') {
     if (value instanceof Date && isValidDate(value)) {
-      return formatDate(value, locale)
+      return dateFormat === 'natural' ? formatDate(value, locale) : formatDateNumeric(value)
     }
     return placeholder ?? 'DD/MM/YYYY'
   }
 
   if (mode === 'range') {
     const range = value as DateRange
-    const formatted = formatDateRange(range, locale)
+    if (!range || !range.from) return placeholder ?? 'DD/MM/YYYY - DD/MM/YYYY'
+    if (dateFormat === 'natural') {
+      const formatted = formatDateRange(range, locale)
+      return formatted || (placeholder ?? 'DD/MM/YYYY - DD/MM/YYYY')
+    }
+    const formatted = formatDateRangeNumeric(range)
     return formatted || (placeholder ?? 'DD/MM/YYYY - DD/MM/YYYY')
   }
 
   if (mode === 'multiple') {
     const dates = (Array.isArray(value) ? value : []) as Date[]
     if (dates.length === 0) return placeholder ?? 'Select dates'
-    if (dates.length === 1 && dates[0]) return formatDate(dates[0], locale)
+    if (dates.length === 1 && dates[0]) {
+      return dateFormat === 'natural' ? formatDate(dates[0], locale) : formatDateNumeric(dates[0])
+    }
     return `${dates.length} dates selected`
   }
 

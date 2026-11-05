@@ -35,6 +35,7 @@ export const useDatePicker = ({
   modal = false,
   closeOnSelect,
   locale,
+  dateFormat = 'numeric',
 }: UseDatePickerOptions = {}): DatePickerContextValue => {
   const isValueControlled = controlledValue !== undefined
   const [localValue, setLocalValue] = useState<DatePickerValue>(() => defaultValue ?? null)
@@ -99,6 +100,7 @@ export const useDatePicker = ({
       open,
       setOpen,
       locale,
+      dateFormat,
       closeOnSelect: shouldCloseOnSelect,
       triggerRef: floating.refs.setReference,
       floatingRef: floating.refs.setFloating,
@@ -115,6 +117,7 @@ export const useDatePicker = ({
       open,
       setOpen,
       locale,
+      dateFormat,
       shouldCloseOnSelect,
       floating.refs.setReference,
       floating.refs.setFloating,

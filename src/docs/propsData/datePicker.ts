@@ -23,9 +23,16 @@ export const datePickerPropsData: PropItem[] = [
     description: 'Callback fired when the selected value changes.',
   },
   {
+    name: 'dateFormat',
+    type: '"numeric" | "natural"',
+    defaultValue: '"numeric"',
+    description:
+      'Date display format. Defaults to DD/MM/YYYY numeric format; set to "natural" for localized text format.',
+  },
+  {
     name: 'placeholder',
     type: 'string',
-    defaultValue: '"Select date"',
+    defaultValue: '"DD/MM/YYYY"',
     description: 'Placeholder string shown when no date is selected.',
   },
   {

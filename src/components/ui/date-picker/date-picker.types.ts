@@ -7,6 +7,8 @@ export type DatePickerMode = 'single' | 'range' | 'multiple'
 
 export type DatePickerVariant = 'default' | 'dual'
 
+export type DatePickerDateFormat = 'numeric' | 'natural'
+
 export type DatePickerValue = Date | DateRange | Date[] | null
 
 export interface DatePickerPreset {
@@ -26,6 +28,7 @@ export interface UseDatePickerOptions {
   modal?: boolean | undefined
   closeOnSelect?: boolean | undefined
   locale?: string | undefined
+  dateFormat?: DatePickerDateFormat | undefined
 }
 
 export interface DatePickerContextValue {
@@ -35,6 +38,7 @@ export interface DatePickerContextValue {
   open: boolean
   setOpen: (open: boolean) => void
   locale?: string | undefined
+  dateFormat?: DatePickerDateFormat | undefined
   closeOnSelect: boolean
   triggerRef: (node: HTMLElement | null) => void
   floatingRef: (node: HTMLElement | null) => void
@@ -63,6 +67,7 @@ export interface DatePickerInputProps {
   invalid?: boolean | undefined
   size?: DatePickerInputSizes | undefined
   clearable?: boolean | undefined
+  dateFormat?: DatePickerDateFormat | undefined
   startAdornment?: ReactNode | undefined
   endAdornment?: ReactNode | undefined
   className?: LithosClass | undefined

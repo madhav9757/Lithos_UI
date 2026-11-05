@@ -14,6 +14,7 @@ export {
   formatDate,
   formatDateRange,
   formatDateNumeric,
+  formatDateRangeNumeric,
   getDayDifference,
   formatDayCount,
   parseDateString,

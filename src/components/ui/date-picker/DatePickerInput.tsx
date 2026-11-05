@@ -15,6 +15,8 @@ import {
   parseDateRangeString,
   formatDate,
   formatDateRange,
+  formatDateNumeric,
+  formatDateRangeNumeric,
   formatDateInput,
   formatDateRangeInput,
   isValidDate,
@@ -39,6 +41,7 @@ export const DatePickerInput = ({
   invalid: propInvalid,
   size = 'default',
   clearable = false,
+  dateFormat: propDateFormat,
   startAdornment,
   endAdornment,
   className,
@@ -53,6 +56,7 @@ export const DatePickerInput = ({
     setValue,
     mode,
     locale,
+    dateFormat: contextDateFormat,
     triggerRef,
     disabled: contextDisabled,
     invalid: contextInvalid,
@@ -60,6 +64,7 @@ export const DatePickerInput = ({
 
   const isDisabled = propDisabled ?? contextDisabled
   const isInvalid = propInvalid ?? contextInvalid
+  const activeDateFormat = propDateFormat ?? contextDateFormat ?? 'numeric'
 
   const internalInputRef = useRef<HTMLInputElement>(null)
   const inputRef = useMergeRefs([internalInputRef, propRef])
@@ -74,18 +79,23 @@ export const DatePickerInput = ({
   const formattedDisplay = useMemo(() => {
     if (!value) return ''
     if (mode === 'single' && value instanceof Date && isValidDate(value)) {
-      return formatDate(value, locale)
+      return activeDateFormat === 'natural' ? formatDate(value, locale) : formatDateNumeric(value)
     }
     if (mode === 'range' && value && typeof value === 'object' && 'from' in value) {
-      return formatDateRange(value as DateRange, locale)
+      const range = value as DateRange
+      if (!range.from) return ''
+      if (activeDateFormat === 'natural') return formatDateRange(range, locale)
+      return formatDateRangeNumeric(range)
     }
     if (mode === 'multiple' && Array.isArray(value)) {
       if (value.length === 0) return ''
-      if (value.length === 1 && isValidDate(value[0])) return formatDate(value[0], locale)
+      if (value.length === 1 && isValidDate(value[0])) {
+        return activeDateFormat === 'natural' ? formatDate(value[0], locale) : formatDateNumeric(value[0])
+      }
       return `${value.length} dates selected`
     }
     return ''
-  }, [value, mode, locale])
+  }, [value, mode, locale, activeDateFormat])
 
   const [inputValue, setInputValue] = useState(formattedDisplay)
   const isFocusedRef = useRef(false)
@@ -175,6 +185,10 @@ export const DatePickerInput = ({
   }
 
   const defaultPlaceholder = placeholder ?? (mode === 'range' ? 'DD/MM/YYYY - DD/MM/YYYY' : 'DD/MM/YYYY')
+  const remainingPlaceholder =
+    inputValue.length > 0 && inputValue.length < defaultPlaceholder.length
+      ? defaultPlaceholder.slice(inputValue.length)
+      : ''
 
   return (
     <div
@@ -193,22 +207,31 @@ export const DatePickerInput = ({
     >
       <div className="flex items-center flex-1 min-w-0 mr-2">
         {startAdornment}
-        <input
-          ref={inputRef}
-          type="text"
-          maxLength={mode === 'range' ? 23 : 10}
-          value={inputValue}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          onClick={(e) => e.stopPropagation()}
-          disabled={isDisabled}
-          placeholder={defaultPlaceholder}
-          aria-label={ariaLabel ?? defaultPlaceholder}
-          className="w-full bg-transparent outline-none font-mono font-bold text-(--lithos-text) placeholder:text-(--lithos-text)/50 select-text"
-          {...props}
-        />
+        <div className="relative flex-1 min-w-0 flex items-center overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 flex items-center font-mono font-bold select-none overflow-hidden"
+          >
+            <span className="invisible whitespace-pre">{inputValue}</span>
+            <span className="text-(--lithos-text)/40 whitespace-pre">{remainingPlaceholder}</span>
+          </div>
+          <input
+            ref={inputRef}
+            type="text"
+            maxLength={mode === 'range' ? 23 : 10}
+            value={inputValue}
+            onChange={handleInputChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            onClick={(e) => e.stopPropagation()}
+            disabled={isDisabled}
+            placeholder={inputValue ? '' : defaultPlaceholder}
+            aria-label={ariaLabel ?? defaultPlaceholder}
+            className="relative z-10 w-full bg-transparent outline-none font-mono font-bold text-(--lithos-text) placeholder:text-(--lithos-text)/40 select-text"
+            {...props}
+          />
+        </div>
       </div>
 
       <div className="flex items-center shrink-0">

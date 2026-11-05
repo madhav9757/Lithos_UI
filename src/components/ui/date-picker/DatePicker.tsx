@@ -24,6 +24,7 @@ export const DatePicker = ({
   modal = false,
   closeOnSelect: propCloseOnSelect,
   locale,
+  dateFormat = 'numeric',
   placeholder,
   disabled,
   invalid,
@@ -57,6 +58,7 @@ export const DatePicker = ({
     placement,
     modal,
     closeOnSelect,
+    dateFormat,
     ...(value !== undefined && { value }),
     ...(defaultValue !== undefined && { defaultValue }),
     ...(onChange !== undefined && { onChange }),
@@ -99,6 +101,7 @@ export const DatePicker = ({
             <DatePickerInput
               size={size}
               clearable={clearable}
+              dateFormat={dateFormat}
               {...(placeholder !== undefined && { placeholder })}
               {...(disabled !== undefined && { disabled })}
               {...(invalid !== undefined && { invalid })}

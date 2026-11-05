@@ -106,38 +106,63 @@ export const DatePickerRangeInputs = ({
     }
   }
 
+  const fromPlaceholder = 'DD/MM/YYYY'
+  const toPlaceholder = 'DD/MM/YYYY'
+  const fromRemaining =
+    fromText.length > 0 && fromText.length < fromPlaceholder.length ? fromPlaceholder.slice(fromText.length) : ''
+  const toRemaining =
+    toText.length > 0 && toText.length < toPlaceholder.length ? toPlaceholder.slice(toText.length) : ''
+
   return (
     <div className={cn('flex flex-row items-center w-full max-w-[500px] mb-3', className)}>
       <div className="flex-1 min-w-0 mr-3 sm:mr-4">
         <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{fromLabel}</label>
-        <input
-          type="text"
-          readOnly={!editable}
-          maxLength={10}
-          value={fromText}
-          onChange={handleFromChange}
-          onFocus={handleFromFocus}
-          onBlur={handleFromBlur}
-          placeholder="DD/MM/YYYY"
-          aria-label={fromLabel}
-          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
-        />
+        <div className="relative flex items-center w-full rounded-(--lithos-radius) bg-(--lithos-surface) border-2 border-(--lithos-border) shadow-[2px_2px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 flex items-center px-2 sm:px-3 py-1.5 font-mono text-xs md:text-sm font-bold select-none overflow-hidden"
+          >
+            <span className="invisible whitespace-pre">{fromText}</span>
+            <span className="text-(--lithos-text)/40 whitespace-pre">{fromRemaining}</span>
+          </div>
+          <input
+            type="text"
+            readOnly={!editable}
+            maxLength={10}
+            value={fromText}
+            onChange={handleFromChange}
+            onFocus={handleFromFocus}
+            onBlur={handleFromBlur}
+            placeholder={fromText ? '' : fromPlaceholder}
+            aria-label={fromLabel}
+            className="relative z-10 w-full bg-transparent font-mono text-xs md:text-sm font-bold text-(--lithos-text) placeholder:text-(--lithos-text)/40 px-2 sm:px-3 py-1.5 outline-none"
+          />
+        </div>
       </div>
 
       <div className="flex-1 min-w-0">
         <label className="block text-xs font-mono font-bold mb-1 opacity-80 text-(--lithos-text)">{toLabel}</label>
-        <input
-          type="text"
-          readOnly={!editable}
-          maxLength={10}
-          value={toText}
-          onChange={handleToChange}
-          onFocus={handleToFocus}
-          onBlur={handleToBlur}
-          placeholder="DD/MM/YYYY"
-          aria-label={toLabel}
-          className="w-full font-mono text-xs md:text-sm font-bold border-2 border-(--lithos-border) bg-(--lithos-surface) text-(--lithos-text) rounded-(--lithos-radius) px-2 sm:px-3 py-1.5 outline-none shadow-[2px_2px_0_0_var(--lithos-shadow)] focus:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition"
-        />
+        <div className="relative flex items-center w-full rounded-(--lithos-radius) bg-(--lithos-surface) border-2 border-(--lithos-border) shadow-[2px_2px_0_0_var(--lithos-shadow)] focus-within:shadow-[4px_4px_0_0_var(--lithos-shadow)] transition overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 flex items-center px-2 sm:px-3 py-1.5 font-mono text-xs md:text-sm font-bold select-none overflow-hidden"
+          >
+            <span className="invisible whitespace-pre">{toText}</span>
+            <span className="text-(--lithos-text)/40 whitespace-pre">{toRemaining}</span>
+          </div>
+          <input
+            type="text"
+            readOnly={!editable}
+            maxLength={10}
+            value={toText}
+            onChange={handleToChange}
+            onFocus={handleToFocus}
+            onBlur={handleToBlur}
+            placeholder={toText ? '' : toPlaceholder}
+            aria-label={toLabel}
+            className="relative z-10 w-full bg-transparent font-mono text-xs md:text-sm font-bold text-(--lithos-text) placeholder:text-(--lithos-text)/40 px-2 sm:px-3 py-1.5 outline-none"
+          />
+        </div>
       </div>
     </div>
   )
