@@ -106,6 +106,10 @@ export interface CalendarProps extends Omit<LithosElementProps<'div'>, 'defaultV
    * Minimum and maximum year range bounds for the year selector dropdown.
    */
   yearRange?: [number, number]
+  /**
+   * Whether to render the outer border, surface background, padding, and brutalist shadow around the calendar container.
+   * @default true
+   */
   bordered?: boolean
 
   /**
