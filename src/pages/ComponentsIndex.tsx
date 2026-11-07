@@ -15,7 +15,6 @@ import { Accordion } from '../components/ui/Accordion'
 import { Breadcrumb } from '../components/ui/Breadcrumb'
 import { Calendar } from '../components/ui/Calendar'
 import { DatePicker } from '../components/ui/DatePicker'
-import { DatePicker } from '../components/ui/DatePicker'
 import { Carousel, CarouselSlide } from '../components/ui/Carousel'
 import { Checkbox } from '../components/ui/Checkbox'
 import {
