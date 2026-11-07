@@ -186,13 +186,6 @@ const getComponentPreview = (name: string) => {
           <DatePicker mode="single" placeholder="DD/MM/YYYY" />
         </div>
       )
-    case 'DatePicker':
-    case 'Date Picker':
-      return (
-        <div className="w-full scale-[0.75] origin-center flex justify-center pointer-events-none">
-          <DatePicker placeholder="DD/MM/YYYY" />
-        </div>
-      )
     case 'Card':
       return (
         <Card
